@@ -1,2 +1,2 @@
 SRC	=\
-	test.cpp
+	String.cpp

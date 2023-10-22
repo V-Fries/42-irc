@@ -1,20 +1,21 @@
 DEBUG					=	0
 
+BASE_NAME				=	webserv
 BUILD_ROOT				=	.build/
 NAMES =\
-	webserv			\
-	webserv_debug1	\
-	webserv_debug2
+	$(BASE_NAME)		\
+	$(BASE_NAME)_debug1	\
+	$(BASE_NAME)_debug2
 ifeq ($(DEBUG), 0)
-	NAME				=	webserv
+	NAME				=	$(BASE_NAME)
 	DIR_BUILD			=	$(BUILD_ROOT)base/
 endif
 ifeq ($(DEBUG), 1)
-	NAME				=	webserv_debug1
+	NAME				=	$(BASE_NAME)_debug1
 	DIR_BUILD			=	$(BUILD_ROOT)debug1/
 endif
 ifeq ($(DEBUG), 2)
-	NAME				=	webserv_debug2
+	NAME				=	$(BASE_NAME)_debug2
 	DIR_BUILD			=	$(BUILD_ROOT)debug2/
 endif
 
@@ -79,7 +80,7 @@ all:
 .PHONY:	run
 run:
 		$(MAKE) -j
-		./$(NAME) || true
+		./$(BASE_NAME) || true
 
 $(NAME):	$(OBJS)
 		$(CXX) $(CPPFLAGS) $(INCLUDES) $(OBJS) $(LIBS) -o $(NAME)
@@ -103,7 +104,7 @@ debug1:
 .PHONY:	runDebug1
 runDebug1:
 		$(MAKE) debug1 -j
-		./$(NAME) || true
+		./$(BASE_NAME)_debug1 || true
 
 .PHONY:	debug2
 debug2:
@@ -112,7 +113,7 @@ debug2:
 .PHONY:	runDebug2
 runDebug2:
 		$(MAKE) debug2 -j
-		./$(NAME) || true
+		./$(BASE_NAME)_debug2 || true
 
 
 .PHONY:	re

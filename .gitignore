@@ -36,5 +36,6 @@ webserv_debug2
 *.app
 
 # IDE
+cmake-build-debug
 .idea
 .vscode
