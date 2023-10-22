@@ -2,6 +2,7 @@
 *.d
 
 # Compiled Object files
+.build
 *.slo
 *.lo
 *.o
@@ -27,6 +28,13 @@
 *.lib
 
 # Executables
+webserv
+webserv_debug1
+webserv_debug2
 *.exe
 *.out
 *.app
+
+# IDE
+.idea
+.vscode

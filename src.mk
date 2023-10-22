@@ -1,0 +1,2 @@
+SRC	=\
+	main.cpp
