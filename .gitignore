@@ -28,9 +28,9 @@
 *.lib
 
 # Executables
-webserv
-webserv_debug1
-webserv_debug2
+ircserv
+ircserv_debug1
+ircserv_debug2
 *.exe
 *.out
 *.app

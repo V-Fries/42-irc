@@ -1,13 +1,19 @@
-#include "String.hpp"
-
 #include <iostream>
 
-int	main() {
-	std::vector<std::string> strings = ft::String::split("sepseptesetsepseptsepsep", "sep");
+#include "ft.hpp"
 
-	for (std::vector<std::string>::const_iterator it = strings.begin(); it != strings.end(); ++it) {
-		std::cout << *it << std::endl;
-	}
+#include "poll.h"
+int main(int argc, char** argv) {
+    static_cast<void>(argc);static_cast<void>(argv);
 
-	std::cout << ft::String::join(strings) << std::endl;
+    std::vector<struct pollfd> vector;
+
+    vector.push_back((struct pollfd){0, 0, 0});
+
+    struct pollfd*  pollfd = &vector[0];
+
+    if (pollfd == &vector.front()) {
+        return 0;
+    }
+    return 1;
 }

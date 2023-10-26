@@ -1,6 +1,6 @@
 DEBUG					=	0
 
-BASE_NAME				=	webserv
+BASE_NAME				=	ircserv
 BUILD_ROOT				=	.build/
 NAMES =\
 	$(BASE_NAME)		\
