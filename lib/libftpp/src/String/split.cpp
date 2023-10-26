@@ -26,9 +26,9 @@ static std::vector<std::string>    splitOnDelimiter(const std::string& string,
     std::vector<std::string>    result;
     size_t                      postNextDelimiter;
 
-    for (size_t i = string.find_first_not_of(delimiter);
+    for (size_t i = ft::String::findFirstNotOfString(string, delimiter);
          i != std::string::npos;
-         i = string.find_first_not_of(delimiter, postNextDelimiter)) {
+         i = ft::String::findFirstNotOfString(string, delimiter, postNextDelimiter)) {
         const size_t    nextDelimiter = string.find(delimiter, i);
         if (nextDelimiter != std::string::npos) {
             result.push_back(string.substr(i, nextDelimiter - i));

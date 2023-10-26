@@ -28,6 +28,10 @@ class ft::String {
                                               const std::string& delimiter,
                                               const uint8_t flags = 0)
                                               throw(std::invalid_argument);
+
+        static size_t   findFirstNotOfString(const std::string& string,
+                                             const std::string& toFind,
+                                             size_t i = 0);
 };
 
 std::ostream&   operator<<(std::ostream& os, std::vector<std::string> strings);

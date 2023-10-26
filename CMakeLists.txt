@@ -10,11 +10,12 @@ add_executable(webserv
 		lib/libftpp/include/ft_String.hpp
 		lib/libftpp/include/ft.hpp
 		src/main.cpp
-		include/paths.hpp
 		lib/libftpp/src/String/join.cpp
 		lib/libftpp/src/String/split.cpp
 		lib/libftpp/src/String/split.cpp
 		lib/libftpp/src/String/vector_string_operators.cpp
+		include/ISocket.hpp
 		include/Server.hpp
 		include/User.hpp
-		src/User.cpp)
+		src/User.cpp
+		lib/libftpp/src/String/findFirstNotOfString.cpp)

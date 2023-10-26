@@ -4,16 +4,11 @@
 
 #include "poll.h"
 int main(int argc, char** argv) {
-    static_cast<void>(argc);static_cast<void>(argv);
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    std::vector<std::string> test = ft::String::split("eT  Test  ", "T ", SPLIT_ON_CHARACTER_SET);
 
-    std::vector<struct pollfd> vector;
-
-    vector.push_back((struct pollfd){0, 0, 0});
-
-    struct pollfd*  pollfd = &vector[0];
-
-    if (pollfd == &vector.front()) {
-        return 0;
-    }
-    return 1;
+    std::cout << test << std::endl << std::endl;
+    test = ft::String::split("eT  Test  ", "T ");
+    std::cout << test << std::endl;
 }

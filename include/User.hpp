@@ -6,12 +6,17 @@
 
 class User : public ISocket {
     public:
-        User(const std::string& nickName, const std::string& userName);
+        User(int fd,
+             const std::string& nickName,
+             const std::string& userName,
+             bool isOperator);
 
         int                 getFD() const;
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
         bool                isOperator() const;
+
+        void                onRequest();
 
     private:
         const int           _fd;
