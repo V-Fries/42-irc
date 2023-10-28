@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 98)
 include_directories(lib/libftpp/include)
 include_directories(include)
 
+add_compile_options(-Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address)
+
+add_link_options(-g3 -fsanitize=address)
+
 add_executable(webserv
 		lib/libftpp/include/ft_String.hpp
 		lib/libftpp/include/ft.hpp
@@ -18,4 +22,6 @@ add_executable(webserv
 		include/Server.hpp
 		include/User.hpp
 		src/User.cpp
-		lib/libftpp/src/String/findFirstNotOfString.cpp)
+		lib/libftpp/src/String/findFirstNotOfString.cpp
+		src/Server.cpp
+		src/RegisterSocket.cpp)

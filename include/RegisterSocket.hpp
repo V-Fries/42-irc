@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   RegisterSocket.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: beroux <beroux@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/27 17:05:39 by beroux            #+#    #+#             */
-/*   Updated: 2023/10/28 16:43:57 by beroux           ###   ########.fr       */
+/*   Created: 2023/10/26 19:21:26 by beroux            #+#    #+#             */
+/*   Updated: 2023/10/28 10:03:34 by beroux           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include "ft.hpp"
-#include "Server.hpp"
+#pragma once
 
-int main(void) {
-    Server server = Server(6667, "");
+#include "ISocket.hpp"
 
-    server.run();
-    return (0);
-}
+class RegisterSocket: public ISocket {
+    public:
+        explicit RegisterSocket();
+
+        void    checkRequest(PollFD *pollFd, Server *server);
+    protected:
+};

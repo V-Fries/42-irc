@@ -1,26 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: beroux <beroux@student.42lyon.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/28 09:20:53 by beroux            #+#    #+#             */
+/*   Updated: 2023/10/28 11:35:59 by beroux           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include "ISocket.hpp"
 
 #include <string>
+#include <sys/socket.h>
 
 class User : public ISocket {
     public:
-        User(int fd,
-             const std::string& nickName,
-             const std::string& userName,
-             bool isOperator);
+        explicit User(int fd, sockaddr addr, socklen_t addrLen);
 
-        int                 getFD() const;
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
-        bool                isOperator() const;
 
-        void                onRequest();
+        void                checkRequest(PollFD *pollFd, Server *server);
 
     private:
-        const int           _fd;
-        const std::string   _nickName;
-        const std::string   _userName;
-        const bool          _isOperator;
+        sockaddr    _addr;
+        socklen_t   _addrLen;
+        std::string _nickName;
+        std::string _userName;
 };
