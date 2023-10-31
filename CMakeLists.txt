@@ -18,4 +18,7 @@ add_executable(webserv
 		include/Server.hpp
 		include/User.hpp
 		src/User.cpp
-		lib/libftpp/src/String/findFirstNotOfString.cpp)
+		lib/libftpp/src/String/findFirstNotOfString.cpp
+		include/Channel.hpp
+		src/Channel.cpp
+		lib/libftpp/include/ft_Set.hpp)

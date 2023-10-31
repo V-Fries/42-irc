@@ -22,5 +22,4 @@ class User : public ISocket {
         const int           _fd;
         const std::string   _nickName;
         const std::string   _userName;
-        const bool          _isOperator;
 };

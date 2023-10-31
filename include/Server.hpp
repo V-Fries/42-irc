@@ -2,6 +2,7 @@
 
 #include "ISocket.hpp"
 #include "User.hpp"
+#include "Channel.hpp"
 
 #include <poll.h>
 #include <vector>
@@ -17,6 +18,8 @@ class Server {
 
         typedef pollfd PollFD;
 
-        std::vector<PollFD>     _pollFDs;
-        std::vector<ISocket*>   _sockets;
+        std::vector<PollFD>             _pollFDs;
+        std::vector<ISocket*>           _sockets;
+        //      <channelName, channel>
+        std::map<std::string, Channel>  _channels;
 };
