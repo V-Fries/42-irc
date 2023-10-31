@@ -6,6 +6,7 @@
 
 class Channel {
     public:
+        class IncorrectName : public std::exception {};
         class IsFull : public std::exception {};
         class HasMoreUserThanNewLimit : public std::exception {};
 
@@ -14,7 +15,8 @@ class Channel {
 
         Channel(const std::string& name,
                 const std::string& password,
-                int creatorFD);
+                int creatorFD)
+            throw (IncorrectName);
 
         const std::string&  getName() const;
 
@@ -25,7 +27,8 @@ class Channel {
         void                setTopic(const std::string& newTopic);
 
         const UserContainer&    getMembers() const;
-        void                    addMember(int newMemberFD) throw (Channel::IsFull);
+        void                    addMember(int newMemberFD)
+                                    throw (Channel::IsFull);
         void                    removeMember(int memberFD);
         bool                    doesMemberExist(int memberFD);
 
@@ -48,8 +51,11 @@ class Channel {
         static UserLimit    getMaxPossibleUserLimit();
 
     private:
+        static bool         _isNameCorrect(const std::string& name);
         const std::string   _name;
+
         std::string         _password;
+
         std::string         _topic;
 
         UserContainer   _membersFDs;

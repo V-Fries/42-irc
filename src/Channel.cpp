@@ -2,9 +2,12 @@
 
 #include <limits>
 
+// public:
+
 Channel::Channel(const std::string& name,
                  const std::string& password,
-                 const int creatorFD):
+                 const int creatorFD)
+        throw (IncorrectName):
     _name(name),
     _password(password),
     _topic(""),
@@ -14,8 +17,8 @@ Channel::Channel(const std::string& name,
     _isInviteOnly(false),
     _userLimit(Channel::getMaxPossibleUserLimit())
 {
-    // TODO check name
-    // if bad name throw
+    if (!Channel::_isNameCorrect(name)) throw (IncorrectName());
+
     _membersFDs.insert(creatorFD);
     _operatorsFDs.insert(creatorFD);
 }
@@ -48,8 +51,8 @@ const Channel::UserContainer&   Channel::getMembers() const {
 }
 
 void    Channel::addMember(const int newMemberFD) throw (Channel::IsFull) {
-    if (_membersFDs.size() >= _userLimit)
-        throw (Channel::IsFull());
+    if (_membersFDs.size() >= _userLimit) throw (Channel::IsFull());
+
     _membersFDs.insert(newMemberFD);
     this->removeInvitedUser(newMemberFD);
 }
@@ -111,8 +114,10 @@ Channel::UserLimit  Channel::getUserLimit() const {
 
 void    Channel::setUserLimit(const Channel::UserLimit newUserLimit)
             throw (Channel::HasMoreUserThanNewLimit) {
-    if (_membersFDs.size() >= newUserLimit)
+    if (_membersFDs.size() >= newUserLimit) {
         throw (Channel::HasMoreUserThanNewLimit()); // TODO need to check RFC to see expected behaviour
+    }
+
     _userLimit = newUserLimit;
 }
 
@@ -122,4 +127,20 @@ void    Channel::removeUserLimit() {
 
 Channel::UserLimit  Channel::getMaxPossibleUserLimit() {
     return std::numeric_limits<Channel::UserLimit>::max();
+}
+
+
+// private:
+
+bool    Channel::_isNameCorrect(const std::string& name) {
+    if (name.length() == 0 || (name[0] != '#' && name[0] != '&')) {
+        return false;
+    }
+
+    for (std::string::const_iterator it = name.begin() + 1; it != name.end(); ++it) {
+        if (*it == ' ' || *it == ',' || *it == '\a') {
+            return false;
+        }
+    }
+    return true;
 }
