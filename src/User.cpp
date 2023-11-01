@@ -33,7 +33,7 @@ void    User::handleEvent(const EpollEvent& epollEvent, Server& server) {
     std::cout << "receive request from client " << _fd << std::endl;
     do {
         end = recv(_fd, buffer, 2048, 0);
-        if (end == -1) throw (std::exception()); // TODO Define a custom exception
+        if (end == -1) throw std::exception(); // TODO Define a custom exception
         msg += std::string(buffer, end);
     } while (end && buffer[end - 1] != '\n');
     std::cout << "message: " << msg << std::endl;

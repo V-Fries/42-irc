@@ -9,11 +9,11 @@ class ListenSocket : public ISocket {
     public:
         ListenSocket(uint16_t port, const std::string& password);
 
-        ~ListenSocket();
-
         void    handleEvent(const EpollEvent& epollEvent, Server& server);
 
         int getFD() const;
+
+        void    startListening() const;
 
     private:
         const int           _fd;

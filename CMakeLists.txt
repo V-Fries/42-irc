@@ -22,4 +22,6 @@ add_executable(webserv
 		src/Server.cpp
 		include/ListenSocket.hpp
 		src/ListenSocket.cpp
-		include/EpollEvent.hpp)
+		include/EpollEvent.hpp
+		include/SignalHandler.hpp
+		src/SignalHandler.cpp)

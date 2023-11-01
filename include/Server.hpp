@@ -17,13 +17,16 @@ class Server {
 
         ~Server();
 
-        void    waitForEvents();
-        void    handleEvents();
-
         void    addUser(User* user);
 
+        void    waitForEvents();
+        void    handleEvents();
+        void    run();
+        void    stop(int exitCode);
+
     private:
-        int _epollFD;
+        const int   _epollFD;
+        int         _listenSocketFD;
 
         EpollEvent* _events;
         bool        _shouldUpdateEventsSize;
