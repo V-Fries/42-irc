@@ -27,8 +27,11 @@ class User : public ISocket {
         void                checkRequest(PollFD *pollFd, Server *server);
 
     private:
+        void    _processLastMessages();
+
         sockaddr    _addr;
         socklen_t   _addrLen;
+        std::string _buffer;
         std::string _nickName;
         std::string _userName;
 };

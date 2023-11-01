@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include "User.hpp"
 #include "Server.hpp"
+#include "ft.hpp"
 
 User::User(int fd, sockaddr addr, socklen_t addrLen) {
     (void) fd;
@@ -31,26 +32,32 @@ const std::string&  User::getUserName() const {
     return _userName;
 }
 
-//FIXME When the client send an EOF in the request the connection is lost
 void User::checkRequest(PollFD *pollFd, Server *server) {
-    char        buffer[2049];
+    char        rcvBuffer[2049];
     ssize_t     end;
     std::string msg = std::string("");
-    std::string conf = ":irc.example.com 001 chris :Welcome to the ExampleNet Internet Relay Chat Network chris\n";
 
     (void) server;
     if (pollFd->revents & POLLIN) {
-        std::cout << "receive request from client " << pollFd->fd << std::endl;
-        do {
-            end = recv(pollFd->fd, buffer, 2048, 0);
-            end = 2048;
-            buffer[end] = 0;
-            msg += std::string (buffer, end);
-        } while (end && buffer[end - 1] != '\n');
-        std::cout << "message: " << msg << std::endl;
+        end = recv(pollFd->fd, rcvBuffer, 2048, 0);
+        rcvBuffer[end] = 0;
+        _buffer += rcvBuffer;
+        if (_buffer.find('\n') != std::string::npos) {
+            _processLastMessages();
+        }
         send(pollFd->fd, NULL, 0, MSG_CONFIRM);
-        std::cout << "MSG_CONFIRM sent" << std::endl;
-    } else if (pollFd->revents & POLLPRI) {
-        std::cout << "out of band data at client " << pollFd->fd << std::endl;
+    }
+}
+
+void User::_processLastMessages() {
+    std::vector<std::string> messages = ft::String::split(_buffer, "\n", 0);
+    if (*(_buffer.end() - 1) == '\n') {
+        _buffer = "";
+    } else {
+        _buffer = *(messages.end() - 1);
+        messages.pop_back();
+    }
+    for (std::vector<std::string>::iterator it(messages.begin()); it != messages.end(); it++) {
+        std::cout << "message: " << *it << std::endl;
     }
 }

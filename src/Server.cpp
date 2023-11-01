@@ -57,7 +57,6 @@ void Server::run() {
         poll(&_pollFDs[0], _pollFDs.size(), 0);
         for (std::vector<PollFD>::iterator it(_pollFDs.begin()); it != _pollFDs.end(); it++) {
             if (it->revents & POLLHUP || it->revents & POLLRDHUP) {
-                std::cout << it->fd << " disconnected" << std::endl;
                 _disconnections.push(it);
             } else _sockets[(*it).fd]->checkRequest(&*it, this);
             it->revents = 0;

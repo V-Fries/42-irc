@@ -31,9 +31,8 @@ void RegisterSocket::checkRequest(PollFD *pollFd, Server *server) {
     memset(&clientPollFd, 0, sizeof(PollFD));
     socklen = 0;
     if (pollFd->revents & POLLIN) {
-        std::cout << "Registration Request received" << std::endl;
         clientPollFd.fd = accept(pollFd->fd, &addr, &socklen);
-        clientPollFd.events = POLLIN | POLLHUP | POLLRDHUP | POLLPRI;
+        clientPollFd.events = POLLIN | POLLHUP | POLLRDHUP;
         server->addUser(clientPollFd, addr, socklen);
     }
 }

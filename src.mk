@@ -1,2 +1,5 @@
 SRC	=\
-	main.cpp
+	main.cpp \
+	User.cpp \
+	RegisterSocket.cpp \
+	Server.cpp
