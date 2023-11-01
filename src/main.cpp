@@ -1,14 +1,19 @@
+#include "Server.hpp"
+
 #include <iostream>
 
-#include "ft.hpp"
-
-#include "poll.h"
 int main(int argc, char** argv) {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
-    std::vector<std::string> test = ft::String::split("eT  Test  ", "T ", SPLIT_ON_CHARACTER_SET);
+    static_cast<void>(argc); // TODO remove me
+    static_cast<void>(argv); // TODO remove me
 
-    std::cout << test << std::endl << std::endl;
-    test = ft::String::split("eT  Test  ", "T ");
-    std::cout << test << std::endl;
+    Server  server(4242, "password"); // TODO Use args to set the server up
+
+    while (true) {
+        try {
+            server.waitForEvents();
+        } catch (const std::exception& e) {
+            // TODO handle exception
+        }
+        server.handleEvents();
+    }
 }

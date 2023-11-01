@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.22.1)
 project(webserv)
 
 set(CMAKE_CXX_STANDARD 98)
@@ -18,4 +18,8 @@ add_executable(webserv
 		include/Server.hpp
 		include/User.hpp
 		src/User.cpp
-		lib/libftpp/src/String/findFirstNotOfString.cpp)
+		lib/libftpp/src/String/findFirstNotOfString.cpp
+		src/Server.cpp
+		include/ListenSocket.hpp
+		src/ListenSocket.cpp
+		include/EpollEvent.hpp)

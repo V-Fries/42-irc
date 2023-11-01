@@ -2,21 +2,32 @@
 
 #include "ISocket.hpp"
 #include "User.hpp"
+#include "EpollEvent.hpp"
 
-#include <poll.h>
+#include <sys/epoll.h>
 #include <vector>
 #include <map>
 #include <stdint.h>
 
 class Server {
     public:
-        Server(const uint16_t &port, const std::string& password);
+        typedef std::map<int, ISocket*> SocketMap;
+
+        Server(uint16_t port, const std::string& password);
+
+        ~Server();
+
+        void    waitForEvents();
+        void    handleEvents();
+
+        void    addUser(User* user);
 
     private:
-        void    addUser() throw(std::exception);
+        int _epollFD;
 
-        typedef pollfd PollFD;
+        EpollEvent* _events;
+        bool        _shouldUpdateEventsSize;
+        int         _numberOfEvents;
 
-        std::vector<PollFD>     _pollFDs;
-        std::vector<ISocket*>   _sockets;
+        SocketMap   _sockets;
 };
