@@ -5,13 +5,12 @@
 #include <iostream>
 #include <sys/socket.h>
 
-User::User(const int fd,
-           const std::string& nickName,
-           const std::string& userName):
+User::RequestsHandlersMap User::_requestsHandlers;
+
+User::User(const int fd):
     _fd(fd),
-    _nickName(nickName),
-    _userName(userName)
-{}
+    _isRegistered(false) {
+}
 
 
 int User::getFD() const {
@@ -26,6 +25,12 @@ const std::string&  User::getUserName() const {
     return _userName;
 }
 
+void    User::initRequestsHandlers() {
+    _requestsHandlers["PASS"] = &User::_handlePASS;
+    _requestsHandlers["USER"] = &User::_handleUSER;
+    _requestsHandlers["NICK"] = &User::_handleNICK;
+}
+
 void    User::handleEvent(uint32_t epollEvents, Server& server) {
     std::cout << "User " << _fd << " is handling event " << epollEvents << std::endl;
     if (epollEvents & EPOLLHUP || epollEvents & EPOLLRDHUP) {
@@ -33,6 +38,8 @@ void    User::handleEvent(uint32_t epollEvents, Server& server) {
         return;
     } else if (epollEvents & EPOLLIN) {
         _handleEPOLLIN(server);
+    } else {
+        std::cerr << "Unrecognized event on user " << _fd << std::endl;
     }
 }
 
@@ -51,8 +58,7 @@ void    User::_handleEPOLLIN(Server& server) {
     send(_fd, NULL, 0, MSG_CONFIRM);
 }
 
-void User::_processRequest(Server& server) {
-    static_cast<void>(server); // TODO remove me
+void    User::_processRequest(Server& server) {
     std::vector<std::string>    messages = ft::String::split(_buffer, "\n");
     if (*(_buffer.end() - 1) == '\n') {
         _buffer = "";
@@ -61,6 +67,18 @@ void User::_processRequest(Server& server) {
         messages.pop_back();
     }
     for (std::vector<std::string>::iterator it(messages.begin()); it != messages.end(); ++it) {
-        std::cout << "message: " << *it << std::endl;
+        _handleRequest(server, *it);
+    }
+}
+
+void    User::_handleRequest(Server& server, const std::string& request) {
+    const std::string   requestType = ft::String::getFirstWord(request, ' ');
+
+    try {
+        RequestHandler requestHandler = _requestsHandlers.at(requestType);
+        (this->*requestHandler)(server, request);
+    } catch (std::out_of_range &er) {
+        std::cerr << "Unknown request: " << request << std::endl;
+        return;
     }
 }

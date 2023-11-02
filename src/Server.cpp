@@ -13,7 +13,13 @@ Server::Server(const uint16_t port, const std::string& password):
     _sockets() {
     if (_epollFD == -1) throw std::exception(); // TODO Define a custom exception
 
-    ListenSocket* listenSocket = new ListenSocket(port, password);
+    ListenSocket* listenSocket;
+    try {
+        listenSocket = new ListenSocket(port, password);
+    } catch (const std::exception& e) {
+        close(_epollFD);
+        throw e;
+    }
     _listenSocketFD = listenSocket->getFD();
 
     EpollEvent event;
@@ -21,6 +27,7 @@ Server::Server(const uint16_t port, const std::string& password):
     event.data.fd = _listenSocketFD;
     if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, _listenSocketFD, &event) == -1) {
         delete listenSocket;
+        close(_epollFD);
         throw std::exception(); // TODO Define a custom exception
     }
     _sockets[_listenSocketFD] = listenSocket;
@@ -29,11 +36,24 @@ Server::Server(const uint16_t port, const std::string& password):
 
 
 Server::~Server() {
-    close(_epollFD);
+    delete _sockets[_listenSocketFD];
+    _sockets.erase(_listenSocketFD);
     for (SocketMap::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
+        epoll_ctl(_epollFD, EPOLL_CTL_DEL, it->first, NULL);
+        if (close(it->first) != 0) {
+            std::cerr << "Error while closing socket " << it->first << std::endl;
+        }
         delete it->second;
     }
+    epoll_ctl(_epollFD, EPOLL_CTL_DEL, _listenSocketFD, NULL);
+    if (close(_listenSocketFD) != 0) {
+        std::cerr << "Error while closing socket " << _listenSocketFD << std::endl;
+    }
     delete[] _events;
+    _sockets.clear();
+    if (close(_epollFD) != 0) {
+        std::cerr << "Error while closing socket " << _epollFD << std::endl;
+    }
 }
 
 
@@ -105,23 +125,6 @@ void    Server::run() {
 
 void    Server::stop(const int exitCode) {
     std::cerr << "Stopping server" << std::endl;
-    delete _sockets[_listenSocketFD];
-    _sockets.erase(_listenSocketFD);
-    for (SocketMap::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
-        epoll_ctl(_epollFD, EPOLL_CTL_DEL, it->first, NULL);
-        if (close(it->first) != 0) {
-            std::cerr << "Error while closing socket " << it->first << std::endl;
-        }
-        delete it->second;
-    }
-    epoll_ctl(_epollFD, EPOLL_CTL_DEL, _listenSocketFD, NULL);
-    if (close(_listenSocketFD) != 0) {
-        std::cerr << "Error while closing socket " << _listenSocketFD << std::endl;
-    }
-    delete[] _events;
-    _sockets.clear();
-    if (close(_epollFD) != 0) {
-        std::cerr << "Error while closing socket " << _epollFD << std::endl;
-    }
+    this->~Server();
     std::exit(exitCode);
 }
