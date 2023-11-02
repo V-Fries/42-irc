@@ -1,11 +1,14 @@
 #include "Server.hpp"
 #include "SignalHandler.hpp"
+#include "ft.hpp"
 
 #include <iostream>
 
 int main(int argc, char** argv) {
     static_cast<void>(argc); // TODO remove me
     static_cast<void>(argv); // TODO remove me
+    ft::Log::setDebugLevel(ft::Log::DEBUG);
+    ft::Log::setFileToWriteTo("logs.txt");
 
     User::initRequestsHandlers();
 
