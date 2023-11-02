@@ -32,6 +32,24 @@ class ft::String {
         static size_t   findFirstNotOfString(const std::string& string,
                                              const std::string& toFind,
                                              size_t i = 0);
+
+        static std::string::iterator        skipChars(std::string::iterator it,
+                                                      std::string::iterator end,
+                                                      const std::string& charsToSkip);
+        static std::string::const_iterator  skipChars(std::string::const_iterator it,
+                                                      std::string::const_iterator end,
+                                                      const std::string& charsToSkip);
+        static std::string::iterator        skipChar(std::string::iterator it,
+                                                     std::string::iterator end,
+                                                     char charToSkip);
+        static std::string::const_iterator  skipChar(std::string::const_iterator it,
+                                                     std::string::const_iterator end,
+                                                     char charToSkip);
+
+        static std::string  getFirstWord(const std::string& string,
+                                         const std::string& charsConsideredAsWordSeparators);
+        static std::string  getFirstWord(const std::string& string,
+                                         char charConsideredAsWordSeparator);
 };
 
 std::ostream&   operator<<(std::ostream& os, std::vector<std::string> strings);

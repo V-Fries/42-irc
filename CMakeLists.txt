@@ -3,6 +3,8 @@ project(webserv)
 
 set(CMAKE_CXX_STANDARD 98)
 
+add_compile_options(-Wall -Wextra -Werror -g3)
+
 include_directories(lib/libftpp/include)
 include_directories(include)
 
@@ -24,4 +26,7 @@ add_executable(webserv
 		src/ListenSocket.cpp
 		include/EpollEvent.hpp
 		include/SignalHandler.hpp
-		src/SignalHandler.cpp)
+		src/SignalHandler.cpp
+		lib/libftpp/src/String/getFirstWord.cpp
+		lib/libftpp/src/String/getFirstWord.cpp
+		lib/libftpp/src/String/skipChars.cpp)

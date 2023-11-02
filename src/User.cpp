@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sys/socket.h>
 
+User::RequestsHandlersMap User::_requestsHandlers;
+
 User::User(const int fd,
            const std::string& nickName,
            const std::string& userName):
@@ -24,6 +26,12 @@ const std::string&  User::getNickName() const {
 
 const std::string&  User::getUserName() const {
     return _userName;
+}
+
+void    User::initRequestsHandlers() {
+    _requestsHandlers["PASS"] = &User::_handlePASS;
+    _requestsHandlers["USER"] = &User::_handleUSER;
+    _requestsHandlers["NICK"] = &User::_handleNICK;
 }
 
 void    User::handleEvent(uint32_t epollEvents, Server& server) {
@@ -51,8 +59,7 @@ void    User::_handleEPOLLIN(Server& server) {
     send(_fd, NULL, 0, MSG_CONFIRM);
 }
 
-void User::_processRequest(Server& server) {
-    static_cast<void>(server); // TODO remove me
+void    User::_processRequest(Server& server) {
     std::vector<std::string>    messages = ft::String::split(_buffer, "\n");
     if (*(_buffer.end() - 1) == '\n') {
         _buffer = "";
@@ -61,6 +68,32 @@ void User::_processRequest(Server& server) {
         messages.pop_back();
     }
     for (std::vector<std::string>::iterator it(messages.begin()); it != messages.end(); ++it) {
-        std::cout << "message: " << *it << std::endl;
+        _redirectRequest(server, *it);
     }
+}
+
+void    User::_redirectRequest(Server& server, const std::string& request) {
+    const std::string   requestType = ft::String::getFirstWord(request, ' ');
+
+    RequestsHandlersMap::const_iterator    requestHandler = _requestsHandlers.find(requestType);
+    if (requestHandler == _requestsHandlers.end()) {
+        std::cerr << "Unknown request: " << request << std::endl;
+        return;
+    }
+    (this->*requestHandler->second)(server, request);
+}
+
+void    User::_handlePASS(Server& server, const std::string& request) {
+    static_cast<void>(server); // TODO remove this
+    std::cerr << "Received PASS request: " << request << std::endl;
+}
+
+void    User::_handleUSER(Server& server, const std::string& request) {
+    static_cast<void>(server); // TODO remove this
+    std::cerr << "Received USER request: " << request << std::endl;
+}
+
+void    User::_handleNICK(Server& server, const std::string& request) {
+    static_cast<void>(server); // TODO remove this
+    std::cerr << "Received NICK request: " << request << std::endl;
 }
