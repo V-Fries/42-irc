@@ -23,8 +23,8 @@ ListenSocket::ListenSocket(const uint16_t port, const std::string& password):
 }
 
 
-void    ListenSocket::handleEvent(const EpollEvent& epollEvent, Server& server) {
-    static_cast<void>(epollEvent);
+void    ListenSocket::handleEvent(const uint32_t epollEvents, Server& server) {
+    static_cast<void>(epollEvents);
 
     int userFD = accept(_fd, NULL, NULL);
     if (userFD == -1) throw std::exception(); // TODO Define a custom exception

@@ -8,5 +8,5 @@ class ISocket {
     public:
         virtual ~ISocket() {}
 
-        virtual void    handleEvent(const EpollEvent& epollEvent, Server& server) = 0;
+        virtual void    handleEvent(uint32_t epollEvents, Server& server) = 0;
 };

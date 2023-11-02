@@ -9,7 +9,7 @@ class ListenSocket : public ISocket {
     public:
         ListenSocket(uint16_t port, const std::string& password);
 
-        void    handleEvent(const EpollEvent& epollEvent, Server& server);
+        void    handleEvent(uint32_t epollEvents, Server& server);
 
         int getFD() const;
 

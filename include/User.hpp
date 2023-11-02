@@ -17,7 +17,7 @@ class User : public ISocket {
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
 
-        void    handleEvent(const EpollEvent& epollEvent, Server& server);
+        void    handleEvent(uint32_t epollEvents, Server& server);
 
     private:
         const int           _fd;

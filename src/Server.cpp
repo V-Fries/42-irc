@@ -41,12 +41,23 @@ void    Server::addUser(User* user) {
     std::cout << "Adding a new user" << std::endl;
 
     EpollEvent event;
-    event.events = EPOLLIN | EPOLLET;
+    event.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
     event.data.fd = user->getFD();
     if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, user->getFD(), &event) == -1) {
         throw std::exception(); // TODO Define a custom exception
     }
     _sockets[user->getFD()] = user;
+    _shouldUpdateEventsSize = true;
+}
+
+void    Server::removeUser(const int userFD) {
+    std::cerr << "User " << userFD << " disconnected" << std::endl;
+    epoll_ctl(_epollFD, EPOLL_CTL_DEL, userFD, NULL);
+    if (close(userFD) != 0) {
+        std::cerr << "Error while closing socket " << userFD << std::endl;
+    }
+    delete _sockets[userFD];
+    _sockets.erase(userFD);
     _shouldUpdateEventsSize = true;
 }
 
@@ -64,7 +75,7 @@ void    Server::handleEvents() {
 
     std::cout << "Handling events" << std::endl;
     for (EpollEvent* it = _events; it != eventsEnd; ++it) {
-        _sockets[it->data.fd]->handleEvent(*it, *this);
+        _sockets[it->data.fd]->handleEvent(it->events, *this);
     }
 
     if (_shouldUpdateEventsSize) {

@@ -18,6 +18,7 @@ class Server {
         ~Server();
 
         void    addUser(User* user);
+        void    removeUser(int userFD);
 
         void    waitForEvents();
         void    handleEvents();

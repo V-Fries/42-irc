@@ -25,12 +25,17 @@ const std::string&  User::getUserName() const {
     return _userName;
 }
 
-void    User::handleEvent(const EpollEvent& epollEvent, Server& server) {
+void    User::handleEvent(uint32_t epollEvents, Server& server) {
+    std::cout << "User " << _fd << " is handling event " << epollEvents << std::endl;
+    if (epollEvents & EPOLLHUP || epollEvents & EPOLLRDHUP) {
+        server.removeUser(_fd);
+        return;
+    }
+
     char        buffer[2049];
     ssize_t     end;
     std::string msg;
 
-    std::cout << "receive request from client " << _fd << std::endl;
     do {
         end = recv(_fd, buffer, 2048, 0);
         if (end == -1) throw std::exception(); // TODO Define a custom exception
@@ -40,6 +45,5 @@ void    User::handleEvent(const EpollEvent& epollEvent, Server& server) {
     send(_fd, NULL, 0, MSG_CONFIRM);
     std::cout << "MSG_CONFIRM sent" << std::endl;
 
-    static_cast<void>(epollEvent); // TODO remove me
     static_cast<void>(server); // TODO remove me
 }
