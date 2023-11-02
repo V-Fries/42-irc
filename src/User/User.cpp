@@ -7,13 +7,10 @@
 
 User::RequestsHandlersMap User::_requestsHandlers;
 
-User::User(const int fd,
-           const std::string& nickName,
-           const std::string& userName):
+User::User(const int fd):
     _fd(fd),
-    _nickName(nickName),
-    _userName(userName)
-{}
+    _isRegistered(false) {
+}
 
 
 int User::getFD() const {
@@ -41,6 +38,8 @@ void    User::handleEvent(uint32_t epollEvents, Server& server) {
         return;
     } else if (epollEvents & EPOLLIN) {
         _handleEPOLLIN(server);
+    } else {
+        std::cerr << "Unrecognized event on user " << _fd << std::endl;
     }
 }
 
@@ -68,32 +67,17 @@ void    User::_processRequest(Server& server) {
         messages.pop_back();
     }
     for (std::vector<std::string>::iterator it(messages.begin()); it != messages.end(); ++it) {
-        _redirectRequest(server, *it);
+        _handleRequest(server, *it);
     }
 }
 
-void    User::_redirectRequest(Server& server, const std::string& request) {
+void    User::_handleRequest(Server& server, const std::string& request) {
     const std::string   requestType = ft::String::getFirstWord(request, ' ');
 
-    RequestsHandlersMap::const_iterator    requestHandler = _requestsHandlers.find(requestType);
+    RequestsHandlersMap::const_iterator requestHandler = _requestsHandlers.find(requestType);
     if (requestHandler == _requestsHandlers.end()) {
         std::cerr << "Unknown request: " << request << std::endl;
         return;
     }
     (this->*requestHandler->second)(server, request);
-}
-
-void    User::_handlePASS(Server& server, const std::string& request) {
-    static_cast<void>(server); // TODO remove this
-    std::cerr << "Received PASS request: " << request << std::endl;
-}
-
-void    User::_handleUSER(Server& server, const std::string& request) {
-    static_cast<void>(server); // TODO remove this
-    std::cerr << "Received USER request: " << request << std::endl;
-}
-
-void    User::_handleNICK(Server& server, const std::string& request) {
-    static_cast<void>(server); // TODO remove this
-    std::cerr << "Received NICK request: " << request << std::endl;
 }

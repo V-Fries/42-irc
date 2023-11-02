@@ -19,7 +19,7 @@ add_executable(webserv
 		include/ISocket.hpp
 		include/Server.hpp
 		include/User.hpp
-		src/User.cpp
+		src/User/User.cpp
 		lib/libftpp/src/String/findFirstNotOfString.cpp
 		src/Server.cpp
 		include/ListenSocket.hpp
@@ -29,4 +29,9 @@ add_executable(webserv
 		src/SignalHandler.cpp
 		lib/libftpp/src/String/getFirstWord.cpp
 		lib/libftpp/src/String/getFirstWord.cpp
-		lib/libftpp/src/String/skipChars.cpp)
+		lib/libftpp/src/String/skipChars.cpp
+		src/User/_handlePASS.cpp
+		src/User/_handleUSER.cpp
+		src/User/_handleNICK.cpp
+		include/NumericReplies.hpp
+		src/NumericReplies.cpp)

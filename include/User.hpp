@@ -10,9 +10,7 @@ class Server;
 
 class User : public ISocket {
     public:
-        User(int fd,
-             const std::string& nickName,
-             const std::string& userName);
+        explicit User(int fd);
 
         int                 getFD() const;
         const std::string&  getNickName() const;
@@ -28,7 +26,7 @@ class User : public ISocket {
 
         void    _handleEPOLLIN(Server& server);
         void    _processRequest(Server& server);
-        void    _redirectRequest(Server& server, const std::string& request);
+        void    _handleRequest(Server& server, const std::string& request);
 
         void    _handlePASS(Server& server, const std::string& request);
         void    _handleUSER(Server& server, const std::string& request);
@@ -36,8 +34,11 @@ class User : public ISocket {
 
         static RequestsHandlersMap _requestsHandlers;
 
-        const int           _fd;
-        const std::string   _nickName;
-        const std::string   _userName;
-        std::string         _buffer;
+        const int   _fd;
+        bool        _isRegistered;
+
+        std::string _nickName;
+        std::string _userName;
+
+        std::string _buffer;
 };

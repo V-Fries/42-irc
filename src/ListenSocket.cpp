@@ -29,7 +29,7 @@ void    ListenSocket::handleEvent(const uint32_t epollEvents, Server& server) {
     int userFD = accept(_fd, NULL, NULL);
     if (userFD == -1) throw std::exception(); // TODO Define a custom exception
 
-    User*   user = new User(userFD, "test", "test"); // TODO get proper name
+    User*   user = new User(userFD);
     try {
         server.addUser(user);
     } catch (const std::exception& e) {
