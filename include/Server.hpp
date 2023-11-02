@@ -3,6 +3,7 @@
 #include "ISocket.hpp"
 #include "User.hpp"
 #include "EpollEvent.hpp"
+#include "Channel.hpp"
 
 #include <sys/epoll.h>
 #include <vector>
@@ -34,4 +35,6 @@ class Server {
         int         _numberOfEvents;
 
         SocketMap   _sockets;
+
+        std::map<std::string, Channel>  _channels;
 };

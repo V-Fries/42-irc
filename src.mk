@@ -4,6 +4,7 @@ SRC	=\
 	User/_handleUSER.cpp	\
 	User/User.cpp			\
 \
+	Channel.cpp			\
 	ListenSocket.cpp	\
 	main.cpp			\
 	NumericReplies.cpp	\

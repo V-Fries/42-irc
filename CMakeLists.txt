@@ -34,4 +34,7 @@ add_executable(webserv
 		src/User/_handleUSER.cpp
 		src/User/_handleNICK.cpp
 		include/NumericReplies.hpp
-		src/NumericReplies.cpp)
+		src/NumericReplies.cpp
+		include/Channel.hpp
+		src/Channel.cpp
+		lib/libftpp/include/ft_Set.hpp)
