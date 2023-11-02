@@ -74,7 +74,7 @@ class ft::Log::Info {
                 std::cerr << ft::Io::green << value << ft::Io::resetColor;
             }
             if (_file.is_open()) {
-                _file << ft::Io::green << value << ft::Io::resetColor;;
+                _file << ft::Io::green << value << ft::Io::resetColor;
             }
             return *this;
         }
@@ -92,7 +92,7 @@ class ft::Log::Warning {
                 std::cerr << ft::Io::yellow << value << ft::Io::resetColor;
             }
             if (_file.is_open()) {
-                _file << ft::Io::yellow << value << ft::Io::resetColor;;
+                _file << ft::Io::yellow << value << ft::Io::resetColor;
             }
             return *this;
         }
@@ -110,7 +110,7 @@ class ft::Log::Error {
                 std::cerr << ft::Io::orange << value << ft::Io::resetColor;
             }
             if (_file.is_open()) {
-                _file << ft::Io::orange << value << ft::Io::resetColor;;
+                _file << ft::Io::orange << value << ft::Io::resetColor;
             }
             return *this;
         }
@@ -128,7 +128,7 @@ class ft::Log::Critical {
                 std::cerr << ft::Io::red << value << ft::Io::resetColor;
             }
             if (_file.is_open()) {
-                _file << ft::Io::red << value << ft::Io::resetColor;;
+                _file << ft::Io::red << value << ft::Io::resetColor;
             }
             return *this;
         }

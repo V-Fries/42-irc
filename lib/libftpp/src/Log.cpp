@@ -46,7 +46,7 @@ ft::Log::Info& ft::Log::Info::operator<<(std::ostream& (*manipulator)(std::ostre
         std::cerr << ft::Io::green << manipulator << ft::Io::resetColor;
     }
     if (_file.is_open()) {
-        _file << ft::Io::green << manipulator << ft::Io::resetColor;;
+        _file << ft::Io::green << manipulator << ft::Io::resetColor;
     }
     return *this;
 }
@@ -58,7 +58,7 @@ ft::Log::Warning& ft::Log::Warning::operator<<(std::ostream& (*manipulator)(std:
         std::cerr << ft::Io::yellow << manipulator << ft::Io::resetColor;
     }
     if (_file.is_open()) {
-        _file << ft::Io::yellow << manipulator << ft::Io::resetColor;;
+        _file << ft::Io::yellow << manipulator << ft::Io::resetColor;
     }
     return *this;
 }
@@ -70,7 +70,7 @@ ft::Log::Error& ft::Log::Error::operator<<(std::ostream& (*manipulator)(std::ost
         std::cerr << ft::Io::orange << manipulator << ft::Io::resetColor;
     }
     if (_file.is_open()) {
-        _file << ft::Io::orange << manipulator << ft::Io::resetColor;;
+        _file << ft::Io::orange << manipulator << ft::Io::resetColor;
     }
     return *this;
 }
@@ -82,7 +82,7 @@ ft::Log::Critical& ft::Log::Critical::operator<<(std::ostream& (*manipulator)(st
         std::cerr << ft::Io::red << manipulator << ft::Io::resetColor;
     }
     if (_file.is_open()) {
-        _file << ft::Io::red << manipulator << ft::Io::resetColor;;
+        _file << ft::Io::red << manipulator << ft::Io::resetColor;
     }
     return *this;
 }
