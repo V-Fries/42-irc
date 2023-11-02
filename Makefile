@@ -116,6 +116,12 @@ runDebug2:
 		./$(BASE_NAME)_debug2 || true
 
 
+.PHONY:	runValgrind
+runValgrind:
+		$(MAKE) debug1 -j
+		valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(BASE_NAME)_debug1 || true
+
+
 .PHONY:	re
 re:		fclean
 		$(MAKE) all

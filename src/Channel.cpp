@@ -108,11 +108,11 @@ void    Channel::setIsInviteOnly(const bool isInviteOnly) {
 }
 
 
-Channel::UserLimit  Channel::getUserLimit() const {
+size_t  Channel::getUserLimit() const {
     return _userLimit;
 }
 
-void    Channel::setUserLimit(const Channel::UserLimit newUserLimit)
+void    Channel::setUserLimit(const size_t newUserLimit)
             throw (Channel::HasMoreUserThanNewLimit) {
     if (_membersFDs.size() >= newUserLimit) {
         throw (Channel::HasMoreUserThanNewLimit()); // TODO need to check RFC to see expected behaviour
@@ -125,8 +125,8 @@ void    Channel::removeUserLimit() {
     this->setUserLimit(Channel::getMaxPossibleUserLimit());
 }
 
-Channel::UserLimit  Channel::getMaxPossibleUserLimit() {
-    return std::numeric_limits<Channel::UserLimit>::max();
+size_t  Channel::getMaxPossibleUserLimit() {
+    return std::numeric_limits<size_t>::max();
 }
 
 

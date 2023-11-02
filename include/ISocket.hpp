@@ -1,8 +1,12 @@
 #pragma once
 
-class ISocket {
-    private:
+#include "EpollEvent.hpp"
 
+class Server;
+
+class ISocket {
     public:
-        virtual void    onRequest() = 0;
+        virtual ~ISocket() {}
+
+        virtual void    handleEvent(uint32_t epollEvents, Server& server) = 0;
 };

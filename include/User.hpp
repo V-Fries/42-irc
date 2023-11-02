@@ -1,25 +1,44 @@
 #pragma once
 
 #include "ISocket.hpp"
+#include "EpollEvent.hpp"
 
 #include <string>
+#include <map>
+
+class Server;
 
 class User : public ISocket {
     public:
-        User(int fd,
-             const std::string& nickName,
-             const std::string& userName,
-             bool isOperator);
+        explicit User(int fd);
 
         int                 getFD() const;
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
-        bool                isOperator() const;
 
-        void                onRequest();
+        static void    initRequestsHandlers();
+
+        void    handleEvent(uint32_t epollEvents, Server& server);
 
     private:
-        const int           _fd;
-        const std::string   _nickName;
-        const std::string   _userName;
+        typedef void (User::*RequestHandler)(Server&, const std::string&);
+        typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
+
+        void    _handleEPOLLIN(Server& server);
+        void    _processRequest(Server& server);
+        void    _handleRequest(Server& server, const std::string& request);
+
+        void    _handlePASS(Server& server, const std::string& request);
+        void    _handleUSER(Server& server, const std::string& request);
+        void    _handleNICK(Server& server, const std::string& request);
+
+        static RequestsHandlersMap _requestsHandlers;
+
+        const int   _fd;
+        bool        _isRegistered;
+
+        std::string _nickName;
+        std::string _userName;
+
+        std::string _buffer;
 };

@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.22.1)
 project(webserv)
 
 set(CMAKE_CXX_STANDARD 98)
+
+add_compile_options(-Wall -Wextra -Werror -g3)
 
 include_directories(lib/libftpp/include)
 include_directories(include)
@@ -17,8 +19,22 @@ add_executable(webserv
 		include/ISocket.hpp
 		include/Server.hpp
 		include/User.hpp
-		src/User.cpp
+		src/User/User.cpp
 		lib/libftpp/src/String/findFirstNotOfString.cpp
+		src/Server.cpp
+		include/ListenSocket.hpp
+		src/ListenSocket.cpp
+		include/EpollEvent.hpp
+		include/SignalHandler.hpp
+		src/SignalHandler.cpp
+		lib/libftpp/src/String/getFirstWord.cpp
+		lib/libftpp/src/String/getFirstWord.cpp
+		lib/libftpp/src/String/skipChars.cpp
+		src/User/_handlePASS.cpp
+		src/User/_handleUSER.cpp
+		src/User/_handleNICK.cpp
+		include/NumericReplies.hpp
+		src/NumericReplies.cpp
 		include/Channel.hpp
 		src/Channel.cpp
 		lib/libftpp/include/ft_Set.hpp)
