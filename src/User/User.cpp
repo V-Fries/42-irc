@@ -74,10 +74,11 @@ void    User::_processRequest(Server& server) {
 void    User::_handleRequest(Server& server, const std::string& request) {
     const std::string   requestType = ft::String::getFirstWord(request, ' ');
 
-    RequestsHandlersMap::const_iterator requestHandler = _requestsHandlers.find(requestType);
-    if (requestHandler == _requestsHandlers.end()) {
+    try {
+        RequestHandler requestHandler = _requestsHandlers.at(requestType);
+        (this->*requestHandler)(server, request);
+    } catch (std::out_of_range &er) {
         std::cerr << "Unknown request: " << request << std::endl;
         return;
     }
-    (this->*requestHandler->second)(server, request);
 }
