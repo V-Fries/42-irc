@@ -37,4 +37,10 @@ add_executable(webserv
 		src/NumericReplies.cpp
 		include/Channel.hpp
 		src/Channel.cpp
-		lib/libftpp/include/ft_Set.hpp)
+		lib/libftpp/include/ft_Set.hpp
+		lib/libftpp/include/ft_Exception.hpp
+		lib/libftpp/src/Exception.cpp
+		lib/libftpp/src/Log.cpp
+		lib/libftpp/include/ft_Log.hpp
+		"lib/libftpp/include/ft_Io.hpp"
+		lib/libftpp/src/Io.cpp)
