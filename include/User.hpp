@@ -20,7 +20,11 @@ class User : public ISocket {
         void    handleEvent(uint32_t epollEvents, Server& server);
 
     private:
+        void    _handleEPOLLIN(Server& server);
+        void    _processRequest(Server& server);
+
         const int           _fd;
         const std::string   _nickName;
         const std::string   _userName;
+        std::string         _buffer;
 };
