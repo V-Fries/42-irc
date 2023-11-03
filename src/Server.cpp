@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <cstdlib>
+#include <netinet/in.h>
 
 Server::Server(const uint16_t port, const std::string& password):
     _epollFD(epoll_create1(0)),
@@ -61,7 +62,7 @@ void    Server::addUser(User* user) {
     std::cout << "Adding a new user" << std::endl;
 
     EpollEvent event;
-    event.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+    event.events = EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP;
     event.data.fd = user->getFD();
     if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, user->getFD(), &event) == -1) {
         throw std::exception(); // TODO Define a custom exception
@@ -91,13 +92,18 @@ void Server::waitForEvents() {
 }
 
 void    Server::handleEvents() {
-    EpollEvent*  eventsEnd = _events + _numberOfEvents;
+    EpollEvent* eventsEnd = _events + _numberOfEvents;
+    User*       currUser;
 
     std::cout << "Handling events" << std::endl;
     for (EpollEvent* it = _events; it != eventsEnd; ++it) {
         _sockets[it->data.fd]->handleEvent(it->events, *this);
     }
 
+    for (EpollEvent* it = _events; it != eventsEnd; ++it) {
+        currUser = dynamic_cast<User*>(_sockets[it->data.fd]);
+        if (currUser) currUser->flushMessages(it->events);
+    }
     if (_shouldUpdateEventsSize) {
         delete[] _events;
         _events = new EpollEvent[_sockets.size()];

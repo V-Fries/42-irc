@@ -82,3 +82,16 @@ void    User::_handleRequest(Server& server, const std::string& request) {
         return;
     }
 }
+
+void User::sendMessage(const std::string &message) {
+    _messagesBuffer.push(message);
+}
+
+void User::flushMessages(uint32_t epollEvents) {
+    if (!(epollEvents & EPOLLOUT)) return;
+    if ((epollEvents & (EPOLLHUP | EPOLLRDHUP))) return;
+    while (!_messagesBuffer.empty()) {
+        send(_fd, _messagesBuffer.front().c_str(), _messagesBuffer.front().length(), 0);
+        _messagesBuffer.pop();
+    }
+}

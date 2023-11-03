@@ -5,6 +5,7 @@
 
 #include <string>
 #include <map>
+#include <queue>
 
 class Server;
 
@@ -19,6 +20,8 @@ class User : public ISocket {
         static void    initRequestsHandlers();
 
         void    handleEvent(uint32_t epollEvents, Server& server);
+        void    sendMessage(const std::string &message);
+        void    flushMessages(uint32_t epollEvents);
 
     private:
         typedef void (User::*RequestHandler)(Server&, const std::string&);
@@ -41,4 +44,6 @@ class User : public ISocket {
         std::string _userName;
 
         std::string _buffer;
+
+        std::queue<std::string> _messagesBuffer;
 };
