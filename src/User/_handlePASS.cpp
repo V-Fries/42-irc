@@ -10,7 +10,7 @@ void    User::_handlePASS(Server& server, const std::string& request) {
     static_cast<void>(server); // TODO remove this
     std::cerr << "Received PASS request: " << request << std::endl;
     response << "Received PASS request: " << request << "\n";
-    this->sendMessage(response.str());
+    this->_sendMessage(response.str(), server);
 //    NumericReplies::Errors::alreadyRegistered(_fd, "Test");
 //    if (_isRegistered) {
 //

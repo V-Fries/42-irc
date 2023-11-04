@@ -1,6 +1,7 @@
 #include "User.hpp"
 #include "Server.hpp"
 #include "ft_String.hpp"
+#include "ft_Log.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -32,14 +33,19 @@ void    User::initRequestsHandlers() {
 }
 
 void    User::handleEvent(uint32_t epollEvents, Server& server) {
-    std::cout << "User " << _fd << " is handling event " << epollEvents << std::endl;
+    ft::Log::debug << "User " << _fd << " is handling event " << epollEvents << std::endl;
     if (epollEvents & EPOLLHUP || epollEvents & EPOLLRDHUP) {
+        ft::Log::debug << "User " << _fd << " received EPOLLHUP || EPOLLRDHUP" << std::endl;
         server.removeUser(_fd);
         return;
-    } else if (epollEvents & EPOLLIN) {
+    }
+    if (epollEvents & EPOLLIN) {
+        ft::Log::debug << "User " << _fd << " received EPOLLIN" << std::endl;
         _handleEPOLLIN(server);
-    } else {
-        std::cerr << "Unrecognized event on user " << _fd << std::endl;
+    }
+    if (epollEvents & EPOLLOUT) {
+        ft::Log::debug << "User " << _fd << " received EPOLLOUT" << std::endl;
+        this->_flushMessages(server);
     }
 }
 
@@ -66,7 +72,9 @@ void    User::_processRequest(Server& server) {
         _buffer = *(messages.end() - 1);
         messages.pop_back();
     }
-    for (std::vector<std::string>::iterator it(messages.begin()); it != messages.end(); ++it) {
+    for (std::vector<std::string>::iterator it(messages.begin());
+         it != messages.end();
+         ++it) {
         _handleRequest(server, *it);
     }
 }
@@ -83,15 +91,24 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     }
 }
 
-void User::sendMessage(const std::string &message) {
+void User::_sendMessage(const std::string &message, Server& server) {
     _messagesBuffer.push(message);
+
+    struct epoll_event  event = Server::getBaseUserEpollEvent(_fd);
+    event.events |= EPOLLOUT;
+    epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event);
+    ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
 }
 
-void User::flushMessages(uint32_t epollEvents) {
-    if (!(epollEvents & EPOLLOUT)) return;
-    if ((epollEvents & (EPOLLHUP | EPOLLRDHUP))) return;
+void User::_flushMessages(Server& server) {
+    std::string messages;
     while (!_messagesBuffer.empty()) {
-        send(_fd, _messagesBuffer.front().c_str(), _messagesBuffer.front().length(), 0);
+        messages += _messagesBuffer.front();
         _messagesBuffer.pop();
     }
+    send(_fd, messages.c_str(), messages.length(), 0);
+
+    epoll_event  event = Server::getBaseUserEpollEvent(_fd);
+    epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event);
+    ft::Log::info << "User " << _fd << " stopped waiting for EPOLLOUT" << std::endl;
 }
