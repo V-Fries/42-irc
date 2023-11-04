@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "ListenSocket.hpp"
+#include "ft_Log.hpp"
 
 #include <iostream>
 #include <unistd.h>
@@ -22,7 +23,7 @@ Server::Server(const uint16_t port, const std::string& password):
     }
     _listenSocketFD = listenSocket->getFD();
 
-    EpollEvent event;
+    epoll_event event;
     event.events = EPOLLIN;
     event.data.fd = _listenSocketFD;
     if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, _listenSocketFD, &event) == -1) {
@@ -31,7 +32,7 @@ Server::Server(const uint16_t port, const std::string& password):
         throw std::exception(); // TODO Define a custom exception
     }
     _sockets[_listenSocketFD] = listenSocket;
-    _events = new EpollEvent[_sockets.size()];
+    _events = new epoll_event[_sockets.size()];
 }
 
 
@@ -57,17 +58,26 @@ Server::~Server() {
 }
 
 
+int     Server::getEpollFD() const {
+    return _epollFD;
+}
+
 void    Server::addUser(User* user) {
     std::cout << "Adding a new user" << std::endl;
 
-    EpollEvent event;
-    event.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
-    event.data.fd = user->getFD();
+    epoll_event event = getBaseUserEpollEvent(user->getFD());
     if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, user->getFD(), &event) == -1) {
         throw std::exception(); // TODO Define a custom exception
     }
     _sockets[user->getFD()] = user;
     _shouldUpdateEventsSize = true;
+}
+
+epoll_event Server::getBaseUserEpollEvent(const int userFD) {
+    epoll_event event = {};
+    event.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+    event.data.fd = userFD;
+    return event;
 }
 
 void    Server::removeUser(const int userFD) {
@@ -91,16 +101,16 @@ void Server::waitForEvents() {
 }
 
 void    Server::handleEvents() {
-    EpollEvent*  eventsEnd = _events + _numberOfEvents;
+    ft::Log::info << "Handling events" << std::endl;
 
-    std::cout << "Handling events" << std::endl;
-    for (EpollEvent* it = _events; it != eventsEnd; ++it) {
+    epoll_event* eventsEnd = _events + _numberOfEvents;
+    for (epoll_event* it = _events; it != eventsEnd; ++it) {
         _sockets[it->data.fd]->handleEvent(it->events, *this);
     }
 
     if (_shouldUpdateEventsSize) {
         delete[] _events;
-        _events = new EpollEvent[_sockets.size()];
+        _events = new epoll_event[_sockets.size()];
         _shouldUpdateEventsSize = false;
     }
 }
