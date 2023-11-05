@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
         Server  server(6667, "password"); // TODO Use args to set the server up
         SignalHandler::init(server);
         server.run();
-    } catch (const std::exception& e) {
-        // TODO handle exception
+    } catch (const ft::Exception& e) {
+        e.printError();
     }
 }

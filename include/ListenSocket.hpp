@@ -7,15 +7,14 @@
 
 class ListenSocket : public ISocket {
     public:
-        ListenSocket(uint16_t port, const std::string& password);
+        ListenSocket(uint16_t port);
 
         void    handleEvent(uint32_t epollEvents, Server& server);
 
-        int getFD() const;
+        int     getFD() const;
 
         void    startListening() const;
 
     private:
-        const int           _fd;
-        const std::string   _password;
+        const int   _fd;
 };

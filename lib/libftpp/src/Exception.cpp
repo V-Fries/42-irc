@@ -41,6 +41,9 @@ Exception::Exception(const std::string& whatMessage,
 
 Exception::~Exception() throw() {}
 
+void    Exception::printError() const {
+    this->stream << this->what() << std::endl;
+}
 
 const char* Exception::what() const throw() {
     return _whatMessage.c_str();

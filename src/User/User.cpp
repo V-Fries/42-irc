@@ -2,15 +2,18 @@
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "ft_Log.hpp"
+#include "ft_Exception.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
+#include <sstream>
 
 User::RequestsHandlersMap User::_requestsHandlers;
 
 User::User(const int fd):
     _fd(fd),
     _isRegistered(false) {
+    ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
 
@@ -27,6 +30,7 @@ const std::string&  User::getUserName() const {
 }
 
 void    User::initRequestsHandlers() {
+    ft::Log::debug << "Initializing User::_requestsHandlers" << std::endl;
     _requestsHandlers["PASS"] = &User::_handlePASS;
     _requestsHandlers["USER"] = &User::_handleUSER;
     _requestsHandlers["NICK"] = &User::_handleNICK;
@@ -55,7 +59,11 @@ void    User::_handleEPOLLIN(Server& server) {
     std::string msg = std::string("");
 
     end = recv(_fd, rcvBuffer, 2048, 0);
-    if (end < 0) throw std::exception(); // TODO make custom exception
+    if (end < 0) {
+        std::stringstream   errorMessage;
+        errorMessage << "Failed to read from socket " << _fd;
+        throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
+    }
     rcvBuffer[end] = 0;
     _buffer += rcvBuffer;
     if (_buffer.find('\n') != std::string::npos) {
@@ -80,35 +88,57 @@ void    User::_processRequest(Server& server) {
 }
 
 void    User::_handleRequest(Server& server, const std::string& request) {
+    ft::Log::info << "Processing request from user " << _fd << std::endl;
     const std::string   requestType = ft::String::getFirstWord(request, ' ');
 
     try {
         RequestHandler requestHandler = _requestsHandlers.at(requestType);
         (this->*requestHandler)(server, request);
+
     } catch (std::out_of_range &er) {
-        std::cerr << "Unknown request: " << request << std::endl;
+        ft::Log::warning << "Request \"" << request << "\" from user " << _fd
+                           << " was not recognized" << std::endl;
         return;
     }
 }
 
 void User::_sendMessage(const std::string &message, Server& server) {
+    if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
+        const std::string   messageWithoutNewline(message.begin(), message.end() - 1);
+        ft::Log::info << "Adding message \"" << messageWithoutNewline << "\" to user "
+                        << _fd << " _messagesBuffer" << std::endl;
+    }
+
     _messagesBuffer.push(message);
 
     struct epoll_event  event = Server::getBaseUserEpollEvent(_fd);
     event.events |= EPOLLOUT;
-    epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event);
-    ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
+    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
+        ft::Log::error << "Failed to make user " << _fd << " wait for EPOLLOUT" << std::endl;
+    } else {
+        ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
+    }
 }
 
 void User::_flushMessages(Server& server) {
+    ft::Log::info << "Flushing messages destined to user " << _fd << std::endl;
+
     std::string messages;
     while (!_messagesBuffer.empty()) {
         messages += _messagesBuffer.front();
         _messagesBuffer.pop();
     }
-    send(_fd, messages.c_str(), messages.length(), 0);
+    if (send(_fd, messages.c_str(), messages.length(), 0) < 0) {
+        ft::Log::error << "Failed to send messages to " << _fd << std::endl;
+        _messagesBuffer.push(messages);
+        return;
+    }
 
     epoll_event  event = Server::getBaseUserEpollEvent(_fd);
-    epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event);
-    ft::Log::info << "User " << _fd << " stopped waiting for EPOLLOUT" << std::endl;
+    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
+        ft::Log::error << "Failed to make user " << _fd << " stop waiting for EPOLLOUT"
+                           << std::endl;
+    } else {
+        ft::Log::info << "User " << _fd << " stopped waiting for EPOLLOUT" << std::endl;
+    }
 }

@@ -28,6 +28,8 @@ class Server {
         void    stop(int exitCode);
 
     private:
+        const std::string   _password;
+
         const int   _epollFD;
         int         _listenSocketFD;
 

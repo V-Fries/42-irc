@@ -1,5 +1,6 @@
 #include "SignalHandler.hpp"
 #include "Server.hpp"
+#include "ft_Exception.hpp"
 
 #include <csignal>
 #include <cstdlib>
@@ -15,10 +16,10 @@ void SignalHandler::init(Server& server) {
     sigemptyset(&action.sa_mask);
     action.sa_flags = 0;
     if (sigaction(SIGINT, &action, NULL) < 0) {
-        throw std::exception();// TODO make custom exception
+        throw ft::Exception("Failed to set SIGINT handler", ft::Log::WARNING);
     }
     if (sigaction(SIGTERM, &action, NULL) < 0) {
-        throw std::exception();// TODO make custom exception
+        throw ft::Exception("Failed to set SIGTERM handler", ft::Log::WARNING);
     }
 }
 
