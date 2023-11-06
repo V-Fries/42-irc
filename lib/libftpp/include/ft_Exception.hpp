@@ -53,6 +53,8 @@ class ft::Exception : public std::exception {
 
         virtual ~Exception() throw();
 
+        virtual void    printError() const;
+
         virtual const char* what() const throw();
 
         const ExceptionStream   stream;

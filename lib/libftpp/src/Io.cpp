@@ -21,6 +21,6 @@ std::ostream&   ft::Io::red(std::ostream& os) {
 }
 
 std::ostream&   ft::Io::resetColor(std::ostream& os) {
-    os << ANSI_RESET_COLOR << std::flush;
+    os << ANSI_RESET_COLOR;
     return os;
 }

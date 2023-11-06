@@ -119,7 +119,7 @@ runDebug2:
 .PHONY:	runValgrind
 runValgrind:
 		$(MAKE) debug1 -j
-		valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(BASE_NAME)_debug1 || true
+		valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes -s ./$(BASE_NAME)_debug1 || true
 
 
 .PHONY:	re

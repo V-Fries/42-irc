@@ -1,6 +1,7 @@
 #include "ListenSocket.hpp"
 #include "User.hpp"
 #include "Server.hpp"
+#include "ft_Exception.hpp"
 
 #include <sys/socket.h>
 #include <unistd.h>
@@ -8,10 +9,12 @@
 #include <iostream>
 #include <cstring>
 
-ListenSocket::ListenSocket(const uint16_t port, const std::string& password):
-    _fd(socket(AF_INET, SOCK_STREAM, 0)),
-    _password(password) {
-    if (_fd == -1) throw std::exception(); // TODO Define a custom exception
+ListenSocket::ListenSocket(const uint16_t port):
+    _fd(socket(AF_INET, SOCK_STREAM, 0)) {
+    ft::Log::debug << "ListenSocket constructor called" << std::endl;
+    if (_fd == -1) {
+        throw ft::Exception("Failed to create ListenSocket socket", ft::Log::CRITICAL);
+    }
 
     struct sockaddr_in  address = {};
     address.sin_family = AF_INET;
@@ -20,23 +23,28 @@ ListenSocket::ListenSocket(const uint16_t port, const std::string& password):
 
     if (bind(_fd, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) != 0) {
         close(_fd);
-        throw std::exception(); // TODO Define a custom exception
+        throw ft::Exception("Failed to bind ListenSocket socket", ft::Log::CRITICAL);
     }
 }
 
 void    ListenSocket::handleEvent(const uint32_t epollEvents, Server& server) {
     static_cast<void>(epollEvents);
 
+    ft::Log::info << "Server received a connection request" << std::endl;
     int userFD = accept(_fd, NULL, NULL);
-    if (userFD == -1) throw std::exception(); // TODO Define a custom exception
+    if (userFD == -1) {
+        ft::Log::error << "Failed to accept connection request" << std::endl;
+        return;
+    }
 
     User*   user = new User(userFD);
     try {
         server.addUser(user);
-    } catch (const std::exception& e) {
+        ft::Log::info << "Successfully added new user" << std::endl;
+    } catch (const ft::Exception& e) {
         close(userFD);
         delete user;
-        throw e;
+        e.printError();
     }
 }
 
@@ -46,8 +54,10 @@ int ListenSocket::getFD() const {
 
 void    ListenSocket::startListening() const {
     if (listen(_fd, SOMAXCONN) == 0) {
+        ft::Log::info << "Server is now listening for incoming connections" << std::endl;
         return ;
     }
 
-    throw std::exception(); // TODO Define a custom exception
+    throw ft::Exception("Failed to start listening for incoming connections",
+                        ft::Log::CRITICAL);
 }

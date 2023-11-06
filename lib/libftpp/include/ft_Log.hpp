@@ -29,7 +29,8 @@ class ft::Log {
             CERR,
         }   DebugLevel;
 
-        static void setDebugLevel(ft::Log::DebugLevel newDebugLevel);
+        static void         setDebugLevel(ft::Log::DebugLevel newDebugLevel);
+        static DebugLevel   getDebugLevel();
 
         static void setShouldWriteToTerminal(bool shouldWriteToTerminal);
 
