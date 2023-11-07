@@ -2,7 +2,6 @@
 
 #include "ISocket.hpp"
 #include "User.hpp"
-#include "EpollEvent.hpp"
 #include "Channel.hpp"
 
 #include <sys/epoll.h>
@@ -18,8 +17,10 @@ class Server {
 
         ~Server();
 
-        void    addUser(User* user);
-        void    removeUser(int userFD);
+        int                 getEpollFD() const;
+        void                addUser(User* user);
+        static epoll_event  getBaseUserEpollEvent(int userFD);
+        void                removeUser(int userFD);
 
         void    waitForEvents();
         void    handleEvents();
@@ -27,10 +28,12 @@ class Server {
         void    stop(int exitCode);
 
     private:
+        const std::string   _password;
+
         const int   _epollFD;
         int         _listenSocketFD;
 
-        EpollEvent* _events;
+        epoll_event* _events;
         bool        _shouldUpdateEventsSize;
         int         _numberOfEvents;
 

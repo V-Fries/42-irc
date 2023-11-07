@@ -24,7 +24,6 @@ add_executable(webserv
 		src/Server.cpp
 		include/ListenSocket.hpp
 		src/ListenSocket.cpp
-		include/EpollEvent.hpp
 		include/SignalHandler.hpp
 		src/SignalHandler.cpp
 		lib/libftpp/src/String/getFirstWord.cpp
@@ -38,4 +37,11 @@ add_executable(webserv
 		include/Channel.hpp
 		src/Channel.cpp
 		src/Command.cpp
-		lib/libftpp/include/ft_Set.hpp)
+		lib/libftpp/include/ft_Set.hpp
+		lib/libftpp/include/ft_Set.hpp
+		lib/libftpp/include/ft_Exception.hpp
+		lib/libftpp/src/Exception.cpp
+		lib/libftpp/src/Log.cpp
+		lib/libftpp/include/ft_Log.hpp
+		"lib/libftpp/include/ft_Io.hpp"
+		lib/libftpp/src/Io.cpp)

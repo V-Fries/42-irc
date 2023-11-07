@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EpollEvent.hpp"
+#include <stdint.h>
 
 class Server;
 

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "ISocket.hpp"
-#include "EpollEvent.hpp"
 #include "Command.hpp"
 
+#include <stdint.h>
 #include <string>
 #include <map>
+#include <queue>
 
 class Server;
 
@@ -25,6 +26,9 @@ class User : public ISocket {
         typedef void (User::*RequestHandler)(Server&, const Command&);
         typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
 
+        void    _sendMessage(const std::string &message, Server& server);
+        void    _flushMessages(Server& server);
+
         void    _handleEPOLLIN(Server& server);
         void    _processRequest(Server& server);
         void    _handleRequest(Server& server, const std::string& request);
@@ -42,4 +46,6 @@ class User : public ISocket {
         std::string _userName;
 
         std::string _buffer;
+
+        std::queue<std::string> _messagesBuffer;
 };
