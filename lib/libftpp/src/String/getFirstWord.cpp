@@ -2,27 +2,42 @@
 
 std::string  ft::String::getFirstWord(const std::string& string,
                                       const std::string& charsConsideredAsWordSeparators) {
-    std::string::const_iterator   it;
-
-    for (it = string.begin();
-         it != string.end()
-         && charsConsideredAsWordSeparators.find(*it) == string.npos;
-         ++it);
-    if (it == string.end())
-        return std::string("");
-    return std::string(string.begin(), it);
+    return ft::String::getFirstWord(string.begin(), string.end(),
+                                    charsConsideredAsWordSeparators);
 }
 
 std::string  ft::String::getFirstWord(const std::string& string,
                                       const char charConsideredAsWordSeparator) {
-    std::string::const_iterator   it;
-
-    for (it = string.begin();
-         it != string.end()
-         && *it != charConsideredAsWordSeparator;
-         ++it);
-    if (it == string.end() || it == string.begin()) // TODO test if it == string.begin() is required
-        return std::string("");
-    return std::string(string.begin(), it);
+    return ft::String::getFirstWord(string.begin(), string.end(),
+                                    charConsideredAsWordSeparator);
 }
 
+std::string  ft::String::getFirstWord(std::string::const_iterator it,
+                                      std::string::const_iterator end,
+                                      const std::string& charsConsideredAsWordSeparators) {
+    std::string::const_iterator firstChar = it;
+    while (firstChar != end
+           && charsConsideredAsWordSeparators.find(*firstChar) != std::string::npos)
+        ++firstChar;
+
+    std::string::const_iterator lastChar = firstChar;
+    while (lastChar != end
+           && charsConsideredAsWordSeparators.find(*lastChar) == std::string::npos)
+        ++lastChar;
+
+    return std::string(firstChar, lastChar);
+}
+
+std::string  ft::String::getFirstWord(std::string::const_iterator it,
+                                      std::string::const_iterator end,
+                                      const char charConsideredAsWordSeparator) {
+    std::string::const_iterator firstChar = it;
+    while (firstChar != end && *firstChar == charConsideredAsWordSeparator)
+        ++firstChar;
+
+    std::string::const_iterator lastChar = firstChar;
+    while (lastChar != end && *lastChar != charConsideredAsWordSeparator)
+        ++lastChar;
+
+    return std::string(firstChar, lastChar);
+}

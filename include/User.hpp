@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ISocket.hpp"
+#include "Command.hpp"
 
 #include <stdint.h>
 #include <string>
@@ -22,7 +23,7 @@ class User : public ISocket {
         void    handleEvent(uint32_t epollEvents, Server& server);
 
     private:
-        typedef void (User::*RequestHandler)(Server&, const std::string&);
+        typedef void (User::*RequestHandler)(Server&, const Command&);
         typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
 
         void    _sendMessage(const std::string &message, Server& server);
@@ -32,9 +33,9 @@ class User : public ISocket {
         void    _processRequest(Server& server);
         void    _handleRequest(Server& server, const std::string& request);
 
-        void    _handlePASS(Server& server, const std::string& request);
-        void    _handleUSER(Server& server, const std::string& request);
-        void    _handleNICK(Server& server, const std::string& request);
+        void    _handlePASS(Server& server, const Command& request);
+        void    _handleUSER(Server& server, const Command& request);
+        void    _handleNICK(Server& server, const Command& request);
 
         static RequestsHandlersMap _requestsHandlers;
 

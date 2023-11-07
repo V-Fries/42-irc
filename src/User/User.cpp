@@ -1,6 +1,7 @@
 #include "User.hpp"
 #include "Server.hpp"
 #include "ft_String.hpp"
+#include "Command.hpp"
 #include "ft_Log.hpp"
 #include "ft_Exception.hpp"
 
@@ -73,7 +74,7 @@ void    User::_handleEPOLLIN(Server& server) {
 }
 
 void    User::_processRequest(Server& server) {
-    std::vector<std::string>    messages = ft::String::split(_buffer, "\n");
+    std::vector<std::string>    messages = ft::String::split(_buffer, "\r\n");
     if (*(_buffer.end() - 1) == '\n') {
         _buffer = "";
     } else {
@@ -92,11 +93,13 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     const std::string   requestType = ft::String::getFirstWord(request, ' ');
 
     try {
+        Command cmd (request);
+        std::cout << cmd << std::endl;
         RequestHandler requestHandler = _requestsHandlers.at(requestType);
-        (this->*requestHandler)(server, request);
+        (this->*requestHandler)(server, cmd);
 
     } catch (std::out_of_range &er) {
-        ft::Log::warning << "Request \"" << request << "\" from user " << _fd
+        ft::Log::warning << "Request " << request << " from user " << _fd
                            << " was not recognized" << std::endl;
         return;
     }

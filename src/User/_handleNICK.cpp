@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-void    User::_handleNICK(Server& server, const std::string& request) {
-    ft::Log::info << "Received NICK request: \"" << request << "\" from user " << _fd
+void    User::_handleNICK(Server& server, const Command& request) {
+    ft::Log::info << "Received NICK request: " << request << " from user " << _fd
                     << std::endl;
     static_cast<void>(server); // TODO remove this
 }

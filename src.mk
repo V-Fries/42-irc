@@ -10,3 +10,4 @@ SRC	=\
 	NumericReplies.cpp	\
 	Server.cpp			\
 	SignalHandler.cpp	\
+	Command.cpp			\
