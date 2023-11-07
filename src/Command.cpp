@@ -5,23 +5,13 @@ Command::Command(const std::string &rawCommand) {
     std::string::const_iterator it = rawCommand.begin();
     std::string::const_iterator currIterator;
 
-    if (rawCommand[0] == ':') {
-        while (!isspace(*it))
-            ++it;
-        while (isspace(*it))
-            ++it;
-    }
-    for (   currIterator = it ; \
-            currIterator != rawCommand.end() && \
-            isupper(*currIterator) && \
-            !isspace(*currIterator); \
-            ++currIterator) { }
-    _command = std::string(it, currIterator);
-    it = currIterator;
-    for (   currIterator = it ; \
-            currIterator != rawCommand.end() && \
-            *currIterator != ':'; \
-            ++currIterator) { }
+    while (isspace(*it)) ++it;
+    _command = ft::String::getFirstWord(it, rawCommand.end(), ' ');
+    it += _command.length();
+    currIterator = it;
+    while (currIterator != rawCommand.end() && \
+            *currIterator != ':')
+            ++currIterator;
     _args = ft::String::split(std::string(it, currIterator), " ");
     if (*currIterator == ':') {
         ++currIterator;
@@ -38,11 +28,15 @@ const std::vector<std::string> &Command::getArgs() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Command& cmd) {
-    os << "Command: " << cmd.getCommand() << '\n';
-    os << "Args: " << '\n';
-    for (std::vector<std::string>::const_iterator it = cmd.getArgs().begin(); it != cmd.getArgs().end(); ++it) {
-        os << *it << '\n';
+    os << "Command: " << cmd.getCommand() << " | ";
+    os << "Args: ";
+    std::vector<std::string>::const_iterator    lastCommand = cmd.getArgs().end() - 1;
+    std::vector<std::string>::const_iterator    it;
+    for (it = cmd.getArgs().begin();
+         it != lastCommand;
+         ++it) {
+        os << *it << " |&| ";
     }
-    os << std::flush;
+    os << *it;
     return os;
 }

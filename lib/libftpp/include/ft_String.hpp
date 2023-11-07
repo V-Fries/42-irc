@@ -50,6 +50,13 @@ class ft::String {
                                          const std::string& charsConsideredAsWordSeparators);
         static std::string  getFirstWord(const std::string& string,
                                          char charConsideredAsWordSeparator);
+        static std::string  getFirstWord(std::string::const_iterator it,
+                                         std::string::const_iterator end,
+                                         const std::string& charsConsideredAsWordSeparators);
+        static std::string  getFirstWord(std::string::const_iterator it,
+                                         std::string::const_iterator end,
+                                         char charConsideredAsWordSeparator);
+
 };
 
 std::ostream&   operator<<(std::ostream& os, std::vector<std::string> strings);

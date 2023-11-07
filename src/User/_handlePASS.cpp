@@ -6,7 +6,7 @@
 #include <sstream>
 
 void    User::_handlePASS(Server& server, const Command& request) {
-    ft::Log::info << "Received PASS request: \"" << request << "\" from user " << _fd
+    ft::Log::info << "Received PASS request: " << request << " from user " << _fd
                   << std::endl;
     std::stringstream   response;
     static_cast<void>(server); // TODO remove this
