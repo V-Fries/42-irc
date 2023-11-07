@@ -1,6 +1,7 @@
 #include "User.hpp"
 #include "Server.hpp"
 #include "ft_String.hpp"
+#include "Command.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -75,6 +76,8 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     const std::string   requestType = ft::String::getFirstWord(request, ' ');
 
     try {
+        Command cmd (request);
+        std::cout << cmd;
         RequestHandler requestHandler = _requestsHandlers.at(requestType);
         (this->*requestHandler)(server, request);
     } catch (std::out_of_range &er) {
@@ -82,3 +85,4 @@ void    User::_handleRequest(Server& server, const std::string& request) {
         return;
     }
 }
+

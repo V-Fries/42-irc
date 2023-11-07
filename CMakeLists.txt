@@ -37,4 +37,5 @@ add_executable(webserv
 		src/NumericReplies.cpp
 		include/Channel.hpp
 		src/Channel.cpp
+		src/Command.cpp
 		lib/libftpp/include/ft_Set.hpp)
