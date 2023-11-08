@@ -1,20 +1,28 @@
 #include "NumericReplies.hpp"
-#include "Server.hpp"
 
-#include <sys/socket.h>
-
-std::string NumericReplies::constructReplyHeader(const std::string& replyCode,
-                                             const std::string& clientName) {
-    return std::string(":" "localhost" " ")
-                + replyCode + " "
-                + clientName + " ";
+NumericReplies::HeaderConstructor::HeaderConstructor(const std::string &number, const std::string &hostname) {
+    _content << ":" << hostname << " " << number;
 }
 
-void    NumericReplies::Errors::alreadyRegistered(const int clientFD,
-                                                  const std::string& client) {
-    const std::string   header = NumericReplies::constructReplyHeader(ERR_ALREADYREGISTERED,
-                                                                      client);
-    const std::string   response = header + ":You may not reregister\n";
+const std::stringstream &NumericReplies::HeaderConstructor::getContent() const {
+    return _content;
+}
 
-    send(clientFD, response.c_str(), response.size(), 0);
+std::ostream&   operator<<(std::ostream& os, const NumericReplies::HeaderConstructor& headerConstructor) {
+    os << headerConstructor.getContent();
+    return (os);
+}
+
+std::string NumericReplies::isAlreadyRegistered() {
+    std::stringstream   reply;
+
+    reply << HeaderConstructor("462", "127.0.0.1") << " :Unauthorized command (already registered)\r\n";
+    return (reply.str());
+}
+
+std::string NumericReplies::notEnoughParameters(const std::string& cmdName) {
+    std::stringstream   reply;
+
+    reply << HeaderConstructor("461", "127.0.0.1") << " * " << cmdName << " :Not enough parameters\r\n";
+    return (reply.str());
 }

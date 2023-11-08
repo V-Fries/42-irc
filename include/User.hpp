@@ -44,6 +44,7 @@ class User : public ISocket {
 
         std::string _nickName;
         std::string _userName;
+        std::string _password;
 
         std::string _buffer;
 
