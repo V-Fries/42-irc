@@ -74,7 +74,8 @@ void    User::_handleEPOLLIN(Server& server) {
 }
 
 void    User::_processRequest(Server& server) {
-    std::vector<std::string>    messages = ft::String::split(_buffer, "\r\n");
+    std::vector<std::string>    messages = ft::String::split(_buffer, "\r\n",
+                                                             SPLIT_ON_CHARACTER_SET);
     if (*(_buffer.end() - 1) == '\n') {
         _buffer = "";
     } else {
@@ -96,7 +97,7 @@ void    User::_handleRequest(Server& server, const std::string& request) {
         Command cmd (request);
         std::cout << cmd << std::endl;
         RequestHandler requestHandler = _requestsHandlers.at(requestType);
-        (this->*requestHandler)(server, cmd);
+        (this->*requestHandler)(server, cmd.getArgs());
 
     } catch (std::out_of_range &er) {
         ft::Log::warning << "Request " << request << " from user " << _fd

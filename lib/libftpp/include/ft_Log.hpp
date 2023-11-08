@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ft_Io.hpp"
+#include "ft_String.hpp"
 
 #include <iostream>
 #include <fstream>
