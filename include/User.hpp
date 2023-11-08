@@ -37,16 +37,20 @@ class User : public ISocket {
         void    _handleUSER(Server& server, const std::vector<std::string>& args);
         void    _handleNICK(Server& server, const std::vector<std::string>& args);
 
+        void    _registerUserIfReady(Server& server);
+
         static RequestsHandlersMap _requestsHandlers;
 
         const int   _fd;
+
         bool        _isRegistered;
 
         std::string _nickName;
         std::string _userName;
         std::string _realName;
+        std::string _password;
 
-        std::string _buffer;
+        std::string _requestBuffer;
 
         std::queue<std::string> _messagesBuffer;
 };

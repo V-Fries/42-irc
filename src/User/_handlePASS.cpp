@@ -8,12 +8,18 @@
 void    User::_handlePASS(Server& server, const std::vector<std::string>& args) {
     ft::Log::info << "Received PASS request: " << args << " from user " << _fd
                   << std::endl;
-    std::stringstream   response;
-    static_cast<void>(server); // TODO remove this
-    response << "Received PASS request: " << args << "\n";
-    this->_sendMessage(response.str(), server);
-//    NumericReplies::Errors::alreadyRegistered(_fd, "Test");
-//    if (_isRegistered) {
-//
-//    }
+
+    if (args.empty()) {
+        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "PASS"),
+                     server);
+        return;
+    }
+
+    if (_isRegistered) {
+        _sendMessage(NumericReplies::Error::alreadyRegistered(_nickName), server);
+        return;
+    }
+
+    _password = args[0];
+    _registerUserIfReady(server);
 }

@@ -4,6 +4,7 @@
 #include "Command.hpp"
 #include "ft_Log.hpp"
 #include "ft_Exception.hpp"
+#include "NumericReplies.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -13,7 +14,8 @@ User::RequestsHandlersMap User::_requestsHandlers;
 
 User::User(const int fd):
     _fd(fd),
-    _isRegistered(false) {
+    _isRegistered(false),
+    _nickName("*") {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
@@ -66,20 +68,20 @@ void    User::_handleEPOLLIN(Server& server) {
         throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
     }
     rcvBuffer[end] = 0;
-    _buffer += rcvBuffer;
-    if (_buffer.find('\n') != std::string::npos) {
+    _requestBuffer += rcvBuffer;
+    if (_requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
     }
     send(_fd, NULL, 0, MSG_CONFIRM);
 }
 
 void    User::_processRequest(Server& server) {
-    std::vector<std::string>    messages = ft::String::split(_buffer, "\r\n",
+    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n",
                                                              SPLIT_ON_CHARACTER_SET);
-    if (*(_buffer.end() - 1) == '\n') {
-        _buffer = "";
+    if (*(_requestBuffer.end() - 1) == '\n') {
+        _requestBuffer = "";
     } else {
-        _buffer = *(messages.end() - 1);
+        _requestBuffer = *(messages.end() - 1);
         messages.pop_back();
     }
     for (std::vector<std::string>::iterator it(messages.begin());
@@ -108,8 +110,8 @@ void    User::_handleRequest(Server& server, const std::string& request) {
 
 void User::_sendMessage(const std::string &message, Server& server) {
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
-        const std::string   messageWithoutNewline(message.begin(), message.end() - 1);
-        ft::Log::info << "Adding message \"" << messageWithoutNewline << "\" to user "
+        const std::string   messageToPrint(message.begin(), message.end() - 2);
+        ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
                         << _fd << " _messagesBuffer" << std::endl;
     }
 
@@ -145,4 +147,12 @@ void User::_flushMessages(Server& server) {
     } else {
         ft::Log::info << "User " << _fd << " stopped waiting for EPOLLOUT" << std::endl;
     }
+}
+
+void    User::_registerUserIfReady(Server& server) {
+    if (_password.empty() || _nickName == "*" || _userName.empty()) return;
+
+    _isRegistered = true;
+    _sendMessage("You are now registered\n", server); // TODO remove this
+    // TODO send all appropriate numeric replies
 }
