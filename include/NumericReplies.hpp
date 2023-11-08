@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 
+#define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 
 class NumericReplies {
