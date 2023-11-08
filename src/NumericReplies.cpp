@@ -9,20 +9,20 @@ const std::stringstream &NumericReplies::HeaderConstructor::getContent() const {
 }
 
 std::ostream&   operator<<(std::ostream& os, const NumericReplies::HeaderConstructor& headerConstructor) {
-    os << headerConstructor.getContent();
+    os << headerConstructor.getContent().str();
     return (os);
 }
 
 std::string NumericReplies::isAlreadyRegistered() {
     std::stringstream   reply;
 
-    reply << HeaderConstructor("462", "127.0.0.1") << " :Unauthorized command (already registered)\r\n";
+    reply << HeaderConstructor(ERR_ALREADYREGISTERED, "127.0.0.1") << " :Unauthorized command (already registered)\r\n";
     return (reply.str());
 }
 
 std::string NumericReplies::notEnoughParameters(const std::string& cmdName) {
     std::stringstream   reply;
 
-    reply << HeaderConstructor("461", "127.0.0.1") << " * " << cmdName << " :Not enough parameters\r\n";
+    reply << HeaderConstructor(ERR_NEEDMOREPARAMS, "127.0.0.1") << " * " << cmdName << " :Not enough parameters\r\n";
     return (reply.str());
 }
