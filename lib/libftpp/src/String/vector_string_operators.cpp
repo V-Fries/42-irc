@@ -1,6 +1,6 @@
 #include "ft_String.hpp"
 
-std::ostream&    operator<<(std::ostream& os, std::vector<std::string> strings) {
+std::ostream&    operator<<(std::ostream& os, const std::vector<std::string>& strings) {
     if (strings.size() == 0) {
         os << "{}";
         return os;

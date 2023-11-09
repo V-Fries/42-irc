@@ -5,10 +5,21 @@
 #include <iostream>
 #include <sstream>
 
-void    User::_handlePASS(Server& server, const Command& request) {
-    ft::Log::info << "Received PASS request: " << request << " from user " << _fd
+void    User::_handlePASS(Server& server, const std::vector<std::string>& args) {
+    ft::Log::info << "Received PASS request: " << args << " from user " << _fd
                   << std::endl;
-    if (request.getArgs().empty()) _sendMessage(NumericReplies::notEnoughParameters("PASS"), server);
-    else if (_isRegistered) _sendMessage(NumericReplies::isAlreadyRegistered(), server);
-    else _password = request.getArgs()[0];
+
+    if (args.empty()) {
+        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "PASS"),
+                     server);
+        return;
+    }
+
+    if (_isRegistered) {
+        _sendMessage(NumericReplies::Error::alreadyRegistered(_nickName), server);
+        return;
+    }
+
+    _password = args[0];
+    _registerUserIfReady(server);
 }

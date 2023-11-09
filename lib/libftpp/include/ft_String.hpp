@@ -59,7 +59,7 @@ class ft::String {
 
 };
 
-std::ostream&   operator<<(std::ostream& os, std::vector<std::string> strings);
+std::ostream&   operator<<(std::ostream& os, const std::vector<std::string>& strings);
 
 std::vector<std::string>    operator+(const std::vector<std::string>& leftValue,
                                       const std::vector<std::string>& rightValue);
