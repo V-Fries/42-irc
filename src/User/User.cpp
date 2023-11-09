@@ -90,11 +90,10 @@ void    User::_processRequest(Server& server) {
 
 void    User::_handleRequest(Server& server, const std::string& request) {
     ft::Log::info << "Processing request from user " << _fd << std::endl;
-    const std::string   requestType = ft::String::getFirstWord(request, ' ');
+    const std::string   requestType = ft::String::getFirstWord(request,  ": ");
 
     try {
         Command cmd (request);
-        std::cout << cmd << std::endl;
         RequestHandler requestHandler = _requestsHandlers.at(requestType);
         (this->*requestHandler)(server, cmd);
 
