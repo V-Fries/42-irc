@@ -17,8 +17,8 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
     nickname = args[0].substr(0,  9);
     if (_checkNickname(nickname, server)) {
         _nickName = nickname;
+        _registerUserIfReady(server);
     }
-    std::cerr << "Received NICK request: " << nickname << std::endl;
 }
 
 bool    User::_checkNickname(const std::string &nickName, const Server &server) {
