@@ -12,6 +12,8 @@ class Server;
 
 class User : public ISocket {
     public:
+        static const size_t maxNickNameLength = 9;
+
         explicit User(int fd);
 
         int                 getFD() const;
@@ -22,7 +24,7 @@ class User : public ISocket {
 
         void    handleEvent(uint32_t epollEvents, Server& server);
 
-        bool    isRegister() const;
+        bool    isRegistered() const;
 
     private:
         typedef void (User::*RequestHandler)(Server&, const std::vector<std::string>&);

@@ -4,7 +4,6 @@
 #include "Command.hpp"
 #include "ft_Log.hpp"
 #include "ft_Exception.hpp"
-#include "NumericReplies.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -56,7 +55,7 @@ void    User::handleEvent(uint32_t epollEvents, Server& server) {
     }
 }
 
-bool User::isRegister() const {
+bool User::isRegistered() const {
     return (_isRegistered);
 }
 
@@ -175,6 +174,7 @@ void    User::_registerUserIfReady(Server& server) {
     if (_password.empty() || _nickName == "*" || _userName.empty()) return;
 
     _isRegistered = true;
+    server.registerUser(this);
     _sendMessage("You are now registered\n", server); // TODO remove this
     // TODO send all appropriate numeric replies
 }
