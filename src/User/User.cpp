@@ -56,6 +56,10 @@ void    User::handleEvent(uint32_t epollEvents, Server& server) {
     }
 }
 
+bool User::isRegister() const {
+    return (_isRegistered);
+}
+
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
     ssize_t     end;
@@ -109,6 +113,24 @@ void    User::_handleRequest(Server& server, const std::string& request) {
 }
 
 void User::_sendMessage(const std::string &message, Server& server) {
+    if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
+        const std::string   messageToPrint(message.begin(), message.end() - 2);
+        ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
+                        << _fd << " _messagesBuffer" << std::endl;
+    }
+
+    _messagesBuffer.push(message);
+
+    struct epoll_event  event = Server::getBaseUserEpollEvent(_fd);
+    event.events |= EPOLLOUT;
+    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
+        ft::Log::error << "Failed to make user " << _fd << " wait for EPOLLOUT" << std::endl;
+    } else {
+        ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
+    }
+}
+
+void User::_sendMessage(const std::string &message, const Server& server) {
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
         const std::string   messageToPrint(message.begin(), message.end() - 2);
         ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
