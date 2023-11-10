@@ -100,15 +100,11 @@ void    Server::removeUser(const int userFD) {
 }
 
 bool Server::nicknameIsTaken(const std::string &nick) const {
-    User*   currUser;
+    return (_usersRegistered.find(nick) != _usersRegistered.end());
+}
 
-    for (SocketMap::const_iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
-        currUser = dynamic_cast<User*>(it->second);
-        if (currUser && currUser->isRegister() && nick == currUser->getNickName()) {
-            return (true);
-        }
-    }
-    return (false);
+void Server::registerUser(User* user) {
+    _usersRegistered[user->getNickName()] = user;
 }
 
 void Server::waitForEvents() {
