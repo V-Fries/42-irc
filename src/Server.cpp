@@ -99,6 +99,20 @@ void    Server::removeUser(const int userFD) {
     _shouldUpdateEventsSize = true;
 }
 
+User*   Server::getUserByNickname(const std::string& nickname) {
+    User    *currUser;
+
+    for (SocketMap::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
+        currUser = dynamic_cast<User*>(it->second);
+        if (currUser)
+            ft::Log::info << "find: " << currUser->getNickName() << std::endl;
+        if (currUser && currUser->getNickName() == nickname) {
+            return (currUser);
+        }
+    }
+    return (NULL);
+}
+
 
 void Server::waitForEvents() {
     ft::Log::info << "Waiting for events" << std::endl;

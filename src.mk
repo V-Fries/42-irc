@@ -2,6 +2,7 @@ SRC	=\
 	User/_handleNICK.cpp	\
 	User/_handlePASS.cpp	\
 	User/_handleUSER.cpp	\
+	User/_handlePRIVMSG.cpp	\
 	User/User.cpp			\
 \
 	Channel.cpp			\

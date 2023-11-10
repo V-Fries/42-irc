@@ -19,7 +19,6 @@ User::User(const int fd):
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
-
 int User::getFD() const {
     return _fd;
 }
@@ -37,6 +36,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PASS"] = &User::_handlePASS;
     _requestsHandlers["USER"] = &User::_handleUSER;
     _requestsHandlers["NICK"] = &User::_handleNICK;
+    _requestsHandlers["PRIVMSG"] = &User::_handlePRIVMSG;
 }
 
 void    User::handleEvent(uint32_t epollEvents, Server& server) {

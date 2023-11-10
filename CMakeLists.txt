@@ -44,4 +44,5 @@ add_executable(webserv
 		lib/libftpp/src/Log.cpp
 		lib/libftpp/include/ft_Log.hpp
 		"lib/libftpp/include/ft_Io.hpp"
-		lib/libftpp/src/Io.cpp)
+		lib/libftpp/src/Io.cpp
+		src/User/_handlePRIVMSG.cpp)
