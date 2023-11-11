@@ -12,21 +12,26 @@ class Server;
 
 class User : public ISocket {
     public:
+        static const size_t maxNickNameLength = 9;
+
         explicit User(int fd);
 
         int                 getFD() const;
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
 
-        static void    initRequestsHandlers();
+        static void initRequestsHandlers();
 
         void    handleEvent(uint32_t epollEvents, Server& server);
+
+        bool    isRegistered() const;
 
     private:
         typedef void (User::*RequestHandler)(Server&, const std::vector<std::string>&);
         typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
 
         void    _sendMessage(const std::string &message, Server& server);
+        void    _sendMessage(const std::string &message, const Server& server);
         void    _flushMessages(Server& server);
 
         void    _handleEPOLLIN(Server& server);
@@ -38,6 +43,8 @@ class User : public ISocket {
         void    _handleNICK(Server& server, const std::vector<std::string>& args);
 
         void    _registerUserIfReady(Server& server);
+
+        bool    _checkNickname(const std::string &nickName, const Server &server);
 
         static RequestsHandlersMap _requestsHandlers;
 
