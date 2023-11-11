@@ -69,7 +69,9 @@ void    User::_handleEPOLLIN(Server& server) {
     ssize_t     end;
     std::string msg = std::string("");
 
-    end = recv(_fd, rcvBuffer, 2048, 0);
+    end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
+                                         // TODO if we failed to read the whole 
+                                         // TODO request in one go?
     if (end < 0) {
         std::stringstream   errorMessage;
         errorMessage << "Failed to read from socket " << _fd;
@@ -199,5 +201,5 @@ void    User::_registerUserIfReady(Server& server) {
                                                    server.getNbOfRegisteredUsers(),
                                                    server.getPeakRegisteredUserCount()),
                  server);
-    // TODO send all appropriate numeric replies
+    _sendMessage(NumericReplies::Reply::messageOfTheDay(_nickName), server);
 }

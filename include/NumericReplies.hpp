@@ -13,6 +13,9 @@
 #define RPL_LUSERME "255"
 #define RPL_LOCALUSERS "265"
 #define RPL_GLOBALUSERS "266"
+#define RPL_MOTD "372"
+#define RPL_MOTDSTART "375"
+#define RPL_ENDOFMOTD "376"
 
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
@@ -41,6 +44,8 @@ class NumericReplies {
                 static std::string  globalUsers(const std::string& nickName,
                                                 size_t nbOfUsers,
                                                 size_t peakRegisteredUserCount);
+
+                static std::string  messageOfTheDay(const std::string& nickName);
         };
 
         class Error {
