@@ -183,6 +183,9 @@ void    User::_registerUserIfReady(Server& server) {
     _sendMessage(NumericReplies::Reply::localUserClient(_nickName,
                                                         server.getNbOfRegisteredUsers()),
                  server);
+    _sendMessage(NumericReplies::Reply::localUserChannels(_nickName,
+                                                          server.getNbOfChannels()),
+                 server);
     // TODO send all appropriate numeric replies
 
     server.registerUser(this);

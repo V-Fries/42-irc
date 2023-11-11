@@ -118,6 +118,10 @@ size_t  Server::getNbOfRegisteredUsers() const {
     return _registeredUsers.size();
 }
 
+size_t  Server::getNbOfChannels() const {
+    return _channels.size();
+}
+
 void Server::waitForEvents() {
     ft::Log::info << "Waiting for events" << std::endl;
     _numberOfEvents = epoll_wait(_epollFD, _events, _sockets.size(), -1);

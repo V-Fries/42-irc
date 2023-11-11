@@ -25,6 +25,7 @@ class Server {
         bool                nicknameIsTaken(const std::string &nick) const;
         void                registerUser(User *user);
         size_t              getNbOfRegisteredUsers() const;
+        size_t              getNbOfChannels() const;
 
         void    waitForEvents();
         void    handleEvents();
@@ -37,9 +38,9 @@ class Server {
         const int   _epollFD;
         int         _listenSocketFD;
 
-        epoll_event* _events;
-        bool        _shouldUpdateEventsSize;
-        int         _numberOfEvents;
+        epoll_event*    _events;
+        bool            _shouldUpdateEventsSize;
+        int             _numberOfEvents;
 
         SocketMap       _sockets;
         RegisteredMap   _registeredUsers;
