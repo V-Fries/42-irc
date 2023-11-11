@@ -96,14 +96,11 @@ void    User::_processRequest(Server& server) {
 
 void    User::_handleRequest(Server& server, const std::string& request) {
     ft::Log::info << "Processing request from user " << _fd << std::endl;
-    const std::string   requestType = ft::String::getFirstWord(request, ' ');
 
     try {
         Command cmd (request);
-        std::cout << cmd << std::endl;
-        RequestHandler requestHandler = _requestsHandlers.at(requestType);
+        RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
         (this->*requestHandler)(server, cmd.getArgs());
-
     } catch (std::out_of_range &er) {
         ft::Log::warning << "Request " << request << " from user " << _fd
                            << " was not recognized" << std::endl;
