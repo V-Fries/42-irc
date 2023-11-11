@@ -80,3 +80,19 @@ std::string NumericReplies::_constructHeader(const std::string &requestID,
     result << ':' << hostname << ' ' << requestID << ' ';
     return result.str();
 }
+
+std::string NumericReplies::Error::erroneousNick(const std::string& currNickname, const std::string& newNickname) {
+    std::stringstream   reply;
+
+    reply << HeaderConstructor(ERR_ERRONEUSNICKNAME, "127.0.0.1") << currNickname
+          << " " << newNickname << " :Erroneous Nickname\r\n";
+    return (reply.str());
+}
+
+std::string NumericReplies::Error::nickInUse(const std::string& currNickname, const std::string& newNickname) {
+    std::stringstream   reply;
+
+    reply << HeaderConstructor(ERR_NICKNAMEINUSE, "127.0.0.1") << currNickname
+          << " " << newNickname << " :Nickname is already in use.\r\n";
+    return (reply.str());
+}

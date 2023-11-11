@@ -4,6 +4,9 @@ logs.txt
 # Prerequisites
 *.d
 
+#junk
+.DS_Store
+
 # Compiled Object files
 .build
 *.slo

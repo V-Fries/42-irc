@@ -1,19 +1,38 @@
 #include "User.hpp"
-#include "ft_Log.hpp"
-#include "NumericReplies.hpp"
+#include "ft.hpp"
+#include "Server.hpp"
 
 #include <iostream>
+#include <vector>
+
+#include "NumericReplies.hpp"
 
 void    User::_handleNICK(Server& server, const std::vector<std::string>& args) {
-    ft::Log::info << "Received NICK request: " << args << " from user " << _fd
-                    << std::endl;
+    std::string nickname;
+
     if (args.empty()) {
-        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "NICK"),
-                     server); // TODO send ERR_NONICKNAMEGIVEN not ERR_NEEDMOREPARAMS
+        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "NICK"), server);
         return;
     }
+    nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
+    if (_checkNickname(nickname, server)) {
+        _nickName = nickname;
+        _registerUserIfReady(server);
+    }
+}
 
-    // TODO check for ERR_ERRONEUSNICKNAME and ERR_NICKNAMEINUSE
-    _nickName = ft::String::toLower(args[0]);
-    _registerUserIfReady(server);
+bool    User::_checkNickname(const std::string &nickName, const Server &server) {
+    if (std::string("$:#&").find(nickName[0]) != std::string::npos) {
+        _sendMessage(NumericReplies::Error::erroneousNick(_nickName, nickName), server);
+        return (false);
+    }
+    if (nickName.find_first_of(" ,*?!@.") != std::string::npos) {
+        _sendMessage(NumericReplies::Error::erroneousNick(_nickName, nickName), server);
+        return (false);
+    }
+    if (server.nicknameIsTaken(nickName)) {
+        _sendMessage(NumericReplies::Error::nickInUse(_nickName, nickName), server);
+        return (false);
+    }
+    return (true);
 }
