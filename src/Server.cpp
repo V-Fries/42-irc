@@ -87,12 +87,18 @@ epoll_event Server::getBaseUserEpollEvent(const int userFD) {
 }
 
 void    Server::removeUser(const int userFD) {
+    User    *user;
+
     ft::Log::info << "User " << userFD << " disconnected" << std::endl;
     if (epoll_ctl(_epollFD, EPOLL_CTL_DEL, userFD, NULL) == -1) {
         ft::Log::error << "Failed to remove user " << userFD << " from epoll" << std::endl;
     }
     if (close(userFD) != 0) {
         ft::Log::error << "Failed to close socket " << userFD << std::endl;
+    }
+    user = dynamic_cast<User*>(_sockets[userFD]);
+    if (user) {
+        _usersRegistered.erase(user->getNickName());
     }
     delete _sockets[userFD];
     _sockets.erase(userFD);
