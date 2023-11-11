@@ -1,33 +1,82 @@
 #include "NumericReplies.hpp"
+#include "User.hpp"
 
-NumericReplies::HeaderConstructor::HeaderConstructor(const std::string &number,
-                                                     const std::string &hostname) {
-    _content << ':' << hostname << ' ' << number << ' ';
-}
-
-const std::stringstream &NumericReplies::HeaderConstructor::getContent() const {
-    return _content;
-}
-
-std::ostream&   operator<<(std::ostream& os,
-                           const NumericReplies::HeaderConstructor& headerConstructor) {
-    os << headerConstructor.getContent().str();
-    return (os);
-}
+#define SERVER_NAME "127.0.0.1"
+#define NETWORK_NAME "42IRC"
+#define SERVER_VERSION "0.1"
+#define CREATION_DATE "November the 9th of 2023"
 
 std::string NumericReplies::Error::alreadyRegistered(const std::string& nickName) {
     std::stringstream   reply;
 
-    reply << HeaderConstructor(ERR_ALREADYREGISTERED, "127.0.0.1") << nickName
+    reply << _constructHeader(ERR_ALREADYREGISTERED, SERVER_NAME) << nickName
             << " :Unauthorized command (already registered)\r\n";
-    return (reply.str());
+    return reply.str();
 }
 
 std::string NumericReplies::Error::needMoreParameters(const std::string& nickName,
                                                       const std::string& cmdName) {
     std::stringstream   reply;
 
-    reply << HeaderConstructor(ERR_NEEDMOREPARAMS, "127.0.0.1") << nickName
+    reply << _constructHeader(ERR_NEEDMOREPARAMS, SERVER_NAME) << nickName
             << ' ' << cmdName << " :Not enough parameters\r\n";
-    return (reply.str());
+    return reply.str();
+}
+
+std::string NumericReplies::Reply::welcome(const std::string& nickName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_WELCOME, SERVER_NAME) << nickName
+            << " :Welcome to the " NETWORK_NAME " Network, " << nickName << "\r\n";
+    return reply.str();
+}
+
+std::string   NumericReplies::Reply::yourHost(const std::string& nickName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_YOURHOST, SERVER_NAME) << nickName
+          << " :Your host is " SERVER_NAME ", running version " SERVER_VERSION << "\r\n";
+    return reply.str();
+}
+
+std::string  NumericReplies::Reply::create(const std::string& nickName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_CREATE, SERVER_NAME) << nickName
+            << " :This server was created on " CREATION_DATE "\r\n";
+    return reply.str();
+}
+
+std::string  NumericReplies::Reply::myInfo(const std::string& nickName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_MYINFO, SERVER_NAME) << nickName << ' '
+            << SERVER_NAME << ' ' << SERVER_VERSION << " _ itkol\r\n";
+    return reply.str();
+}
+
+std::string  NumericReplies::Reply::iSupport(const std::string& nickName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_ISUPPORT, SERVER_NAME) << nickName << " "
+            "CASEMAPPING=ascii "
+            "CHANTYPES=#& "
+            "CHANLIMIT=#:" << User::maxNbOfJoinedRegularChannels << ",&:"
+                << User::maxNbOfJoinedLocalChannels << " "
+            "CHANMODES=,k,l,it "
+            "ELIST= "
+            "NICKLEN=" << User::maxNickNameLength << " "
+            ""
+            ":are supported by this server\r\n"; // TODO we probably need to add
+                                                 // TODO more things here
+    return reply.str();
+}
+
+
+std::string NumericReplies::_constructHeader(const std::string &requestID,
+                                             const std::string &hostname) {
+    std::stringstream   result;
+
+    result << ':' << hostname << ' ' << requestID << ' ';
+    return result.str();
 }

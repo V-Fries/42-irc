@@ -29,18 +29,6 @@ const std::vector<std::string> &Command::getArgs() const {
 
 std::ostream& operator<<(std::ostream& os, const Command& cmd) {
     os << "Command: " << cmd.getCommand() << " | ";
-    if (cmd.getArgs().size() == 0) {
-        os << "no args";
-        return os;
-    }
-    os << "Args: ";
-    std::vector<std::string>::const_iterator    lastCommand = cmd.getArgs().end() - 1;
-    std::vector<std::string>::const_iterator    it;
-    for (it = cmd.getArgs().begin();
-         it != lastCommand;
-         ++it) {
-        os << *it << " |&| ";
-    }
-    os << *it;
+    os << "Args: " << cmd.getArgs();
     return os;
 }

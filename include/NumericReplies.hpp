@@ -3,21 +3,24 @@
 #include <string>
 #include <sstream>
 
+#define RPL_WELCOME "001"
+#define RPL_YOURHOST "002"
+#define RPL_CREATE "003"
+#define RPL_MYINFO "004"
+#define RPL_ISUPPORT "005"
+
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 
-#define RPL_WELCOME "001"
-
 class NumericReplies {
     public:
-        class HeaderConstructor {
+        class Reply {
             public:
-                HeaderConstructor(const std::string& number,
-                                  const std::string& hostname);
-
-                const std::stringstream&    getContent() const;
-            private:
-                std::stringstream _content;
+                static std::string  welcome(const std::string& nickName);
+                static std::string  yourHost(const std::string& nickName);
+                static std::string  create(const std::string& nickName);
+                static std::string  myInfo(const std::string& nickName);
+                static std::string  iSupport(const std::string& nickName);
         };
 
         class Error {
@@ -28,10 +31,7 @@ class NumericReplies {
                                                        const std::string& cmdName);
         };
 
-        class Reply {
-            public:
-        };
+    private:
+        static std::string  _constructHeader(const std::string& requestID,
+                                             const std::string& hostname);
 };
-
-std::ostream&   operator<<(std::ostream& os,
-                           const NumericReplies::HeaderConstructor& headerConstructor);

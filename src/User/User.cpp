@@ -95,14 +95,13 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     ft::Log::info << "Processing request from user " << _fd << std::endl;
     const std::string   requestType = ft::String::getFirstWord(request, ' ');
 
+    Command cmd(request);
     try {
-        Command cmd (request);
-        std::cout << cmd << std::endl;
         RequestHandler requestHandler = _requestsHandlers.at(requestType);
         (this->*requestHandler)(server, cmd.getArgs());
 
     } catch (std::out_of_range &er) {
-        ft::Log::warning << "Request " << request << " from user " << _fd
+        ft::Log::warning << "Request " << cmd << " from user " << _fd
                            << " was not recognized" << std::endl;
         return;
     }
@@ -153,6 +152,10 @@ void    User::_registerUserIfReady(Server& server) {
     if (_password.empty() || _nickName == "*" || _userName.empty()) return;
 
     _isRegistered = true;
-    _sendMessage("You are now registered\n", server); // TODO remove this
+    _sendMessage(NumericReplies::Reply::welcome(_nickName), server);
+    _sendMessage(NumericReplies::Reply::yourHost(_nickName), server);
+    _sendMessage(NumericReplies::Reply::create(_nickName), server);
+    _sendMessage(NumericReplies::Reply::myInfo(_nickName), server);
+    _sendMessage(NumericReplies::Reply::iSupport(_nickName), server);
     // TODO send all appropriate numeric replies
 }

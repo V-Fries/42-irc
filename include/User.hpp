@@ -12,6 +12,10 @@ class Server;
 
 class User : public ISocket {
     public:
+        static const int maxNbOfJoinedRegularChannels = 42; // # channels
+        static const int maxNbOfJoinedLocalChannels = 42; // & channels
+        static const int maxNickNameLength = 42;
+
         explicit User(int fd);
 
         int                 getFD() const;
