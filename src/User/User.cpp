@@ -13,7 +13,8 @@ User::RequestsHandlersMap User::_requestsHandlers;
 
 User::User(const int fd):
     _fd(fd),
-    _isRegistered(false) {
+    _isRegistered(false),
+    _nickName("*") {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
@@ -54,6 +55,10 @@ void    User::handleEvent(uint32_t epollEvents, Server& server) {
     }
 }
 
+bool User::isRegistered() const {
+    return (_isRegistered);
+}
+
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
     ssize_t     end;
@@ -66,19 +71,20 @@ void    User::_handleEPOLLIN(Server& server) {
         throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
     }
     rcvBuffer[end] = 0;
-    _buffer += rcvBuffer;
-    if (_buffer.find('\n') != std::string::npos) {
+    _requestBuffer += rcvBuffer;
+    if (_requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
     }
     send(_fd, NULL, 0, MSG_CONFIRM);
 }
 
 void    User::_processRequest(Server& server) {
-    std::vector<std::string>    messages = ft::String::split(_buffer, "\r\n");
-    if (*(_buffer.end() - 1) == '\n') {
-        _buffer = "";
+    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n",
+                                                             SPLIT_ON_CHARACTER_SET);
+    if (*(_requestBuffer.end() - 1) == '\n') {
+        _requestBuffer = "";
     } else {
-        _buffer = *(messages.end() - 1);
+        _requestBuffer = *(messages.end() - 1);
         messages.pop_back();
     }
     for (std::vector<std::string>::iterator it(messages.begin());
@@ -95,6 +101,7 @@ void    User::_handleRequest(Server& server, const std::string& request) {
         Command cmd (request);
         RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
         (this->*requestHandler)(server, cmd);
+        (this->*requestHandler)(server, cmd.getArgs());
 
     } catch (std::out_of_range &er) {
         ft::Log::warning << "Request " << request << " from user " << _fd
@@ -105,8 +112,26 @@ void    User::_handleRequest(Server& server, const std::string& request) {
 
 void User::_sendMessage(const std::string &message, Server& server) {
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
-        const std::string   messageWithoutNewline(message.begin(), message.end() - 1);
-        ft::Log::info << "Adding message \"" << messageWithoutNewline << "\" to user "
+        const std::string   messageToPrint(message.begin(), message.end() - 2);
+        ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
+                        << _fd << " _messagesBuffer" << std::endl;
+    }
+
+    _messagesBuffer.push(message);
+
+    struct epoll_event  event = Server::getBaseUserEpollEvent(_fd);
+    event.events |= EPOLLOUT;
+    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
+        ft::Log::error << "Failed to make user " << _fd << " wait for EPOLLOUT" << std::endl;
+    } else {
+        ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
+    }
+}
+
+void User::_sendMessage(const std::string &message, const Server& server) {
+    if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
+        const std::string   messageToPrint(message.begin(), message.end() - 2);
+        ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
                         << _fd << " _messagesBuffer" << std::endl;
     }
 
@@ -142,4 +167,13 @@ void User::_flushMessages(Server& server) {
     } else {
         ft::Log::info << "User " << _fd << " stopped waiting for EPOLLOUT" << std::endl;
     }
+}
+
+void    User::_registerUserIfReady(Server& server) {
+    if (_password.empty() || _nickName == "*" || _userName.empty()) return;
+
+    _isRegistered = true;
+    server.registerUser(this);
+    _sendMessage("You are now registered\n", server); // TODO remove this
+    // TODO send all appropriate numeric replies
 }
