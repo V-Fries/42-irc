@@ -100,9 +100,7 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     try {
         Command cmd (request);
         RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
-        (this->*requestHandler)(server, cmd);
         (this->*requestHandler)(server, cmd.getArgs());
-
     } catch (std::out_of_range &er) {
         ft::Log::warning << "Request " << request << " from user " << _fd
                            << " was not recognized" << std::endl;
