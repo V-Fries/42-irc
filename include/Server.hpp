@@ -24,6 +24,7 @@ class Server {
         void                removeUser(int userFD);
         bool                nicknameIsTaken(const std::string &nick) const;
         void                registerUser(User *user);
+        size_t              getNbOfRegisteredUsers() const;
 
         void    waitForEvents();
         void    handleEvents();
@@ -41,7 +42,7 @@ class Server {
         int         _numberOfEvents;
 
         SocketMap       _sockets;
-        RegisteredMap   _usersRegistered;
+        RegisteredMap   _registeredUsers;
 
         std::map<std::string, Channel>  _channels;
 };

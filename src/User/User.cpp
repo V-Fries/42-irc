@@ -180,6 +180,9 @@ void    User::_registerUserIfReady(Server& server) {
     _sendMessage(NumericReplies::Reply::create(_nickName), server);
     _sendMessage(NumericReplies::Reply::myInfo(_nickName), server);
     _sendMessage(NumericReplies::Reply::iSupport(_nickName), server);
+    _sendMessage(NumericReplies::Reply::localUserClient(_nickName,
+                                                        server.getNbOfRegisteredUsers()),
+                 server);
     // TODO send all appropriate numeric replies
 
     server.registerUser(this);

@@ -57,6 +57,15 @@ std::string  NumericReplies::Reply::iSupport(const std::string& nickName) {
     return reply.str();
 }
 
+std::string  NumericReplies::Reply::localUserClient(const std::string& nickName,
+                                                    const size_t nbOfUsers) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LUSERCLIENT, SERVER_NAME) << nickName
+            << " :There are " << nbOfUsers << " users on 1 server\r\n";
+    return reply.str();
+}
+
 // Error
 
 std::string NumericReplies::Error::alreadyRegistered(const std::string& nickName) {
@@ -76,18 +85,20 @@ std::string NumericReplies::Error::needMoreParameters(const std::string& nickNam
     return reply.str();
 }
 
-std::string NumericReplies::Error::erroneousNick(const std::string& currNickname, const std::string& newNickname) {
+std::string NumericReplies::Error::erroneousNick(const std::string& currNickname,
+                                                 const std::string& newNickname) {
     std::stringstream   reply;
 
-    reply << _constructHeader(ERR_ERRONEUSNICKNAME, "127.0.0.1") << currNickname
+    reply << _constructHeader(ERR_ERRONEUSNICKNAME, SERVER_NAME) << currNickname
           << " " << newNickname << " :Erroneous Nickname\r\n";
     return (reply.str());
 }
 
-std::string NumericReplies::Error::nickInUse(const std::string& currNickname, const std::string& newNickname) {
+std::string NumericReplies::Error::nickInUse(const std::string& currNickname,
+                                             const std::string& newNickname) {
     std::stringstream   reply;
 
-    reply << _constructHeader(ERR_NICKNAMEINUSE, "127.0.0.1") << currNickname
+    reply << _constructHeader(ERR_NICKNAMEINUSE, SERVER_NAME) << currNickname
           << " " << newNickname << " :Nickname is already in use.\r\n";
     return (reply.str());
 }

@@ -98,7 +98,7 @@ void    Server::removeUser(const int userFD) {
     }
     user = dynamic_cast<User*>(_sockets[userFD]);
     if (user) {
-        _usersRegistered.erase(user->getNickName());
+        _registeredUsers.erase(user->getNickName());
     }
     delete _sockets[userFD];
     _sockets.erase(userFD);
@@ -106,12 +106,16 @@ void    Server::removeUser(const int userFD) {
 }
 
 bool Server::nicknameIsTaken(const std::string &nick) const {
-    return (_usersRegistered.find(nick) != _usersRegistered.end());
+    return (_registeredUsers.find(nick) != _registeredUsers.end());
 }
 
 void Server::registerUser(User* user) {
     user->setIsRegistered(true);
-    _usersRegistered[user->getNickName()] = user;
+    _registeredUsers[user->getNickName()] = user;
+}
+
+size_t  Server::getNbOfRegisteredUsers() const {
+    return _registeredUsers.size();
 }
 
 void Server::waitForEvents() {

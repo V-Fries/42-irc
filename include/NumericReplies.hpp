@@ -8,6 +8,7 @@
 #define RPL_CREATE "003"
 #define RPL_MYINFO "004"
 #define RPL_ISUPPORT "005"
+#define RPL_LUSERCLIENT "251"
 
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
@@ -23,6 +24,8 @@ class NumericReplies {
                 static std::string  create(const std::string& nickName);
                 static std::string  myInfo(const std::string& nickName);
                 static std::string  iSupport(const std::string& nickName);
+                static std::string  localUserClient(const std::string& nickName,
+                                                    size_t nbOfUsers);
         };
 
         class Error {
