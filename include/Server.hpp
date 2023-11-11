@@ -25,6 +25,7 @@ class Server {
         bool                nicknameIsTaken(const std::string &nick) const;
         void                registerUser(User *user);
         size_t              getNbOfRegisteredUsers() const;
+        size_t              getPeakRegisteredUserCount() const;
         size_t              getNbOfChannels() const;
 
         void    waitForEvents();
@@ -44,6 +45,8 @@ class Server {
 
         SocketMap       _sockets;
         RegisteredMap   _registeredUsers;
+
+        size_t          _peakRegisteredUserCount;
 
         std::map<std::string, Channel>  _channels;
 };

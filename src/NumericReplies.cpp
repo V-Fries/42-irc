@@ -70,7 +70,7 @@ std::string  NumericReplies::Reply::localUserChannels(const std::string& nickNam
                                                       const size_t nbOfChannels) {
     std::stringstream   reply;
 
-    reply << _constructHeader(RPL_LUSERCLIENT, SERVER_NAME) << nickName << ' '
+    reply << _constructHeader(RPL_LUSERCHANNELS, SERVER_NAME) << nickName << ' '
             << nbOfChannels << " :channels formed\r\n";
     return reply.str();
 }
@@ -79,8 +79,32 @@ std::string  NumericReplies::Reply::localUserMe(const std::string& nickName,
                                                 const size_t nbOfUsers) {
     std::stringstream   reply;
 
-    reply << _constructHeader(RPL_LUSERCLIENT, SERVER_NAME) << nickName
+    reply << _constructHeader(RPL_LUSERME, SERVER_NAME) << nickName
             << " :I have " << nbOfUsers << " clients and 0 servers\r\n";
+    return reply.str();
+}
+
+std::string  NumericReplies::Reply::localUsers(const std::string& nickName,
+                                               size_t nbOfUsers,
+                                               size_t peakRegisteredUserCount) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LOCALUSERS, SERVER_NAME) << nickName << ' '
+            << nbOfUsers << ' ' << peakRegisteredUserCount
+            << " :Current local users " << nbOfUsers << ", peak "
+            << peakRegisteredUserCount << "\r\n";
+    return reply.str();
+}
+
+std::string  NumericReplies::Reply::globalUsers(const std::string& nickName,
+                                               size_t nbOfUsers,
+                                               size_t peakRegisteredUserCount) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LOCALUSERS, SERVER_NAME) << nickName << ' '
+            << nbOfUsers << ' ' << peakRegisteredUserCount
+            << " :Current global users " << nbOfUsers << ", peak "
+            << peakRegisteredUserCount << "\r\n";
     return reply.str();
 }
 

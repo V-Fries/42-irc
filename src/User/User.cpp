@@ -191,5 +191,13 @@ void    User::_registerUserIfReady(Server& server) {
     _sendMessage(NumericReplies::Reply::localUserMe(_nickName,
                                                     server.getNbOfRegisteredUsers()),
                  server);
+    _sendMessage(NumericReplies::Reply::localUsers(_nickName,
+                                                   server.getNbOfRegisteredUsers(),
+                                                   server.getPeakRegisteredUserCount()),
+                 server);
+    _sendMessage(NumericReplies::Reply::globalUsers(_nickName,
+                                                   server.getNbOfRegisteredUsers(),
+                                                   server.getPeakRegisteredUserCount()),
+                 server);
     // TODO send all appropriate numeric replies
 }

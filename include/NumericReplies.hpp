@@ -11,6 +11,8 @@
 #define RPL_LUSERCLIENT "251"
 #define RPL_LUSERCHANNELS "254"
 #define RPL_LUSERME "255"
+#define RPL_LOCALUSERS "265"
+#define RPL_GLOBALUSERS "266"
 
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
@@ -26,12 +28,19 @@ class NumericReplies {
                 static std::string  create(const std::string& nickName);
                 static std::string  myInfo(const std::string& nickName);
                 static std::string  iSupport(const std::string& nickName);
+
                 static std::string  localUserClient(const std::string& nickName,
                                                     size_t nbOfUsers);
                 static std::string  localUserChannels(const std::string& nickName,
                                                       size_t nbOfChannels);
                 static std::string  localUserMe(const std::string& nickName,
                                                 size_t nbOfUsers);
+                static std::string  localUsers(const std::string& nickName,
+                                               size_t nbOfUsers,
+                                               size_t peakRegisteredUserCount);
+                static std::string  globalUsers(const std::string& nickName,
+                                                size_t nbOfUsers,
+                                                size_t peakRegisteredUserCount);
         };
 
         class Error {

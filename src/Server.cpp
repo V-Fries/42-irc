@@ -12,7 +12,7 @@ Server::Server(const uint16_t port, const std::string& password):
     _listenSocketFD(-1),
     _events(NULL),
     _numberOfEvents(0),
-    _sockets() {
+    _peakRegisteredUserCount(0) {
     ft::Log::debug << "Server constructor called" << std::endl;
     if (_epollFD == -1) {
         throw ft::Exception("epoll failed to be created", ft::Log::CRITICAL);
@@ -112,10 +112,16 @@ bool Server::nicknameIsTaken(const std::string &nick) const {
 void Server::registerUser(User* user) {
     user->setIsRegistered(true);
     _registeredUsers[user->getNickName()] = user;
+    _peakRegisteredUserCount = std::max(_peakRegisteredUserCount,
+                                        _registeredUsers.size());
 }
 
 size_t  Server::getNbOfRegisteredUsers() const {
     return _registeredUsers.size();
+}
+
+size_t  Server::getPeakRegisteredUserCount() const {
+    return _peakRegisteredUserCount;
 }
 
 size_t  Server::getNbOfChannels() const {
