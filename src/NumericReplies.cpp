@@ -6,22 +6,7 @@
 #define SERVER_VERSION "0.1"
 #define CREATION_DATE "November the 9th of 2023"
 
-std::string NumericReplies::Error::alreadyRegistered(const std::string& nickName) {
-    std::stringstream   reply;
-
-    reply << _constructHeader(ERR_ALREADYREGISTERED, SERVER_NAME) << nickName
-            << " :Unauthorized command (already registered)\r\n";
-    return reply.str();
-}
-
-std::string NumericReplies::Error::needMoreParameters(const std::string& nickName,
-                                                      const std::string& cmdName) {
-    std::stringstream   reply;
-
-    reply << _constructHeader(ERR_NEEDMOREPARAMS, SERVER_NAME) << nickName
-            << ' ' << cmdName << " :Not enough parameters\r\n";
-    return reply.str();
-}
+// Reply
 
 std::string NumericReplies::Reply::welcome(const std::string& nickName) {
     std::stringstream   reply;
@@ -72,19 +57,29 @@ std::string  NumericReplies::Reply::iSupport(const std::string& nickName) {
     return reply.str();
 }
 
+// Error
 
-std::string NumericReplies::_constructHeader(const std::string &requestID,
-                                             const std::string &hostname) {
-    std::stringstream   result;
+std::string NumericReplies::Error::alreadyRegistered(const std::string& nickName) {
+    std::stringstream   reply;
 
-    result << ':' << hostname << ' ' << requestID << ' ';
-    return result.str();
+    reply << _constructHeader(ERR_ALREADYREGISTERED, SERVER_NAME) << nickName
+            << " :Unauthorized command (already registered)\r\n";
+    return reply.str();
+}
+
+std::string NumericReplies::Error::needMoreParameters(const std::string& nickName,
+                                                      const std::string& cmdName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NEEDMOREPARAMS, SERVER_NAME) << nickName
+            << ' ' << cmdName << " :Not enough parameters\r\n";
+    return reply.str();
 }
 
 std::string NumericReplies::Error::erroneousNick(const std::string& currNickname, const std::string& newNickname) {
     std::stringstream   reply;
 
-    reply << HeaderConstructor(ERR_ERRONEUSNICKNAME, "127.0.0.1") << currNickname
+    reply << _constructHeader(ERR_ERRONEUSNICKNAME, "127.0.0.1") << currNickname
           << " " << newNickname << " :Erroneous Nickname\r\n";
     return (reply.str());
 }
@@ -92,7 +87,17 @@ std::string NumericReplies::Error::erroneousNick(const std::string& currNickname
 std::string NumericReplies::Error::nickInUse(const std::string& currNickname, const std::string& newNickname) {
     std::stringstream   reply;
 
-    reply << HeaderConstructor(ERR_NICKNAMEINUSE, "127.0.0.1") << currNickname
+    reply << _constructHeader(ERR_NICKNAMEINUSE, "127.0.0.1") << currNickname
           << " " << newNickname << " :Nickname is already in use.\r\n";
     return (reply.str());
+}
+
+// _constructHeader
+
+std::string NumericReplies::_constructHeader(const std::string &requestID,
+                                             const std::string &hostname) {
+    std::stringstream   result;
+
+    result << ':' << hostname << ' ' << requestID << ' ';
+    return result.str();
 }

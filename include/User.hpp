@@ -19,6 +19,7 @@ class User : public ISocket {
         explicit User(int fd);
 
         int                 getFD() const;
+        void                setIsRegistered(bool isRegistered);
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
 

@@ -110,6 +110,7 @@ bool Server::nicknameIsTaken(const std::string &nick) const {
 }
 
 void Server::registerUser(User* user) {
+    user->setIsRegistered(true);
     _usersRegistered[user->getNickName()] = user;
 }
 

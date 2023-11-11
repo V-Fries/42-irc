@@ -4,6 +4,7 @@
 #include "Command.hpp"
 #include "ft_Log.hpp"
 #include "ft_Exception.hpp"
+#include "NumericReplies.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -21,6 +22,10 @@ User::User(const int fd):
 
 int User::getFD() const {
     return _fd;
+}
+
+void    User::setIsRegistered(bool isRegistered) {
+    _isRegistered = isRegistered;
 }
 
 const std::string&  User::getNickName() const {
