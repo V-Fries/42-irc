@@ -175,6 +175,8 @@ void User::_flushMessages(Server& server) {
 void    User::_registerUserIfReady(Server& server) {
     if (_password.empty() || _nickName == "*" || _userName.empty()) return;
 
+    server.registerUser(this);
+
     _sendMessage(NumericReplies::Reply::welcome(_nickName), server);
     _sendMessage(NumericReplies::Reply::yourHost(_nickName), server);
     _sendMessage(NumericReplies::Reply::create(_nickName), server);
@@ -186,7 +188,8 @@ void    User::_registerUserIfReady(Server& server) {
     _sendMessage(NumericReplies::Reply::localUserChannels(_nickName,
                                                           server.getNbOfChannels()),
                  server);
+    _sendMessage(NumericReplies::Reply::localUserMe(_nickName,
+                                                    server.getNbOfRegisteredUsers()),
+                 server);
     // TODO send all appropriate numeric replies
-
-    server.registerUser(this);
 }

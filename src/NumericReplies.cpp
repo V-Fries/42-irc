@@ -62,7 +62,7 @@ std::string  NumericReplies::Reply::localUserClient(const std::string& nickName,
     std::stringstream   reply;
 
     reply << _constructHeader(RPL_LUSERCLIENT, SERVER_NAME) << nickName
-            << " :There are " << nbOfUsers << " users on 1 server\r\n";
+            << " :There are " << nbOfUsers << " users and 0 invisible on 1 server\r\n";
     return reply.str();
 }
 
@@ -72,6 +72,15 @@ std::string  NumericReplies::Reply::localUserChannels(const std::string& nickNam
 
     reply << _constructHeader(RPL_LUSERCLIENT, SERVER_NAME) << nickName << ' '
             << nbOfChannels << " :channels formed\r\n";
+    return reply.str();
+}
+
+std::string  NumericReplies::Reply::localUserMe(const std::string& nickName,
+                                                const size_t nbOfUsers) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LUSERCLIENT, SERVER_NAME) << nickName
+            << " :I have " << nbOfUsers << " clients and 0 servers\r\n";
     return reply.str();
 }
 
