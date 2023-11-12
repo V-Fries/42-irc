@@ -22,6 +22,7 @@ class Server {
         void                addUser(User* user);
         static epoll_event  getBaseUserEpollEvent(int userFD);
         void                removeUser(int userFD);
+        User*               getUserByNickname(const std::string&);
         bool                nicknameIsTaken(const std::string &nick) const;
         void                registerUser(User *user);
         size_t              getNbOfRegisteredUsers() const;

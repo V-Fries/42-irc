@@ -40,7 +40,6 @@ Server::Server(const uint16_t port, const std::string& password):
     _events = new epoll_event[_sockets.size()];
 }
 
-
 Server::~Server() {
     ft::Log::debug << "Server destructor called" << std::endl;
     for (SocketMap::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
@@ -62,7 +61,6 @@ Server::~Server() {
         }
     } while (errno == EINTR);
 }
-
 
 int     Server::getEpollFD() const {
     return _epollFD;
@@ -126,6 +124,16 @@ size_t  Server::getPeakRegisteredUserCount() const {
 
 size_t  Server::getNbOfChannels() const {
     return _channels.size();
+}
+User*   Server::getUserByNickname(const std::string& nickname) {
+    User    *currUser;
+
+    try {
+        currUser = _registeredUsers[nickname];
+    } catch (std::out_of_range) {
+        return (NULL);
+    }
+    return (currUser);
 }
 
 void Server::waitForEvents() {
