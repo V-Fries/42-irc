@@ -45,4 +45,6 @@ add_executable(webserv
 		lib/libftpp/include/ft_Log.hpp
 		"lib/libftpp/include/ft_Io.hpp"
 		lib/libftpp/src/Io.cpp
+		src/User/_handlePRIVMSG.cpp
+		lib/libftpp/src/Io.cpp
 		lib/libftpp/src/String/toLower.cpp)
