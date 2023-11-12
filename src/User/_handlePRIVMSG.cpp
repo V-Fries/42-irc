@@ -12,8 +12,7 @@ void User::_handlePRIVMSG(Server&server, const std::vector<std::string>&args) {
     User*                       currTarget;
 
     if (args.size() < 2) {
-        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "PRIVMSG"),
-                     server);
+        NumericReplies::Error::needMoreParameters(*this, server, "PRIVMSG");
     }
     targets = ft::String::split(args[0], ",");
     for (std::vector<std::string>::const_iterator it = targets.begin();
@@ -21,9 +20,9 @@ void User::_handlePRIVMSG(Server&server, const std::vector<std::string>&args) {
          ++it) {
         currTarget = server.getUserByNickname(*it);
         if (currTarget) {
-            currTarget->_sendMessage(constructMessageToUser(*this,
-                                                            *currTarget,
-                                                            args[1]),
+            currTarget->sendMessage(constructMessageToUser(*this,
+                                                           *currTarget,
+                                                           args[1]),
                                      server);
         }
     }
