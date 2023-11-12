@@ -130,7 +130,7 @@ User*   Server::getUserByNickname(const std::string& nickname) {
 
     try {
         currUser = _registeredUsers[nickname];
-    } catch (std::out_of_range) {
+    } catch (std::out_of_range& ) {
         return (NULL);
     }
     return (currUser);
