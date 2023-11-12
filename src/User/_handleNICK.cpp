@@ -11,7 +11,7 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
     std::string nickname;
 
     if (args.empty()) {
-        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "NICK"), server);
+        NumericReplies::Error::needMoreParameters(*this, server, "NICK");
         return;
     }
     nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
@@ -23,15 +23,15 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
 
 bool    User::_checkNickname(const std::string &nickName, const Server &server) {
     if (std::string("$:#&").find(nickName[0]) != std::string::npos) {
-        _sendMessage(NumericReplies::Error::erroneousNick(_nickName, nickName), server);
+        NumericReplies::Error::erroneousNick(*this, server, nickName);
         return (false);
     }
     if (nickName.find_first_of(" ,*?!@.") != std::string::npos) {
-        _sendMessage(NumericReplies::Error::erroneousNick(_nickName, nickName), server);
+        NumericReplies::Error::erroneousNick(*this, server, nickName);
         return (false);
     }
     if (server.nicknameIsTaken(nickName)) {
-        _sendMessage(NumericReplies::Error::nickInUse(_nickName, nickName), server);
+        NumericReplies::Error::nickInUse(*this, server, nickName);
         return (false);
     }
     return (true);

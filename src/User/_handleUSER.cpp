@@ -9,13 +9,12 @@ void    User::_handleUSER(Server& server, const std::vector<std::string>& args) 
     ft::Log::info << "Received USER request: \"" << args << "\" from user " << _fd
                   << std::endl;
     if (args.size() < 4) {
-        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "USER"),
-                     server);
+        NumericReplies::Error::needMoreParameters(*this, server, "USER");
         return;
     }
 
     if (_isRegistered) {
-        _sendMessage(NumericReplies::Error::alreadyRegistered(_nickName), server);
+        NumericReplies::Error::alreadyRegistered(*this, server);
         return;
     }
 
