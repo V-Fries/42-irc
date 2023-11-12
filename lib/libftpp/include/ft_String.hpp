@@ -57,6 +57,8 @@ class ft::String {
                                          std::string::const_iterator end,
                                          char charConsideredAsWordSeparator);
 
+        static std::string toLower(const std::string& string);
+
 };
 
 std::ostream&   operator<<(std::ostream& os, const std::vector<std::string>& strings);

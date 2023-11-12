@@ -24,6 +24,9 @@ class Server {
         void                removeUser(int userFD);
         bool                nicknameIsTaken(const std::string &nick) const;
         void                registerUser(User *user);
+        size_t              getNbOfRegisteredUsers() const;
+        size_t              getPeakRegisteredUserCount() const;
+        size_t              getNbOfChannels() const;
 
         void    waitForEvents();
         void    handleEvents();
@@ -36,12 +39,14 @@ class Server {
         const int   _epollFD;
         int         _listenSocketFD;
 
-        epoll_event* _events;
-        bool        _shouldUpdateEventsSize;
-        int         _numberOfEvents;
+        epoll_event*    _events;
+        bool            _shouldUpdateEventsSize;
+        int             _numberOfEvents;
 
         SocketMap       _sockets;
-        RegisteredMap   _usersRegistered;
+        RegisteredMap   _registeredUsers;
+
+        size_t          _peakRegisteredUserCount;
 
         std::map<std::string, Channel>  _channels;
 };

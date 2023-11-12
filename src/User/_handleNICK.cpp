@@ -14,10 +14,7 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
         _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "NICK"), server);
         return;
     }
-    nickname = args[0].substr(0,  User::maxNickNameLength);
-    for (std::string::iterator it = nickname.begin(); it != nickname.end(); ++it) {
-        *it = tolower(*it);
-    }
+    nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
     if (_checkNickname(nickname, server)) {
         _nickName = nickname;
         _registerUserIfReady(server);

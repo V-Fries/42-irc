@@ -4,6 +4,7 @@
 #include "Command.hpp"
 #include "ft_Log.hpp"
 #include "ft_Exception.hpp"
+#include "NumericReplies.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -21,6 +22,10 @@ User::User(const int fd):
 
 int User::getFD() const {
     return _fd;
+}
+
+void    User::setIsRegistered(bool isRegistered) {
+    _isRegistered = isRegistered;
 }
 
 const std::string&  User::getNickName() const {
@@ -64,7 +69,9 @@ void    User::_handleEPOLLIN(Server& server) {
     ssize_t     end;
     std::string msg = std::string("");
 
-    end = recv(_fd, rcvBuffer, 2048, 0);
+    end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
+                                         // TODO if we failed to read the whole 
+                                         // TODO request in one go?
     if (end < 0) {
         std::stringstream   errorMessage;
         errorMessage << "Failed to read from socket " << _fd;
@@ -97,12 +104,12 @@ void    User::_processRequest(Server& server) {
 void    User::_handleRequest(Server& server, const std::string& request) {
     ft::Log::info << "Processing request from user " << _fd << std::endl;
 
+    Command cmd(request);
     try {
-        Command cmd (request);
         RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
         (this->*requestHandler)(server, cmd.getArgs());
     } catch (std::out_of_range &er) {
-        ft::Log::warning << "Request " << request << " from user " << _fd
+        ft::Log::warning << "Request " << cmd << " from user " << _fd
                            << " was not recognized" << std::endl;
         return;
     }
@@ -170,8 +177,29 @@ void User::_flushMessages(Server& server) {
 void    User::_registerUserIfReady(Server& server) {
     if (_password.empty() || _nickName == "*" || _userName.empty()) return;
 
-    _isRegistered = true;
     server.registerUser(this);
-    _sendMessage("You are now registered\n", server); // TODO remove this
-    // TODO send all appropriate numeric replies
+
+    _sendMessage(NumericReplies::Reply::welcome(_nickName), server);
+    _sendMessage(NumericReplies::Reply::yourHost(_nickName), server);
+    _sendMessage(NumericReplies::Reply::create(_nickName), server);
+    _sendMessage(NumericReplies::Reply::myInfo(_nickName), server);
+    _sendMessage(NumericReplies::Reply::iSupport(_nickName), server);
+    _sendMessage(NumericReplies::Reply::localUserClient(_nickName,
+                                                        server.getNbOfRegisteredUsers()),
+                 server);
+    _sendMessage(NumericReplies::Reply::localUserChannels(_nickName,
+                                                          server.getNbOfChannels()),
+                 server);
+    _sendMessage(NumericReplies::Reply::localUserMe(_nickName,
+                                                    server.getNbOfRegisteredUsers()),
+                 server);
+    _sendMessage(NumericReplies::Reply::localUsers(_nickName,
+                                                   server.getNbOfRegisteredUsers(),
+                                                   server.getPeakRegisteredUserCount()),
+                 server);
+    _sendMessage(NumericReplies::Reply::globalUsers(_nickName,
+                                                   server.getNbOfRegisteredUsers(),
+                                                   server.getPeakRegisteredUserCount()),
+                 server);
+    _sendMessage(NumericReplies::Reply::messageOfTheDay(_nickName), server);
 }
