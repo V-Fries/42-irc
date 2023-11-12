@@ -22,42 +22,38 @@
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 
+class User;
+class Server;
+
 class NumericReplies {
     public:
         class Reply {
             public:
-                static std::string  welcome(const std::string& nickName);
-                static std::string  yourHost(const std::string& nickName);
-                static std::string  create(const std::string& nickName);
-                static std::string  myInfo(const std::string& nickName);
-                static std::string  iSupport(const std::string& nickName);
+                static void welcome(User& user, const Server& server);
+                static void yourHost(User& user, const Server& server);
+                static void create(User& user, const Server& server);
+                static void myInfo(User& user, const Server& server);
+                static void iSupport(User& user, const Server& server);
 
-                static std::string  localUserClient(const std::string& nickName,
-                                                    size_t nbOfUsers);
-                static std::string  localUserChannels(const std::string& nickName,
-                                                      size_t nbOfChannels);
-                static std::string  localUserMe(const std::string& nickName,
-                                                size_t nbOfUsers);
-                static std::string  localUsers(const std::string& nickName,
-                                               size_t nbOfUsers,
-                                               size_t peakRegisteredUserCount);
-                static std::string  globalUsers(const std::string& nickName,
-                                                size_t nbOfUsers,
-                                                size_t peakRegisteredUserCount);
+                static void localUserClient(User& user, const Server& server);
+                static void localUserChannels(User& user, const Server& server);
+                static void localUserMe(User& user, const Server& server);
+                static void localUsers(User& user, const Server& server);
+                static void globalUsers(User& user, const Server& server);
 
-                static std::string  messageOfTheDay(const std::string& nickName);
+                static void messageOfTheDay(User& user, const Server& server);
         };
 
         class Error {
             public:
-                static std::string  alreadyRegistered(const std::string& nickName);
+                static void alreadyRegistered(User& user, const Server& server);
 
-                static std::string  needMoreParameters(const std::string& nickName,
-                                                       const std::string& cmdName);
-                static std::string  erroneousNick(const std::string& currNickname,
-                                                  const std::string& newNickname);
-                static std::string  nickInUse(const std::string& currNickname,
-                                                  const std::string& newNickname);
+                static void needMoreParameters(User& user, const Server& server,
+                                               const std::string& cmdName);
+                static void erroneousNick(User& user, const Server& server,
+                                          const std::string& newNickname);
+                static void nickInUse(User& user, const Server& server,
+                                      const std::string& newNickname);
         };
 
     private:

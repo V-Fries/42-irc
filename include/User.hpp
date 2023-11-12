@@ -29,12 +29,12 @@ class User : public ISocket {
 
         bool    isRegistered() const;
 
+        void    sendMessage(const std::string &message, const Server& server);
+
     private:
         typedef void (User::*RequestHandler)(Server&, const std::vector<std::string>&);
         typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
 
-        void    _sendMessage(const std::string &message, Server& server);
-        void    _sendMessage(const std::string &message, const Server& server);
         void    _flushMessages(Server& server);
 
         void    _handleEPOLLIN(Server& server);

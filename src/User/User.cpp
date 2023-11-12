@@ -64,6 +64,24 @@ bool User::isRegistered() const {
     return (_isRegistered);
 }
 
+void User::sendMessage(const std::string &message, const Server& server) {
+    if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
+        const std::string   messageToPrint(message.begin(), message.end() - 2);
+        ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
+                        << _fd << " _messagesBuffer" << std::endl;
+    }
+
+    _messagesBuffer.push(message);
+
+    struct epoll_event  event = Server::getBaseUserEpollEvent(_fd);
+    event.events |= EPOLLOUT;
+    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
+        ft::Log::error << "Failed to make user " << _fd << " wait for EPOLLOUT" << std::endl;
+    } else {
+        ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
+    }
+}
+
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
     ssize_t     end;
@@ -115,42 +133,6 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     }
 }
 
-void User::_sendMessage(const std::string &message, Server& server) {
-    if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
-        const std::string   messageToPrint(message.begin(), message.end() - 2);
-        ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
-                        << _fd << " _messagesBuffer" << std::endl;
-    }
-
-    _messagesBuffer.push(message);
-
-    struct epoll_event  event = Server::getBaseUserEpollEvent(_fd);
-    event.events |= EPOLLOUT;
-    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
-        ft::Log::error << "Failed to make user " << _fd << " wait for EPOLLOUT" << std::endl;
-    } else {
-        ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
-    }
-}
-
-void User::_sendMessage(const std::string &message, const Server& server) {
-    if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
-        const std::string   messageToPrint(message.begin(), message.end() - 2);
-        ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
-                        << _fd << " _messagesBuffer" << std::endl;
-    }
-
-    _messagesBuffer.push(message);
-
-    struct epoll_event  event = Server::getBaseUserEpollEvent(_fd);
-    event.events |= EPOLLOUT;
-    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
-        ft::Log::error << "Failed to make user " << _fd << " wait for EPOLLOUT" << std::endl;
-    } else {
-        ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
-    }
-}
-
 void User::_flushMessages(Server& server) {
     ft::Log::info << "Flushing messages destined to user " << _fd << std::endl;
 
@@ -179,27 +161,15 @@ void    User::_registerUserIfReady(Server& server) {
 
     server.registerUser(this);
 
-    _sendMessage(NumericReplies::Reply::welcome(_nickName), server);
-    _sendMessage(NumericReplies::Reply::yourHost(_nickName), server);
-    _sendMessage(NumericReplies::Reply::create(_nickName), server);
-    _sendMessage(NumericReplies::Reply::myInfo(_nickName), server);
-    _sendMessage(NumericReplies::Reply::iSupport(_nickName), server);
-    _sendMessage(NumericReplies::Reply::localUserClient(_nickName,
-                                                        server.getNbOfRegisteredUsers()),
-                 server);
-    _sendMessage(NumericReplies::Reply::localUserChannels(_nickName,
-                                                          server.getNbOfChannels()),
-                 server);
-    _sendMessage(NumericReplies::Reply::localUserMe(_nickName,
-                                                    server.getNbOfRegisteredUsers()),
-                 server);
-    _sendMessage(NumericReplies::Reply::localUsers(_nickName,
-                                                   server.getNbOfRegisteredUsers(),
-                                                   server.getPeakRegisteredUserCount()),
-                 server);
-    _sendMessage(NumericReplies::Reply::globalUsers(_nickName,
-                                                   server.getNbOfRegisteredUsers(),
-                                                   server.getPeakRegisteredUserCount()),
-                 server);
-    _sendMessage(NumericReplies::Reply::messageOfTheDay(_nickName), server);
+    NumericReplies::Reply::welcome(*this, server);
+    NumericReplies::Reply::yourHost(*this, server);
+    NumericReplies::Reply::create(*this, server);
+    NumericReplies::Reply::myInfo(*this, server);
+    NumericReplies::Reply::iSupport(*this, server);
+    NumericReplies::Reply::localUserClient(*this, server);
+    NumericReplies::Reply::localUserChannels(*this, server);
+    NumericReplies::Reply::localUserMe(*this, server);
+    NumericReplies::Reply::localUsers(*this, server);
+    NumericReplies::Reply::globalUsers(*this, server);
+    NumericReplies::Reply::messageOfTheDay(*this, server);
 }

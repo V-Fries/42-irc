@@ -10,13 +10,12 @@ void    User::_handlePASS(Server& server, const std::vector<std::string>& args) 
                   << std::endl;
 
     if (args.empty()) {
-        _sendMessage(NumericReplies::Error::needMoreParameters(_nickName, "PASS"),
-                     server);
+        NumericReplies::Error::needMoreParameters(*this, server, "PASS");
         return;
     }
 
     if (_isRegistered) {
-        _sendMessage(NumericReplies::Error::alreadyRegistered(_nickName), server);
+        NumericReplies::Error::alreadyRegistered(*this, server);
         return;
     }
 
