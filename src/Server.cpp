@@ -12,7 +12,7 @@ Server::Server(const uint16_t port, const std::string& password):
     _listenSocketFD(-1),
     _events(NULL),
     _numberOfEvents(0),
-    _sockets() {
+    _peakRegisteredUserCount(0) {
     ft::Log::debug << "Server constructor called" << std::endl;
     if (_epollFD == -1) {
         throw ft::Exception("epoll failed to be created", ft::Log::CRITICAL);
@@ -87,6 +87,8 @@ epoll_event Server::getBaseUserEpollEvent(const int userFD) {
 }
 
 void    Server::removeUser(const int userFD) {
+    User    *user;
+
     ft::Log::info << "User " << userFD << " disconnected" << std::endl;
     if (epoll_ctl(_epollFD, EPOLL_CTL_DEL, userFD, NULL) == -1) {
         ft::Log::error << "Failed to remove user " << userFD << " from epoll" << std::endl;
@@ -94,11 +96,37 @@ void    Server::removeUser(const int userFD) {
     if (close(userFD) != 0) {
         ft::Log::error << "Failed to close socket " << userFD << std::endl;
     }
+    user = dynamic_cast<User*>(_sockets[userFD]);
+    if (user) {
+        _registeredUsers.erase(user->getNickName());
+    }
     delete _sockets[userFD];
     _sockets.erase(userFD);
     _shouldUpdateEventsSize = true;
 }
 
+bool Server::nicknameIsTaken(const std::string &nick) const {
+    return (_registeredUsers.find(nick) != _registeredUsers.end());
+}
+
+void Server::registerUser(User* user) {
+    user->setIsRegistered(true);
+    _registeredUsers[user->getNickName()] = user;
+    _peakRegisteredUserCount = std::max(_peakRegisteredUserCount,
+                                        _registeredUsers.size());
+}
+
+size_t  Server::getNbOfRegisteredUsers() const {
+    return _registeredUsers.size();
+}
+
+size_t  Server::getPeakRegisteredUserCount() const {
+    return _peakRegisteredUserCount;
+}
+
+size_t  Server::getNbOfChannels() const {
+    return _channels.size();
+}
 User*   Server::getUserByNickname(const std::string& nickname) {
     User    *currUser;
 

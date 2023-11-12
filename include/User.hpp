@@ -12,21 +12,29 @@ class Server;
 
 class User : public ISocket {
     public:
+        static const int maxNbOfJoinedRegularChannels = 42; // # channels
+        static const int maxNbOfJoinedLocalChannels = 42; // & channels
+        static const int maxNickNameLength = 42;
+
         explicit User(int fd);
 
         int                 getFD() const;
+        void                setIsRegistered(bool isRegistered);
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
 
-        static void    initRequestsHandlers();
+        static void initRequestsHandlers();
 
         void    handleEvent(uint32_t epollEvents, Server& server);
+
+        bool    isRegistered() const;
 
     private:
         typedef void (User::*RequestHandler)(Server&, const std::vector<std::string>&);
         typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
 
         void    _sendMessage(const std::string &message, Server& server);
+        void    _sendMessage(const std::string &message, const Server& server);
         void    _flushMessages(Server& server);
 
         void    _handleEPOLLIN(Server& server);
@@ -39,6 +47,8 @@ class User : public ISocket {
         void    _handlePRIVMSG(Server& server, const std::vector<std::string>& args);
 
         void    _registerUserIfReady(Server& server);
+
+        bool    _checkNickname(const std::string &nickName, const Server &server);
 
         static RequestsHandlersMap _requestsHandlers;
 

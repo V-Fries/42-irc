@@ -3,21 +3,49 @@
 #include <string>
 #include <sstream>
 
+#define RPL_WELCOME "001"
+#define RPL_YOURHOST "002"
+#define RPL_CREATE "003"
+#define RPL_MYINFO "004"
+#define RPL_ISUPPORT "005"
+#define RPL_LUSERCLIENT "251"
+#define RPL_LUSERCHANNELS "254"
+#define RPL_LUSERME "255"
+#define RPL_LOCALUSERS "265"
+#define RPL_GLOBALUSERS "266"
+#define RPL_MOTD "372"
+#define RPL_MOTDSTART "375"
+#define RPL_ENDOFMOTD "376"
+
+#define ERR_ERRONEUSNICKNAME "432"
+#define ERR_NICKNAMEINUSE "433"
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 
-#define RPL_WELCOME "001"
-
 class NumericReplies {
     public:
-        class HeaderConstructor {
+        class Reply {
             public:
-                HeaderConstructor(const std::string& number,
-                                  const std::string& hostname);
+                static std::string  welcome(const std::string& nickName);
+                static std::string  yourHost(const std::string& nickName);
+                static std::string  create(const std::string& nickName);
+                static std::string  myInfo(const std::string& nickName);
+                static std::string  iSupport(const std::string& nickName);
 
-                const std::stringstream&    getContent() const;
-            private:
-                std::stringstream _content;
+                static std::string  localUserClient(const std::string& nickName,
+                                                    size_t nbOfUsers);
+                static std::string  localUserChannels(const std::string& nickName,
+                                                      size_t nbOfChannels);
+                static std::string  localUserMe(const std::string& nickName,
+                                                size_t nbOfUsers);
+                static std::string  localUsers(const std::string& nickName,
+                                               size_t nbOfUsers,
+                                               size_t peakRegisteredUserCount);
+                static std::string  globalUsers(const std::string& nickName,
+                                                size_t nbOfUsers,
+                                                size_t peakRegisteredUserCount);
+
+                static std::string  messageOfTheDay(const std::string& nickName);
         };
 
         class Error {
@@ -26,12 +54,13 @@ class NumericReplies {
 
                 static std::string  needMoreParameters(const std::string& nickName,
                                                        const std::string& cmdName);
+                static std::string  erroneousNick(const std::string& currNickname,
+                                                  const std::string& newNickname);
+                static std::string  nickInUse(const std::string& currNickname,
+                                                  const std::string& newNickname);
         };
 
-        class Reply {
-            public:
-        };
+    private:
+        static std::string  _constructHeader(const std::string& requestID,
+                                             const std::string& hostname);
 };
-
-std::ostream&   operator<<(std::ostream& os,
-                           const NumericReplies::HeaderConstructor& headerConstructor);

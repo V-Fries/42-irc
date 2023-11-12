@@ -11,7 +11,8 @@
 
 class Server {
     public:
-        typedef std::map<int, ISocket*> SocketMap;
+        typedef std::map<int, ISocket*>         SocketMap;
+        typedef std::map<std::string, User*>    RegisteredMap;
 
         Server(uint16_t port, const std::string& password);
 
@@ -22,6 +23,11 @@ class Server {
         static epoll_event  getBaseUserEpollEvent(int userFD);
         void                removeUser(int userFD);
         User*               getUserByNickname(const std::string&);
+        bool                nicknameIsTaken(const std::string &nick) const;
+        void                registerUser(User *user);
+        size_t              getNbOfRegisteredUsers() const;
+        size_t              getPeakRegisteredUserCount() const;
+        size_t              getNbOfChannels() const;
 
         void    waitForEvents();
         void    handleEvents();
@@ -34,11 +40,14 @@ class Server {
         const int   _epollFD;
         int         _listenSocketFD;
 
-        epoll_event* _events;
-        bool        _shouldUpdateEventsSize;
-        int         _numberOfEvents;
+        epoll_event*    _events;
+        bool            _shouldUpdateEventsSize;
+        int             _numberOfEvents;
 
-        SocketMap   _sockets;
+        SocketMap       _sockets;
+        RegisteredMap   _registeredUsers;
+
+        size_t          _peakRegisteredUserCount;
 
         std::map<std::string, Channel>  _channels;
 };

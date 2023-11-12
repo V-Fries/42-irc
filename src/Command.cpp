@@ -2,12 +2,14 @@
 #include "ft.hpp"
 
 Command::Command(const std::string &rawCommand) {
-    std::string::const_iterator it = rawCommand.begin();
+    std::string::const_iterator it;
     std::string::const_iterator currIterator;
 
+    it = rawCommand.begin();
     while (isspace(*it)) ++it;
-    _command = ft::String::getFirstWord(it, rawCommand.end(), ' ');
+    _command = ft::String::getFirstWord(it, rawCommand.end(), ": ");
     it += _command.length();
+    while (isspace(*it)) ++it;
     currIterator = it;
     while (currIterator != rawCommand.end() && \
             *currIterator != ':')
@@ -15,7 +17,8 @@ Command::Command(const std::string &rawCommand) {
     _args = ft::String::split(std::string(it, currIterator), " ");
     if (*currIterator == ':') {
         ++currIterator;
-        _args.push_back(std::string(currIterator, rawCommand.end()));
+        if (currIterator != rawCommand.end())
+            _args.push_back(std::string(currIterator, rawCommand.end()));
     }
 }
 
@@ -29,18 +32,6 @@ const std::vector<std::string> &Command::getArgs() const {
 
 std::ostream& operator<<(std::ostream& os, const Command& cmd) {
     os << "Command: " << cmd.getCommand() << " | ";
-    if (cmd.getArgs().size() == 0) {
-        os << "no args";
-        return os;
-    }
-    os << "Args: ";
-    std::vector<std::string>::const_iterator    lastCommand = cmd.getArgs().end() - 1;
-    std::vector<std::string>::const_iterator    it;
-    for (it = cmd.getArgs().begin();
-         it != lastCommand;
-         ++it) {
-        os << *it << " |&| ";
-    }
-    os << *it;
+    os << "Args: " << cmd.getArgs() ;
     return os;
 }

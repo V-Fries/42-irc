@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+#include "ft_String.hpp"
 
 #include <limits>
 
@@ -8,7 +9,7 @@ Channel::Channel(const std::string& name,
                  const std::string& password,
                  const int creatorFD)
         throw (IncorrectName):
-    _name(name),
+    _name(ft::String::toLower(name)),
     _password(password),
     _topic(""),
     _membersFDs(),
@@ -17,7 +18,7 @@ Channel::Channel(const std::string& name,
     _isInviteOnly(false),
     _userLimit(Channel::getMaxPossibleUserLimit())
 {
-    if (!Channel::_isNameCorrect(name)) throw (IncorrectName());
+    if (!Channel::_isNameCorrect(_name)) throw (IncorrectName());
 
     _membersFDs.insert(creatorFD);
     _operatorsFDs.insert(creatorFD);
