@@ -10,7 +10,6 @@
 
 static uint16_t     getPort(const std::string& portStr);
 static std::string  getPassword(const std::string& password);
-static bool         isPasswordTooLongToFitInPassRequest(const std::string& password);
 static uint16_t     getMaxPasswordLength();
 
 int main(int argc, char** argv) {
@@ -59,10 +58,10 @@ static std::string getPassword(const std::string& password) {
     if (password.empty()) {
         throw ft::Exception("Password argument should not be empty", ft::Log::CRITICAL);
     }
-    if (isPasswordTooLongToFitInPassRequest(password)) {
+    if (password.size() > getMaxPasswordLength()) {
         std::stringstream   errorMessage;
         errorMessage << "Password argument should be no longer than "
-                       << getMaxPasswordLength();
+                       << getMaxPasswordLength() << " characters";
         throw ft::Exception(errorMessage.str(), ft::Log::CRITICAL);
     }
 
@@ -74,10 +73,6 @@ static std::string getPassword(const std::string& password) {
     }
 
     return password;
-}
-
-static bool isPasswordTooLongToFitInPassRequest(const std::string& password) {
-    return password.size() > getMaxPasswordLength();
 }
 
 static uint16_t  getMaxPasswordLength() {
