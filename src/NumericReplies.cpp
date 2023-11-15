@@ -175,6 +175,14 @@ void    NumericReplies::Error::nickInUse(User& user, const Server& server,
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::noNicknameGiven(User &user, const Server &server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NONICKNAMEGIVEN, SERVER_NAME) << user.getNickName()
+          << " :No nickname given\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
 std::string NumericReplies::_constructHeader(const std::string &requestID,

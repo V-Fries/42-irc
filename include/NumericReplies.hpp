@@ -17,6 +17,7 @@
 #define RPL_MOTDSTART "375"
 #define RPL_ENDOFMOTD "376"
 
+#define ERR_NONICKNAMEGIVEN "431"
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
 #define ERR_NEEDMOREPARAMS "461"
@@ -54,6 +55,7 @@ class NumericReplies {
                                           const std::string& newNickname);
                 static void nickInUse(User& user, const Server& server,
                                       const std::string& newNickname);
+                static void noNicknameGiven(User& user, const Server& server);
         };
 
     private:
