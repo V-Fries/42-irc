@@ -8,9 +8,11 @@
 #include <cstdlib>
 #include <iostream>
 
+#define PASS_REQUEST_LENGTH 7
+#define MAX_PASSWORD_LENGHT (REQUEST_LENGTH_LIMIT - PASS_REQUEST_LENGTH)
+
 static uint16_t     getPort(const std::string& portStr);
 static std::string  getPassword(const std::string& password);
-static uint16_t     getMaxPasswordLength();
 
 int main(int argc, char** argv) {
     ft::Log::setDebugLevel(ft::Log::DEBUG);
@@ -58,10 +60,10 @@ static std::string getPassword(const std::string& password) {
     if (password.empty()) {
         throw ft::Exception("Password argument should not be empty", ft::Log::CRITICAL);
     }
-    if (password.size() > getMaxPasswordLength()) {
+    if (password.size() > MAX_PASSWORD_LENGHT) {
         std::stringstream   errorMessage;
         errorMessage << "Password argument should be no longer than "
-                       << getMaxPasswordLength() << " characters";
+                       << MAX_PASSWORD_LENGHT << " characters";
         throw ft::Exception(errorMessage.str(), ft::Log::CRITICAL);
     }
 
@@ -73,10 +75,4 @@ static std::string getPassword(const std::string& password) {
     }
 
     return password;
-}
-
-static uint16_t  getMaxPasswordLength() {
-    const uint8_t   passRequestLength = 7; // Length of "PASS \r\n"
-
-    return REQUEST_LENGTH_LIMIT - passRequestLength;
 }
