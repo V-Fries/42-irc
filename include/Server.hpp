@@ -9,6 +9,8 @@
 #include <map>
 #include <stdint.h>
 
+#define REQUEST_LENGTH_LIMIT 512
+
 class Server {
     public:
         typedef std::map<int, ISocket*>         SocketMap;
