@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project(webserv)
 
 set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_COMPILER g++)
 
 add_compile_options(-Wall -Wextra -Werror -g3)
 
@@ -43,8 +44,10 @@ add_executable(webserv
 		lib/libftpp/src/Exception.cpp
 		lib/libftpp/src/Log.cpp
 		lib/libftpp/include/ft_Log.hpp
-		"lib/libftpp/include/ft_Io.hpp"
+		lib/libftpp/include/ft_Io.hpp
 		lib/libftpp/src/Io.cpp
 		src/User/_handlePRIVMSG.cpp
-		lib/libftpp/src/Io.cpp
-		lib/libftpp/src/String/toLower.cpp)
+		lib/libftpp/src/String/toLower.cpp
+		src/User/_handleJOIN.cpp
+		src/User/_handlePING.cpp
+		src/User/_handleWHO.cpp)

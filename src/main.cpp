@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     User::initRequestsHandlers();
 
     try {
-        Server  server(6667, "password"); // TODO Use args to set the server up
+        Server  server(3443, "password"); // TODO Use args to set the server up
         SignalHandler::init(server);
         server.run();
     } catch (const ft::Exception& e) {

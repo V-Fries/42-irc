@@ -1,16 +1,9 @@
 #include "NumericReplies.hpp"
 #include "User.hpp"
 #include "Server.hpp"
+#include "Channel.hpp"
 
 #include <fstream>
-
-#define SERVER_NAME "127.0.0.1"
-#define NETWORK_NAME "42IRC"
-#define SERVER_VERSION "0.1"
-#define CREATION_DATE "November the 9th of 2023"
-
-#define PATH_TO_MOTD "data/MOTD.txt" // TODO this path only works if IRC binary
-                                     // TODO is in the current working directory
 
 // Reply
 
@@ -136,6 +129,31 @@ void    NumericReplies::Reply::messageOfTheDay(User& user, const Server& server)
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Reply::namesReply(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_NAMREPLY, SERVER_NAME) << user.getNickName() << " = " << channel.getName() << " :";
+    for (Channel::UserContainer::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+        if (it != channel.getMembers().end()) {
+            if (channel.isOperator(user.getFD())) reply << "@";
+            reply << (*it)->getNickName() << " ";
+        }
+    }
+    reply << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::endOfNames(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_ENDOFNAMES, SERVER_NAME) << user.getNickName() << " " << channel.getName() << " :End of NAMES list.\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const Server& server) {
+    (void) user;(void) channel;(void) server;
+}
+
 // Error
 
 void    NumericReplies::Error::alreadyRegistered(User& user, const Server& server) {
@@ -172,6 +190,14 @@ void    NumericReplies::Error::nickInUse(User& user, const Server& server,
     reply << _constructHeader(ERR_NICKNAMEINUSE, SERVER_NAME)
             << user.getNickName() << " " << newNickname
             << " :Nickname is already in use.\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::channelIsFull(User& user, const Server& server, const std::string& channelName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_CHANNELISFULL, SERVER_NAME)
+          << user.getNickName() << " " << channelName << " :Cannot join channel (+l)\r\n";
     user.sendMessage(reply.str(), server);
 }
 

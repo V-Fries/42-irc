@@ -6,10 +6,14 @@
 static std::string  constructMessageToUser(const User& sender,
                                            const User& receiver,
                                            const std::string& body);
+static std::string  constructMessageToChannel(const User& sender,
+                                              const Channel& receiver,
+                                              const std::string& body);
 
 void User::_handlePRIVMSG(Server&server, const std::vector<std::string>&args) {
     std::vector<std::string>    targets;
-    User*                       currTarget;
+    User*                       currUserTarget;
+    Channel*                    currChannelTarget;
 
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "PRIVMSG");
@@ -18,12 +22,15 @@ void User::_handlePRIVMSG(Server&server, const std::vector<std::string>&args) {
     for (std::vector<std::string>::const_iterator it = targets.begin();
          it != targets.end();
          ++it) {
-        currTarget = server.getUserByNickname(*it);
-        if (currTarget) {
-            currTarget->sendMessage(constructMessageToUser(*this,
-                                                           *currTarget,
+        currUserTarget = server.getUserByNickname(*it);
+        currChannelTarget = server.getChannelByName(*it);
+        if (currUserTarget) {
+            currUserTarget->sendMessage(constructMessageToUser(*this,
+                                                           *currUserTarget,
                                                            args[1]),
-                                     server);
+                                    server);
+        } else if (currChannelTarget) {
+            currChannelTarget->sendMessage(_fd, constructMessageToChannel(*this, *currChannelTarget, args[1]), server);
         }
     }
 }
@@ -35,5 +42,15 @@ static std::string  constructMessageToUser(const User& sender,
 
     message << ":" << sender.getNickName() << " PRIVMSG " <<
             receiver.getNickName() << " :" << body << "\r\n";
+    return (message.str());
+}
+
+static std::string  constructMessageToChannel(const User& sender,
+                                              const Channel& receiver,
+                                              const std::string& body) {
+    std::stringstream   message;
+
+    message << ":" << sender.getNickName() << " PRIVMSG " <<
+            receiver.getName() << " :" << body << "\r\n";
     return (message.str());
 }

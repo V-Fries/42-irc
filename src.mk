@@ -3,6 +3,9 @@ SRC	=\
 	User/_handlePASS.cpp	\
 	User/_handleUSER.cpp	\
 	User/_handlePRIVMSG.cpp	\
+	User/_handleJOIN.cpp	\
+	User/_handlePING.cpp	\
+	User/_handleWHO.cpp		\
 	User/User.cpp			\
 \
 	Channel.cpp			\
