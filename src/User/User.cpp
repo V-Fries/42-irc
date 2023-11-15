@@ -97,6 +97,7 @@ void User::sendMessage(const std::string &message, const Server& server) {
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
     ssize_t     end;
+    char        test = 'a';
 
     do {
         end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
@@ -108,16 +109,18 @@ void    User::_handleEPOLLIN(Server& server) {
             throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
         }
         rcvBuffer[end] = 0;
-        _requestBuffer += std::string(rcvBuffer);
+        _requestBuffer += rcvBuffer;
+        _requestBuffer += test;
         ft::Log::debug << "end = " << end << std::endl;
     } while (end == 2048);
-    if (_requestBuffer.find("\r\n") != std::string::npos) {
+    if (_requestBuffer.find('\r') != std::string::npos || _requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
     }
 }
 
 void    User::_processRequest(Server& server) {
-    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n");
+
+    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n", SPLIT_ON_CHARACTER_SET);
     if (*(_requestBuffer.end() - 1) == '\n') {
         _requestBuffer = "";
     } else {

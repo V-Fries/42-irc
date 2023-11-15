@@ -8,9 +8,12 @@
 #include <netinet/in.h>
 #include <iostream>
 #include <cstring>
+#include <libexplain/setsockopt.h>
 
 ListenSocket::ListenSocket(const uint16_t port):
     _fd(socket(AF_INET, SOCK_STREAM, 0)) {
+    int opt;
+
     ft::Log::debug << "ListenSocket constructor called" << std::endl;
     if (_fd == -1) {
         throw ft::Exception("Failed to create ListenSocket socket", ft::Log::CRITICAL);
@@ -24,6 +27,13 @@ ListenSocket::ListenSocket(const uint16_t port):
     if (bind(_fd, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) != 0) {
         close(_fd);
         throw ft::Exception("Failed to bind ListenSocket socket", ft::Log::CRITICAL);
+    }
+    opt = 1;
+    if (setsockopt(_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof (int))) {
+        ft::Log::error << "setsockopt fail: " << explain_setsockopt(_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof (int)) << std::endl;
+    }
+    if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (int))) {
+        ft::Log::error << "setsockopt fail: " << explain_setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (int)) << std::endl;
     }
 }
 

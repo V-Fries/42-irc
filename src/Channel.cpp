@@ -22,6 +22,7 @@ Channel::Channel(const std::string& name,
 {
     if (!Channel::_isNameCorrect(_name)) throw (IncorrectName());
 
+    ft::Log::info << "new channel: " << _name << std::endl;
     _members.insert(creator);
     _operators.insert(creator);
 }
@@ -56,6 +57,7 @@ const Channel::UserContainer&   Channel::getMembers() const {
 void    Channel::addMember(User *newMember) throw (Channel::IsFull) {
     if (_members.size() >= _userLimit) throw (Channel::IsFull());
 
+    ft::Log::info << "channel " << _name << " add " << newMember->getNickName();
     _members.insert(newMember);
     this->removeInvitedUser(newMember->getFD());
 }
@@ -141,6 +143,7 @@ size_t  Channel::getMaxPossibleUserLimit() {
 }
 
 void Channel::sendMessage(int senderFd, const std::string& message, const Server& server) {
+    ft::Log::info << _name << " send message: " << message << std::endl;
     for(UserContainer::iterator it = _members.begin(); it != _members.end(); ++it) {
             if ((*it)->getFD() != senderFd) (*it)->sendMessage(message, server);
     }

@@ -27,7 +27,7 @@ void    ft::Log::setShouldWriteToTerminal(bool shouldWriteToTerminal) {
 
 
 void    ft::Log::setFileToWriteTo(const std::string& fileName) {
-    _file.open(fileName.c_str());
+    _file.open(fileName.c_str(), std::ios_base::app | std::ios_base::ate);
 
     if (!_file.is_open()) {
         throw FailedToOpenFile("ft::Log::setFileToWriteTo(): "

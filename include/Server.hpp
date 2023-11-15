@@ -9,13 +9,7 @@
 #include <map>
 #include <stdint.h>
 
-#define SERVER_NAME "127.0.0.1"
-#define NETWORK_NAME "42IRC"
-#define SERVER_VERSION "0.1"
-#define CREATION_DATE "November the 9th of 2023"
-
-#define PATH_TO_MOTD "data/MOTD.txt" // TODO this path only works if IRC binary
-                                     // TODO is in the current working directory
+#define REQUEST_LENGTH_LIMIT 512
 
 class Server {
     public:

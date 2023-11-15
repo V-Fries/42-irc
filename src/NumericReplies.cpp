@@ -5,6 +5,14 @@
 
 #include <fstream>
 
+#define SERVER_NAME "127.0.0.1"
+#define NETWORK_NAME "42IRC"
+#define SERVER_VERSION "0.1"
+#define CREATION_DATE "November the 9th of 2023"
+
+#define PATH_TO_MOTD "data/MOTD.txt" // TODO this path only works if IRC binary
+                                     // TODO is in the current working directory
+
 // Reply
 
 void    NumericReplies::Reply::welcome(User& user, const Server& server) {
@@ -198,6 +206,14 @@ void NumericReplies::Error::channelIsFull(User& user, const Server& server, cons
 
     reply << _constructHeader(ERR_CHANNELISFULL, SERVER_NAME)
           << user.getNickName() << " " << channelName << " :Cannot join channel (+l)\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::noNicknameGiven(User &user, const Server &server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NONICKNAMEGIVEN, SERVER_NAME) << user.getNickName()
+          << " :No nickname given\r\n";
     user.sendMessage(reply.str(), server);
 }
 

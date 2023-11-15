@@ -30,6 +30,7 @@ void User::_handlePRIVMSG(Server&server, const std::vector<std::string>&args) {
                                                            args[1]),
                                     server);
         } else if (currChannelTarget) {
+            ft::Log::info << "send message to channel :" << currChannelTarget->getName() << std::endl;
             currChannelTarget->sendMessage(_fd, constructMessageToChannel(*this, *currChannelTarget, args[1]), server);
         }
     }

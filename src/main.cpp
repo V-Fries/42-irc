@@ -2,21 +2,77 @@
 #include "SignalHandler.hpp"
 #include "ft.hpp"
 
+#include <limits>
+#include <sstream>
+#include <cerrno>
+#include <cstdlib>
 #include <iostream>
 
+#define PASS_REQUEST_LENGTH 7
+#define MAX_PASSWORD_LENGHT (REQUEST_LENGTH_LIMIT - PASS_REQUEST_LENGTH)
+
+static uint16_t     getPort(const std::string& portStr);
+static std::string  getPassword(const std::string& password);
+
 int main(int argc, char** argv) {
-    static_cast<void>(argc); // TODO remove me
-    static_cast<void>(argv); // TODO remove me
     ft::Log::setDebugLevel(ft::Log::DEBUG);
     ft::Log::setFileToWriteTo("logs.txt");
 
-    User::initRequestsHandlers();
+    if (argc != 3) {
+        ft::Log::critical << "Wrong number of arguments, expected:\n"
+                             "\t./ircserv PORT PASSWORD" << std::endl;
+        return 1;
+    }
 
     try {
-        Server  server(3443, "password"); // TODO Use args to set the server up
+        Server  server(getPort(argv[1]), getPassword(argv[2]));
+        User::initRequestsHandlers();
         SignalHandler::init(server);
         server.run();
     } catch (const ft::Exception& e) {
         e.printError();
+        return 2;
     }
+}
+
+static uint16_t getPort(const std::string& portStr) {
+    if (portStr.empty()) {
+        throw ft::Exception("Port argument should not be empty", ft::Log::CRITICAL);
+    }
+
+    char*       lastChar;
+    const long  port = std::strtol(portStr.c_str(), &lastChar, 10);
+
+    if (!std::isdigit(static_cast<unsigned char>(portStr[0])) || *lastChar != '\0') {
+        throw ft::Exception("Unexpected character in port argument: \"" + portStr + '\"',
+                            ft::Log::CRITICAL);
+    }
+    if (errno == ERANGE || port < 0 || port > std::numeric_limits<uint16_t>::max()) {
+        throw ft::Exception("Value for port should be an uint16",
+                            ft::Log::CRITICAL);
+    }
+
+    ft::Log::debug << "Port argument is " << static_cast<uint16_t>(port) << std::endl;
+    return static_cast<uint16_t>(port);
+}
+
+static std::string getPassword(const std::string& password) {
+    if (password.empty()) {
+        throw ft::Exception("Password argument should not be empty", ft::Log::CRITICAL);
+    }
+    if (password.size() > MAX_PASSWORD_LENGHT) {
+        std::stringstream   errorMessage;
+        errorMessage << "Password argument should be no longer than "
+                       << MAX_PASSWORD_LENGHT << " characters";
+        throw ft::Exception(errorMessage.str(), ft::Log::CRITICAL);
+    }
+
+    for (std::string::const_iterator it(password.begin()); it != password.end(); ++it) {
+        if (std::isspace(static_cast<unsigned char>(*it))) {
+            throw ft::Exception("Password argument should not contain any whitespaces",
+                                ft::Log::CRITICAL);
+        }
+    }
+
+    return password;
 }

@@ -11,7 +11,7 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
     std::string nickname;
 
     if (args.empty()) {
-        NumericReplies::Error::needMoreParameters(*this, server, "NICK");
+        NumericReplies::Error::noNicknameGiven(*this, server);
         return;
     }
     nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
