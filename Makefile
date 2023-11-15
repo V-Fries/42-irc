@@ -6,6 +6,7 @@ NAMES =\
 	$(BASE_NAME)		\
 	$(BASE_NAME)_debug1	\
 	$(BASE_NAME)_debug2
+ARGS = 6667 password
 ifeq ($(DEBUG), 0)
 	NAME				=	$(BASE_NAME)
 	DIR_BUILD			=	$(BUILD_ROOT)base/
@@ -80,7 +81,7 @@ all:
 .PHONY:	run
 run:
 		$(MAKE) -j
-		./$(BASE_NAME) || true
+		./$(BASE_NAME) $(ARGS) || true
 
 $(NAME):	$(OBJS)
 		$(CXX) $(CPPFLAGS) $(INCLUDES) $(OBJS) $(LIBS) -o $(NAME)
@@ -104,7 +105,7 @@ debug1:
 .PHONY:	runDebug1
 runDebug1:
 		$(MAKE) debug1 -j
-		./$(BASE_NAME)_debug1 || true
+		./$(BASE_NAME)_debug1 $(ARGS) || true
 
 .PHONY:	debug2
 debug2:
@@ -113,14 +114,14 @@ debug2:
 .PHONY:	runDebug2
 runDebug2:
 		$(MAKE) debug2 -j
-		./$(BASE_NAME)_debug2 || true
+		./$(BASE_NAME)_debug2 $(ARGS) || true
 
 
 .PHONY:	runValgrind
 runValgrind:
 		$(MAKE) debug1 -j
 		valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
-				 --track-fds=yes -s -q ./$(BASE_NAME)_debug1 \
+				 --track-fds=yes -s -q ./$(BASE_NAME)_debug1 $(ARGS)\
 			|| true
 
 
