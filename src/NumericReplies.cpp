@@ -5,7 +5,8 @@
 
 #include <fstream>
 
-#define SERVER_NAME "127.0.0.1"
+#include "ft_Log.hpp"
+
 #define NETWORK_NAME "42IRC"
 #define SERVER_VERSION "0.1"
 #define CREATION_DATE "November the 9th of 2023"
@@ -143,7 +144,8 @@ void NumericReplies::Reply::namesReply(User& user, const Channel& channel, const
     reply << _constructHeader(RPL_NAMREPLY, SERVER_NAME) << user.getNickName() << " = " << channel.getName() << " :";
     for (Channel::UserContainer::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
         if (it != channel.getMembers().end()) {
-            if (channel.isOperator(user.getFD())) reply << "@";
+            if (channel.isOperator((*it)->getFD()))
+                reply << "@";
             reply << (*it)->getNickName() << " ";
         }
     }
@@ -159,7 +161,25 @@ void NumericReplies::Reply::endOfNames(User& user, const Channel& channel, const
 }
 
 void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const Server& server) {
-    (void) user;(void) channel;(void) server;
+    std::stringstream   reply;
+    std::stringstream   replyLineStart;
+
+    replyLineStart << _constructHeader(RPL_WHOREPLY, SERVER_NAME) << user.getNickName() << " " << channel.getName() << " ";
+    for (Channel::UserContainer::iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+        ft::Log::info << "add " << (*it)->getNickName() << " to WHO list reply" << std::endl;
+        reply.str("");
+        reply << replyLineStart << (*it)->getUserName() << " " << "hostname " << SERVER_NAME << " " << (*it)->getNickName() << " H";
+        if (channel.isOperator((*it)->getFD())) reply << "@";
+        reply << " :0 " << (*it)->getRealName() << "\r\n";
+        user.sendMessage(reply.str(), server);
+    }
+}
+
+void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_ENDOFWHO, SERVER_NAME) << user.getNickName() << " " << channel.getName() << " :End of WHO list.\r\n";
+    user.sendMessage(reply.str(), server);
 }
 
 // Error

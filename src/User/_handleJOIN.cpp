@@ -33,8 +33,10 @@ void User::_handleJOIN(Server&server, const std::vector<std::string>&args) {
 static void sendChannelWelcomeMessages(User& user, const Server& server, const Channel& channel) {
     std::stringstream   message;
 
-    message << ":" << user.getNickName() << " JOIN " << channel.getName() << "\r\n"; // TODO: send to all channel members
-    user.sendMessage(message.str(), server);
+    message << ":" << user.getNickName() << " JOIN " << channel.getName() << "\r\n";
+    for (Channel::UserContainer::iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+        (*it)->sendMessage(message.str(), server);
+    }
     NumericReplies::Reply::namesReply(user, channel, server);
     NumericReplies::Reply::endOfNames(user, channel, server);
 }

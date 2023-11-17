@@ -45,6 +45,10 @@ const std::string&  User::getUserName() const {
     return _userName;
 }
 
+const std::string& User::getRealName() const {
+    return _realName;
+}
+
 void    User::initRequestsHandlers() {
     ft::Log::debug << "Initializing User::_requestsHandlers" << std::endl;
     _requestsHandlers["PASS"] = &User::_handlePASS;
@@ -53,6 +57,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PRIVMSG"] = &User::_handlePRIVMSG;
     _requestsHandlers["JOIN"] = &User::_handleJOIN;
     _requestsHandlers["PING"] = &User::_handlePING;
+    _requestsHandlers["WHO"] = &User::_handleWHO;
 }
 
 void    User::handleEvent(uint32_t epollEvents, Server& server) {
@@ -97,7 +102,6 @@ void User::sendMessage(const std::string &message, const Server& server) {
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
     ssize_t     end;
-    char        test = 'a';
 
     do {
         end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
@@ -110,7 +114,6 @@ void    User::_handleEPOLLIN(Server& server) {
         }
         rcvBuffer[end] = 0;
         _requestBuffer += rcvBuffer;
-        _requestBuffer += test;
         ft::Log::debug << "end = " << end << std::endl;
     } while (end == 2048);
     if (_requestBuffer.find('\r') != std::string::npos || _requestBuffer.find('\n') != std::string::npos) {

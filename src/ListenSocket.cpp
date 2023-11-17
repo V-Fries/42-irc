@@ -8,7 +8,6 @@
 #include <netinet/in.h>
 #include <iostream>
 #include <cstring>
-#include <libexplain/setsockopt.h>
 
 ListenSocket::ListenSocket(const uint16_t port):
     _fd(socket(AF_INET, SOCK_STREAM, 0)) {
@@ -30,10 +29,10 @@ ListenSocket::ListenSocket(const uint16_t port):
     }
     opt = 1;
     if (setsockopt(_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof (int))) {
-        ft::Log::error << "setsockopt fail: " << explain_setsockopt(_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof (int)) << std::endl;
+        ft::Log::error << "setsockopt reuse port failed" << std::endl;
     }
     if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (int))) {
-        ft::Log::error << "setsockopt fail: " << explain_setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (int)) << std::endl;
+        ft::Log::error << "setsockopt reuse addr failed" << std::endl;
     }
 }
 

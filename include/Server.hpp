@@ -9,6 +9,7 @@
 #include <map>
 #include <stdint.h>
 
+#define SERVER_NAME "127.0.0.1"
 #define REQUEST_LENGTH_LIMIT 512
 
 class Server {

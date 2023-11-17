@@ -142,6 +142,7 @@ Channel* Server::getChannelByName(const std::string& name) const {
 }
 
 void Server::addUserToChannel(const std::string& channel, User* user) {
+
     _channels[channel]->addMember(user);
 }
 

@@ -21,6 +21,9 @@ void SignalHandler::init(Server& server) {
     if (sigaction(SIGTERM, &action, NULL) < 0) {
         throw ft::Exception("Failed to set SIGTERM handler", ft::Log::WARNING);
     }
+    if (sigaction(SIGQUIT, &action, NULL) < 0) {
+        throw ft::Exception("Failed to set SIGTERM handler", ft::Log::WARNING);
+    }
 }
 
 void     SignalHandler::handleSignal(int signal) {

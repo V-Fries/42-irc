@@ -13,6 +13,7 @@
 #define RPL_LUSERME "255"
 #define RPL_LOCALUSERS "265"
 #define RPL_GLOBALUSERS "266"
+#define RPL_ENDOFWHO "315"
 #define RPL_WHOREPLY "352"
 #define RPL_NAMREPLY "353"
 #define RPL_ENDOFNAMES "366"
