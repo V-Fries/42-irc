@@ -12,8 +12,8 @@ std::string  ft::String::getFirstWord(const std::string& string,
                                     charConsideredAsWordSeparator);
 }
 
-std::string  ft::String::getFirstWord(std::string::const_iterator it,
-                                      std::string::const_iterator end,
+std::string  ft::String::getFirstWord(const std::string::const_iterator it,
+                                      const std::string::const_iterator end,
                                       const std::string& charsConsideredAsWordSeparators) {
     std::string::const_iterator firstChar = it;
     while (firstChar != end
@@ -28,8 +28,8 @@ std::string  ft::String::getFirstWord(std::string::const_iterator it,
     return std::string(firstChar, lastChar);
 }
 
-std::string  ft::String::getFirstWord(std::string::const_iterator it,
-                                      std::string::const_iterator end,
+std::string  ft::String::getFirstWord(const std::string::const_iterator it,
+                                      const std::string::const_iterator end,
                                       const char charConsideredAsWordSeparator) {
     std::string::const_iterator firstChar = it;
     while (firstChar != end && *firstChar == charConsideredAsWordSeparator)

@@ -26,6 +26,6 @@ void SignalHandler::init(Server& server) {
     }
 }
 
-void     SignalHandler::handleSignal(int signal) {
+void     SignalHandler::handleSignal(const int signal) {
     _server->stop(128 + signal);
 }

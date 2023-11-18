@@ -19,12 +19,11 @@ User::User(const int fd):
     _fd(fd),
     _isRegistered(false) {
     struct sockaddr_in  addr;
-    socklen_t       len;
-    struct hostent  *host;
+    socklen_t           len;
 
     len = sizeof (addr);
     getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
-    host = gethostbyname(inet_ntoa(addr.sin_addr));
+    const struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
     ft::Log::debug << "hostname: " << host->h_name << std::endl;
 }
@@ -33,7 +32,7 @@ int User::getFD() const {
     return _fd;
 }
 
-void    User::setIsRegistered(bool isRegistered) {
+void    User::setIsRegistered(const bool isRegistered) {
     _isRegistered = isRegistered;
 }
 
@@ -60,7 +59,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["WHO"] = &User::_handleWHO;
 }
 
-void    User::handleEvent(uint32_t epollEvents, Server& server) {
+void    User::handleEvent(const uint32_t epollEvents, Server& server) {
     ft::Log::debug << "User " << _fd << " is handling event " << epollEvents << std::endl;
     if (epollEvents & EPOLLHUP || epollEvents & EPOLLRDHUP) {
         ft::Log::debug << "User " << _fd << " received EPOLLHUP || EPOLLRDHUP" << std::endl;
@@ -140,18 +139,18 @@ void    User::_processRequest(Server& server) {
 void    User::_handleRequest(Server& server, const std::string& request) {
     ft::Log::info << "Processing request from user " << _fd << std::endl;
 
-    Command cmd(request);
+    const Command cmd(request);
     try {
-        RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
+        const RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
         (this->*requestHandler)(server, cmd.getArgs());
-    } catch (std::out_of_range &er) {
+    } catch (std::out_of_range &) {
         ft::Log::warning << "Request " << cmd << " from user " << _fd
                            << " was not recognized" << std::endl;
         return;
     }
 }
 
-void User::_flushMessages(Server& server) {
+void User::_flushMessages(const Server& server) {
     ft::Log::info << "Flushing messages destined to user " << _fd << std::endl;
 
     std::string messages;

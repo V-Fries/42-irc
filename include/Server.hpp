@@ -5,7 +5,6 @@
 #include "Channel.hpp"
 
 #include <sys/epoll.h>
-#include <vector>
 #include <map>
 #include <stdint.h>
 

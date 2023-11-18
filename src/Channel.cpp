@@ -87,8 +87,8 @@ bool    Channel::isOperator(const int memberFD) const {
     return (false);
 }
 
-void    Channel::addOperator(User *newOperatorPtr) {
-    _operators.insert(newOperatorPtr);
+void    Channel::addOperator(User *newOperator) {
+    _operators.insert(newOperator);
 }
 
 void    Channel::removeOperator(User *operatorPtr) {
@@ -104,11 +104,11 @@ bool    Channel::wasUserInvited(const int userFD) const {
     return _invitedUsersFDs.contains(userFD);
 }
 
-void    Channel::addInvitedUser(int newInvitedUserFD) {
+void    Channel::addInvitedUser(const int newInvitedUserFD) {
     _invitedUsersFDs.insert(newInvitedUserFD);
 }
 
-void    Channel::removeInvitedUser(int invitedUserFD) {
+void    Channel::removeInvitedUser(const int invitedUserFD) {
     _invitedUsersFDs.erase(invitedUserFD);
 }
 
@@ -142,7 +142,7 @@ size_t  Channel::getMaxPossibleUserLimit() {
     return std::numeric_limits<size_t>::max();
 }
 
-void Channel::sendMessage(int senderFd, const std::string& message, const Server& server) {
+void Channel::sendMessage(const int senderFd, const std::string& message, const Server& server) {
     ft::Log::info << _name << " send message: " << message << std::endl;
     for(UserContainer::iterator it = _members.begin(); it != _members.end(); ++it) {
             if ((*it)->getFD() != senderFd) (*it)->sendMessage(message, server);

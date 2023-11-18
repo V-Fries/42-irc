@@ -29,15 +29,15 @@ class Channel {
         void                setTopic(const std::string& newTopic);
 
         const UserContainer&    getMembers() const;
-        void                    addMember(User* newMemberFD)
+        void                    addMember(User* newMember)
                                     throw (Channel::IsFull);
         void                    removeMember(User* member);
         bool                    doesMemberExist(int memberFD);
 
         const UserContainer&    getOperators() const;
         bool                    isOperator(int memberFD) const;
-        void                    addOperator(User* newOperatorFD);
-        void                    removeOperator(User* operatorFD);
+        void                    addOperator(User* newOperator);
+        void                    removeOperator(User* operatorPtr);
 
         const InvitedUsersContainer&    getInvitedUsers() const;
         bool                            wasUserInvited(int userFD) const;

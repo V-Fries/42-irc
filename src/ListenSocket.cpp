@@ -6,7 +6,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netinet/in.h>
-#include <iostream>
 #include <cstring>
 
 ListenSocket::ListenSocket(const uint16_t port):
@@ -40,7 +39,7 @@ void    ListenSocket::handleEvent(const uint32_t epollEvents, Server& server) {
     static_cast<void>(epollEvents);
 
     ft::Log::info << "Server received a connection request" << std::endl;
-    int userFD = accept(_fd, NULL, NULL);
+    const int userFD = accept(_fd, NULL, NULL);
     if (userFD == -1) {
         ft::Log::error << "Failed to accept connection request" << std::endl;
         return;

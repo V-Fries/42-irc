@@ -2,7 +2,6 @@
 #include "ListenSocket.hpp"
 #include "ft_Exception.hpp"
 
-#include <iostream>
 #include <unistd.h>
 #include <cstdlib>
 
@@ -21,9 +20,9 @@ Server::Server(const uint16_t port, const std::string& password):
     ListenSocket* listenSocket;
     try {
         listenSocket = new ListenSocket(port);
-    } catch (const ft::Exception& e) {
+    } catch (const ft::Exception& ) {
         close(_epollFD);
-        throw e;
+        throw;
     }
     _listenSocketFD = listenSocket->getFD();
     _sockets[_listenSocketFD] = listenSocket;
@@ -176,8 +175,8 @@ void Server::waitForEvents() {
 void    Server::handleEvents() {
     ft::Log::info << "Handling events" << std::endl;
 
-    epoll_event* eventsEnd = _events + _numberOfEvents;
-    for (epoll_event* it = _events; it != eventsEnd; ++it) {
+    const epoll_event* eventsEnd = _events + _numberOfEvents;
+    for (const epoll_event* it = _events; it != eventsEnd; ++it) {
         try {
             _sockets[it->data.fd]->handleEvent(it->events, *this);
         } catch (const ft::Exception& e) {

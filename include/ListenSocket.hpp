@@ -3,11 +3,10 @@
 #include "ISocket.hpp"
 
 #include <stdint.h>
-#include <string>
 
 class ListenSocket : public ISocket {
     public:
-        ListenSocket(uint16_t port);
+        explicit ListenSocket(uint16_t port);
 
         void    handleEvent(uint32_t epollEvents, Server& server);
 

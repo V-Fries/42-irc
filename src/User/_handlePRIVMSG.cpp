@@ -11,19 +11,15 @@ static std::string  constructMessageToChannel(const User& sender,
                                               const std::string& body);
 
 void User::_handlePRIVMSG(Server&server, const std::vector<std::string>&args) {
-    std::vector<std::string>    targets;
-    User*                       currUserTarget;
-    Channel*                    currChannelTarget;
-
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "PRIVMSG");
     }
-    targets = ft::String::split(args[0], ",");
+    std::vector<std::string> targets = ft::String::split(args[0], ",");
     for (std::vector<std::string>::const_iterator it = targets.begin();
          it != targets.end();
          ++it) {
-        currUserTarget = server.getUserByNickname(*it);
-        currChannelTarget = server.getChannelByName(*it);
+        User* currUserTarget = server.getUserByNickname(*it);
+        Channel* currChannelTarget = server.getChannelByName(*it);
         if (currUserTarget) {
             currUserTarget->sendMessage(constructMessageToUser(*this,
                                                            *currUserTarget,

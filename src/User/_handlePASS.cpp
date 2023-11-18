@@ -2,10 +2,9 @@
 #include "NumericReplies.hpp"
 #include "ft_Log.hpp"
 
-#include <iostream>
 #include <sstream>
 
-void    User::_handlePASS(Server& server, const std::vector<std::string>& args) {
+void    User::_handlePASS(Server&server, const std::vector<std::string>& args) {
     ft::Log::info << "Received PASS request: " << args << " from user " << _fd
                   << std::endl;
 

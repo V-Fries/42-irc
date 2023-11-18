@@ -141,8 +141,11 @@ void    NumericReplies::Reply::messageOfTheDay(User& user, const Server& server)
 void NumericReplies::Reply::namesReply(User& user, const Channel& channel, const Server& server) {
     std::stringstream   reply;
 
-    reply << _constructHeader(RPL_NAMREPLY, SERVER_NAME) << user.getNickName() << " = " << channel.getName() << " :";
-    for (Channel::UserContainer::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+    reply << _constructHeader(RPL_NAMREPLY, SERVER_NAME)
+          << user.getNickName() << " = " << channel.getName() << " :";
+    for (Channel::UserContainer::const_iterator it = channel.getMembers().begin();
+         it != channel.getMembers().end();
+         ++it) {
         if (it != channel.getMembers().end()) {
             if (channel.isOperator((*it)->getFD()))
                 reply << "@";
@@ -156,7 +159,8 @@ void NumericReplies::Reply::namesReply(User& user, const Channel& channel, const
 void NumericReplies::Reply::endOfNames(User& user, const Channel& channel, const Server& server) {
     std::stringstream   reply;
 
-    reply << _constructHeader(RPL_ENDOFNAMES, SERVER_NAME) << user.getNickName() << " " << channel.getName() << " :End of NAMES list.\r\n";
+    reply << _constructHeader(RPL_ENDOFNAMES, SERVER_NAME) << user.getNickName()
+          << " " << channel.getName() << " :End of NAMES list.\r\n";
     user.sendMessage(reply.str(), server);
 }
 
@@ -164,11 +168,15 @@ void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const S
     std::stringstream   reply;
     std::stringstream   replyLineStart;
 
-    replyLineStart << _constructHeader(RPL_WHOREPLY, SERVER_NAME) << user.getNickName() << " " << channel.getName() << " ";
-    for (Channel::UserContainer::iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+    replyLineStart << _constructHeader(RPL_WHOREPLY, SERVER_NAME)
+                   << user.getNickName() << " " << channel.getName() << " ";
+    for (Channel::UserContainer::iterator it = channel.getMembers().begin();
+         it != channel.getMembers().end();
+         ++it) {
         ft::Log::info << "add " << (*it)->getNickName() << " to WHO list reply" << std::endl;
         reply.str("");
-        reply << replyLineStart << (*it)->getUserName() << " " << "hostname " << SERVER_NAME << " " << (*it)->getNickName() << " H";
+        reply << replyLineStart << (*it)->getUserName() << " "
+             << "hostname " << SERVER_NAME << " " << (*it)->getNickName() << " H";
         if (channel.isOperator((*it)->getFD())) reply << "@";
         reply << " :0 " << (*it)->getRealName() << "\r\n";
         user.sendMessage(reply.str(), server);
@@ -178,7 +186,8 @@ void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const S
 void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, const Server& server) {
     std::stringstream   reply;
 
-    reply << _constructHeader(RPL_ENDOFWHO, SERVER_NAME) << user.getNickName() << " " << channel.getName() << " :End of WHO list.\r\n";
+    reply << _constructHeader(RPL_ENDOFWHO, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName() << " :End of WHO list.\r\n";
     user.sendMessage(reply.str(), server);
 }
 
@@ -188,7 +197,7 @@ void    NumericReplies::Error::alreadyRegistered(User& user, const Server& serve
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_ALREADYREGISTERED, SERVER_NAME) << user.getNickName()
-            << " :Unauthorized command (already registered)\r\n";
+          << " :Unauthorized command (already registered)\r\n";
     user.sendMessage(reply.str(), server);
 }
 

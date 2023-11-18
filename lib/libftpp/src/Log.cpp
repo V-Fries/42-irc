@@ -12,7 +12,7 @@ ft::Log::DebugLevel ft::Log::_debugLevel = WARNING;
 bool                ft::Log::_shouldWriteToTerminal = true;
 std::ofstream       ft::Log::_file;
 
-void  ft::Log::setDebugLevel(ft::Log::DebugLevel newDebugLevel) {
+void  ft::Log::setDebugLevel(const ft::Log::DebugLevel newDebugLevel) {
     _debugLevel = newDebugLevel;
 }
 
@@ -21,7 +21,7 @@ ft::Log::DebugLevel ft::Log::getDebugLevel() {
 }
 
 
-void    ft::Log::setShouldWriteToTerminal(bool shouldWriteToTerminal) {
+void    ft::Log::setShouldWriteToTerminal(const bool shouldWriteToTerminal) {
     _shouldWriteToTerminal = shouldWriteToTerminal;
 }
 
