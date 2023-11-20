@@ -1,4 +1,7 @@
 #include "User.hpp"
+
+#include <cstdlib>
+
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "Command.hpp"
@@ -17,15 +20,17 @@ User::RequestsHandlersMap User::_requestsHandlers;
 
 User::User(const int fd):
     _fd(fd),
-    _isRegistered(false) {
+    _isRegistered(false),
+    _nickName(User::defaultNickname) {
     struct sockaddr_in  addr;
     socklen_t           len;
 
     len = sizeof (addr);
     getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
-    const struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
+    struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
     ft::Log::debug << "hostname: " << host->h_name << std::endl;
+    free(host);
 }
 
 int User::getFD() const {
@@ -102,20 +107,18 @@ void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
     ssize_t     end;
 
-    do {
-        end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
-        // TODO if we failed to read the whole
-        // TODO request in one go?
-        if (end < 0) {
-            std::stringstream   errorMessage;
-            errorMessage << "Failed to read from socket " << _fd;
-            throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
-        }
-        rcvBuffer[end] = 0;
-        _requestBuffer += rcvBuffer;
-        ft::Log::debug << "end = " << end << std::endl;
-    } while (end == 2048);
-    if (_requestBuffer.find('\r') != std::string::npos || _requestBuffer.find('\n') != std::string::npos) {
+    end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
+    // TODO if we failed to read the whole
+    // TODO request in one go?
+    if (end < 0) {
+        std::stringstream   errorMessage;
+        errorMessage << "Failed to read from socket " << _fd;
+        throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
+    }
+    const std::string stringBuffer = std::string(rcvBuffer, end);
+    _requestBuffer += stringBuffer;
+    ft::Log::debug << "end = " << end << std::endl;
+    if (_requestBuffer.find("\r\n") != std::string::npos) {
         _processRequest(server);
     }
 }

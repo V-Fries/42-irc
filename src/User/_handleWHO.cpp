@@ -3,7 +3,7 @@
 #include "Server.hpp"
 #include "User.hpp"
 
-void User::_handleWHO(Server&server, const std::vector<std::string>& args) {
+void User::_handleWHO(Server& server, const std::vector<std::string>& args) {
     if (args.empty()) {
         NumericReplies::Error::needMoreParameters(*this, server, "WHO");
         return;

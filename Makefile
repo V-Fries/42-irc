@@ -70,7 +70,7 @@ LIBS =\
 
 
 RM						=	rm -rf
-CXX						=	g++
+CXX						=	c++
 
 
 .PHONY:	all

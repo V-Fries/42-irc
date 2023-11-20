@@ -10,9 +10,12 @@ static std::string  constructMessageToChannel(const User& sender,
                                               const Channel& receiver,
                                               const std::string& body);
 
-void User::_handlePRIVMSG(Server&server, const std::vector<std::string>&args) {
+void User::_handlePRIVMSG(Server& server, const std::vector<std::string>& args) {
+    if (args.empty()) {
+        NumericReplies::Error::noRecipient(*this, "PRIVMSG", server);
+    }
     if (args.size() < 2) {
-        NumericReplies::Error::needMoreParameters(*this, server, "PRIVMSG");
+        NumericReplies::Error::noTextToSend(*this, server);
     }
     std::vector<std::string> targets = ft::String::split(args[0], ",");
     for (std::vector<std::string>::const_iterator it = targets.begin();

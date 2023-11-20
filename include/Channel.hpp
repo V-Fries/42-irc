@@ -13,7 +13,7 @@ class Channel {
         class HasMoreUserThanNewLimit : public std::exception {};
 
         typedef ft::Set<User*>  UserContainer;
-        typedef ft::Set<int>    InvitedUsersContainer;
+        typedef ft::Set<int>    UsersFdContainer;
 
         Channel(const std::string& name,
                 const std::string& password,
@@ -34,12 +34,14 @@ class Channel {
         void                    removeMember(User* member);
         bool                    doesMemberExist(int memberFD);
 
-        const UserContainer&    getOperators() const;
+        const UsersFdContainer& getOperators();
         bool                    isOperator(int memberFD) const;
         void                    addOperator(User* newOperator);
+        void                    addOperator(int newOperatorFd);
         void                    removeOperator(User* operatorPtr);
+        void                    removeOperator(int operatorFd);
 
-        const InvitedUsersContainer&    getInvitedUsers() const;
+        const UsersFdContainer&    getInvitedUsers() const;
         bool                            wasUserInvited(int userFD) const;
         void                            addInvitedUser(int newInvitedUserFD);
         void                            removeInvitedUser(int invitedUserFD);
@@ -64,11 +66,11 @@ class Channel {
 
         std::string _topic;
 
-        UserContainer   _members;
-        UserContainer   _operators;
+        UserContainer       _members;
+        UsersFdContainer    _operators;
 
-        InvitedUsersContainer   _invitedUsersFDs;
-        bool                    _isInviteOnly;
+        UsersFdContainer    _invitedUsersFDs;
+        bool                _isInviteOnly;
 
         size_t  _userLimit;
 };

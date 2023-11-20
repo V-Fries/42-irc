@@ -6,7 +6,7 @@
 
 static void sendChannelWelcomeMessages(User& user, const Server& server, const Channel& channel);
 
-void User::_handleJOIN(Server&server, const std::vector<std::string>&args) {
+void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
     if (args.empty()) {
         NumericReplies::Error::needMoreParameters(*this, server, "JOIN");
         return;

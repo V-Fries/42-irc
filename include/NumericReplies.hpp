@@ -21,6 +21,8 @@
 #define RPL_MOTDSTART "375"
 #define RPL_ENDOFMOTD "376"
 
+#define ERR_NORECIPIENT "411"
+#define ERR_NOTEXTTOSEND "412"
 #define ERR_NONICKNAMEGIVEN "431"
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
@@ -70,6 +72,11 @@ class NumericReplies {
                 static void channelIsFull(User& user, const Server& server,
                                           const std::string& channelName);
                 static void noNicknameGiven(User& user, const Server& server);
+
+                static void noRecipient(User& user, const std::string& command, const Server& server);
+
+                static void noTextToSend(User& user, const Server& server);
+
         };
 
     private:

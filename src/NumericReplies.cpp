@@ -191,6 +191,20 @@ void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, co
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::noRecipient(User& user, const std::string& command, const Server& server) {
+    std::stringstream   reply;
+
+    reply << user.getNickName() << " :No recipient given (" << command << ")\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::noTextToSend(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << user.getNickName() << " :No text to send\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // Error
 
 void    NumericReplies::Error::alreadyRegistered(User& user, const Server& server) {

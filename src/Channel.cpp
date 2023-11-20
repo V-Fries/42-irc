@@ -24,7 +24,7 @@ Channel::Channel(const std::string& name,
 
     ft::Log::info << "new channel: " << _name << std::endl;
     _members.insert(creator);
-    _operators.insert(creator);
+    _operators.insert(creator->getFD());
 }
 
 const std::string&  Channel::getName() const {
@@ -75,28 +75,36 @@ bool    Channel::doesMemberExist(const int memberFD) {
 }
 
 
-const Channel::UserContainer&   Channel::getOperators() const {
+const Channel::UsersFdContainer& Channel::getOperators() {
     return _operators;
 }
 
 bool    Channel::isOperator(const int memberFD) const {
-    for (UserContainer::const_iterator it = _operators.begin(); it != _operators.end(); ++it) {
-        if ((*it)->getFD() == memberFD)
+    for (UsersFdContainer::const_iterator it = _operators.begin(); it != _operators.end(); ++it) {
+        if (*it == memberFD)
             return (true);
     }
     return (false);
 }
 
 void    Channel::addOperator(User *newOperator) {
-    _operators.insert(newOperator);
+    _operators.insert(newOperator->getFD());
+}
+
+void Channel::addOperator(int newOperatorFd) {
+    _operators.insert(newOperatorFd);
 }
 
 void    Channel::removeOperator(User *operatorPtr) {
-    _operators.erase(operatorPtr);
+    _operators.erase(operatorPtr->getFD());
+}
+
+void Channel::removeOperator(int operatorFd) {
+    _operators.erase(operatorFd);
 }
 
 
-const Channel::InvitedUsersContainer&   Channel::getInvitedUsers() const {
+const Channel::UsersFdContainer&   Channel::getInvitedUsers() const {
     return _invitedUsersFDs;
 }
 

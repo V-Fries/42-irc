@@ -47,7 +47,7 @@ INCLUDES =\
 
 
 RM						=	rm -rf
-CXX						=	g++
+CXX						=	c++
 AR						=	ar rcs
 
 .PHONY:	all

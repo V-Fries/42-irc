@@ -101,7 +101,7 @@ void    Server::removeUser(User *user) {
         _registeredUsers.erase(user->getNickName());
     }
     _sockets.erase(user->getFD());
-    delete _sockets[user->getFD()];
+    delete user;
     _shouldUpdateEventsSize = true;
 }
 
@@ -132,7 +132,7 @@ void Server::addChannel(Channel* channel) {
     _channels[channel->getName()] = channel;
 }
 
-Channel* Server::getChannelByName(const std::string& name) const {
+Channel* Server::getChannelByName(const std::string& name) {
     try {
         return (_channels.at(name));
     } catch (std::out_of_range& ) {
@@ -151,12 +151,15 @@ const std::string& Server::getNicknameByFd(const int fd) const {
     try {
         user = dynamic_cast<User*>(_sockets.at(fd));
     } catch (std::out_of_range& ) {
+        throw;
+    }
+    if (!user) {
         return (User::defaultNickname);
     }
     return (user->getNickName());
 }
 
-User*   Server::getUserByNickname(const std::string& nickname) const {
+User*   Server::getUserByNickname(const std::string& nickname) {
     try {
         return (_registeredUsers.at(nickname));
     } catch (std::out_of_range& ) {

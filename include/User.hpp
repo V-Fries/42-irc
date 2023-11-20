@@ -45,11 +45,11 @@ class User : public ISocket {
 
         void    _handlePASS(Server& server, const std::vector<std::string>& args);
         void    _handleUSER(Server& server, const std::vector<std::string>& args);
-        void    _handleNICK(Server&server, const std::vector<std::string>& args);
-        void    _handlePRIVMSG(Server&server, const std::vector<std::string>& args);
-        void    _handleJOIN(Server&server, const std::vector<std::string>& args);
-        void    _handlePING(Server&server, const std::vector<std::string>& args);
-        void    _handleWHO(Server&server, const std::vector<std::string>& args);
+        void    _handleNICK(Server& server, const std::vector<std::string>& args);
+        void    _handlePRIVMSG(Server& server, const std::vector<std::string>& args);
+        void    _handleJOIN(Server& server, const std::vector<std::string>& args);
+        void    _handlePING(Server& server, const std::vector<std::string>& args);
+        void    _handleWHO(Server& server, const std::vector<std::string>& args);
 
         void    _registerUserIfReady(Server& server);
 

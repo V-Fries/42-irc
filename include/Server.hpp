@@ -24,14 +24,14 @@ class Server {
         void                addUser(User* user);
         static epoll_event  getBaseUserEpollEvent(int userFD);
         void                removeUser(User* user);
-        User*               getUserByNickname(const std::string&) const;
+        User*               getUserByNickname(const std::string&);
         bool                nicknameIsTaken(const std::string &nick) const;
         void                registerUser(User *user);
         size_t              getNbOfRegisteredUsers() const;
         size_t              getPeakRegisteredUserCount() const;
         size_t              getNbOfChannels() const;
         void                addChannel(Channel *channel);
-        Channel*            getChannelByName(const std::string& name) const;
+        Channel*            getChannelByName(const std::string& name);
         void                addUserToChannel(const std::string& channel, User *user);
         const std::string&  getNicknameByFd(int fd) const;
 

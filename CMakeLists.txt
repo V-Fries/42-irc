@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.22.1)
 project(webserv)
 
 set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_CXX_COMPILER g++)
 
 add_compile_options(-Wall -Wextra -Werror -g3)
 
