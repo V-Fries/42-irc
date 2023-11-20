@@ -122,7 +122,7 @@ void    User::_handleEPOLLIN(Server& server) {
 
 void    User::_processRequest(Server& server) {
 
-    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n", SPLIT_ON_CHARACTER_SET);
+    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n");
     if (*(_requestBuffer.end() - 1) == '\n') {
         _requestBuffer = "";
     } else {
