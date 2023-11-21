@@ -21,16 +21,17 @@ User::RequestsHandlersMap User::_requestsHandlers;
 User::User(const int fd):
     _fd(fd),
     _isRegistered(false),
-    _nickName(User::defaultNickname) {
-    struct sockaddr_in  addr;
+    _nickName(defaultNickname) {
+    struct sockaddr_in  addr = {};
     socklen_t           len;
 
     len = sizeof (addr);
     getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
     struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
+    if (!host)
+        throw std::exception();
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
     ft::Log::debug << "hostname: " << host->h_name << std::endl;
-    free(host);
 }
 
 int User::getFD() const {
