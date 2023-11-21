@@ -207,6 +207,22 @@ void NumericReplies::Error::noTextToSend(User& user, const Server& server) {
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::noSuchChannel(User& user, const std::string& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NOSUCHCHANNEL, SERVER_NAME)
+          << user.getNickName() << " " << channel << " :No such channel\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::notOnChannel(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName() << " :You're not on that channel\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // Error
 
 void    NumericReplies::Error::alreadyRegistered(User& user, const Server& server) {

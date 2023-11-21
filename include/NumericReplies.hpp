@@ -3,6 +3,8 @@
 #include <string>
 #include <sstream>
 
+#include "Channel.hpp"
+
 #define RPL_WELCOME "001"
 #define RPL_YOURHOST "002"
 #define RPL_CREATE "003"
@@ -21,11 +23,13 @@
 #define RPL_MOTDSTART "375"
 #define RPL_ENDOFMOTD "376"
 
+#define ERR_NOSUCHCHANNEL "403"
 #define ERR_NORECIPIENT "411"
 #define ERR_NOTEXTTOSEND "412"
 #define ERR_NONICKNAMEGIVEN "431"
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
+#define ERR_NOTONCHANNEL "442"
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 #define ERR_CHANNELISFULL "471"
@@ -76,6 +80,10 @@ class NumericReplies {
                 static void noRecipient(User& user, const std::string& command, const Server& server);
 
                 static void noTextToSend(User& user, const Server& server);
+
+                static void noSuchChannel(User& user, const std::string& channel, const Server& server);
+
+                static void notOnChannel(User& user, const Channel& channel, const Server& server);
 
         };
 
