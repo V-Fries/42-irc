@@ -11,13 +11,13 @@ Channel::Channel(const std::string& name,
                  const std::string& password,
                  User *creator)
         throw (IncorrectName):
+    _modes(0),
     _name(ft::String::toLower(name)),
     _password(password),
     _topic(""),
     _members(),
     _operators(),
     _invitedUsersFDs(),
-    _isInviteOnly(false),
     _userLimit(Channel::getMaxPossibleUserLimit())
 {
     if (!Channel::_isNameCorrect(_name)) throw (IncorrectName());
@@ -121,14 +121,17 @@ void    Channel::removeInvitedUser(const int invitedUserFD) {
     _invitedUsersFDs.erase(invitedUserFD);
 }
 
-bool    Channel::isInviteOnly() const {
-    return _isInviteOnly;
+bool Channel::getModes(const uint8_t flags) const {
+    return (_modes & flags);
 }
 
-void    Channel::setIsInviteOnly(const bool isInviteOnly) {
-    _isInviteOnly = isInviteOnly;
+void Channel::addModes(const uint8_t flags) {
+    _modes |= flags;
 }
 
+void Channel::removeModes(const uint8_t flags) {
+    _modes &= ~flags;
+}
 
 size_t  Channel::getUserLimit() const {
     return _userLimit;
@@ -141,10 +144,6 @@ void    Channel::setUserLimit(const size_t newUserLimit)
     }
 
     _userLimit = newUserLimit;
-}
-
-void    Channel::removeUserLimit() {
-    this->setUserLimit(Channel::getMaxPossibleUserLimit());
 }
 
 size_t  Channel::getMaxPossibleUserLimit() {

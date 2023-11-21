@@ -6,6 +6,11 @@
 
 #include "User.hpp"
 
+#define MODE_INV (1 << 0)
+#define MODE_TOP (1 << 1)
+#define MODE_KEY (1 << 2)
+#define MODE_LIM (1 << 3)
+
 class Channel {
     public:
         class IncorrectName : public std::exception {};
@@ -41,24 +46,26 @@ class Channel {
         void                    removeOperator(User* operatorPtr);
         void                    removeOperator(int operatorFd);
 
-        const UsersFdContainer&    getInvitedUsers() const;
-        bool                            wasUserInvited(int userFD) const;
-        void                            addInvitedUser(int newInvitedUserFD);
-        void                            removeInvitedUser(int invitedUserFD);
-        bool                            isInviteOnly() const;
-        void                            setIsInviteOnly(bool isInviteOnly);
+        const UsersFdContainer& getInvitedUsers() const;
+        bool                    wasUserInvited(int userFD) const;
+        void                    addInvitedUser(int newInvitedUserFD);
+        void                    removeInvitedUser(int invitedUserFD);
+
+        bool    getModes(uint8_t flags) const;
+        void    addModes(uint8_t flags);
+        void    removeModes(uint8_t flags);
 
         size_t          getUserLimit() const;
         void            setUserLimit(size_t newUserLimit)
                             throw (Channel::HasMoreUserThanNewLimit);
-        void            removeUserLimit();
         static size_t   getMaxPossibleUserLimit();
 
-        void            sendMessage(int senderFd, const std::string& message, const Server& server);
+        void    sendMessage(int senderFd, const std::string& message, const Server& server);
 
     private:
         static bool _isNameCorrect(const std::string& name);
 
+        uint8_t _modes;
 
         const std::string   _name;
 
@@ -70,7 +77,6 @@ class Channel {
         UsersFdContainer    _operators;
 
         UsersFdContainer    _invitedUsersFDs;
-        bool                _isInviteOnly;
 
         size_t  _userLimit;
 };
