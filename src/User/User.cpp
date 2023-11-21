@@ -27,10 +27,12 @@ User::User(const int fd):
 
     len = sizeof (addr);
     getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
-    struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
-    if (!host)
-        throw std::exception();
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
+    struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
+    if (!host) {
+        ft::Log::error << "gethostbyname failed with h error number: " << h_errno << std::endl;
+        return;
+    }
     ft::Log::debug << "hostname: " << host->h_name << std::endl;
 }
 
