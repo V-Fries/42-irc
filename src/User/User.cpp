@@ -1,4 +1,7 @@
 #include "User.hpp"
+
+#include <cstdlib>
+
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "Command.hpp"
@@ -9,21 +12,35 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <sstream>
+#include <unistd.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 
 User::RequestsHandlersMap User::_requestsHandlers;
 
 User::User(const int fd):
     _fd(fd),
     _isRegistered(false),
-    _nickName("*") {
+    _nickName(defaultNickname) {
+    struct sockaddr_in  addr = {};
+    socklen_t           len;
+
+    len = sizeof (addr);
+    getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
+    struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
+    if (!host) {
+        ft::Log::error << "gethostbyname failed with h error number: " << h_errno << std::endl;
+        return;
+    }
+    ft::Log::debug << "hostname: " << host->h_name << std::endl;
 }
 
 int User::getFD() const {
     return _fd;
 }
 
-void    User::setIsRegistered(bool isRegistered) {
+void    User::setIsRegistered(const bool isRegistered) {
     _isRegistered = isRegistered;
 }
 
@@ -35,19 +52,26 @@ const std::string&  User::getUserName() const {
     return _userName;
 }
 
+const std::string& User::getRealName() const {
+    return _realName;
+}
+
 void    User::initRequestsHandlers() {
     ft::Log::debug << "Initializing User::_requestsHandlers" << std::endl;
     _requestsHandlers["PASS"] = &User::_handlePASS;
     _requestsHandlers["USER"] = &User::_handleUSER;
     _requestsHandlers["NICK"] = &User::_handleNICK;
     _requestsHandlers["PRIVMSG"] = &User::_handlePRIVMSG;
+    _requestsHandlers["JOIN"] = &User::_handleJOIN;
+    _requestsHandlers["PING"] = &User::_handlePING;
+    _requestsHandlers["WHO"] = &User::_handleWHO;
 }
 
-void    User::handleEvent(uint32_t epollEvents, Server& server) {
+void    User::handleEvent(const uint32_t epollEvents, Server& server) {
     ft::Log::debug << "User " << _fd << " is handling event " << epollEvents << std::endl;
     if (epollEvents & EPOLLHUP || epollEvents & EPOLLRDHUP) {
         ft::Log::debug << "User " << _fd << " received EPOLLHUP || EPOLLRDHUP" << std::endl;
-        server.removeUser(_fd);
+        server.removeUser(this);
         return;
     }
     if (epollEvents & EPOLLIN) {
@@ -85,27 +109,26 @@ void User::sendMessage(const std::string &message, const Server& server) {
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
     ssize_t     end;
-    std::string msg = std::string("");
 
     end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
-                                         // TODO if we failed to read the whole 
-                                         // TODO request in one go?
+    // TODO if we failed to read the whole
+    // TODO request in one go?
     if (end < 0) {
         std::stringstream   errorMessage;
         errorMessage << "Failed to read from socket " << _fd;
         throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
     }
-    rcvBuffer[end] = 0;
-    _requestBuffer += rcvBuffer;
-    if (_requestBuffer.find('\n') != std::string::npos) {
+    const std::string stringBuffer = std::string(rcvBuffer, end);
+    _requestBuffer += stringBuffer;
+    ft::Log::debug << "end = " << end << std::endl;
+    if (_requestBuffer.find("\r\n") != std::string::npos) {
         _processRequest(server);
     }
-    send(_fd, NULL, 0, MSG_CONFIRM);
 }
 
 void    User::_processRequest(Server& server) {
-    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n",
-                                                             SPLIT_ON_CHARACTER_SET);
+
+    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n");
     if (*(_requestBuffer.end() - 1) == '\n') {
         _requestBuffer = "";
     } else {
@@ -122,18 +145,18 @@ void    User::_processRequest(Server& server) {
 void    User::_handleRequest(Server& server, const std::string& request) {
     ft::Log::info << "Processing request from user " << _fd << std::endl;
 
-    Command cmd(request);
+    const Command cmd(request);
     try {
-        RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
+        const RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
         (this->*requestHandler)(server, cmd.getArgs());
-    } catch (std::out_of_range &er) {
+    } catch (std::out_of_range &) {
         ft::Log::warning << "Request " << cmd << " from user " << _fd
                            << " was not recognized" << std::endl;
         return;
     }
 }
 
-void User::_flushMessages(Server& server) {
+void User::_flushMessages(const Server& server) {
     ft::Log::info << "Flushing messages destined to user " << _fd << std::endl;
 
     std::string messages;
@@ -173,3 +196,5 @@ void    User::_registerUserIfReady(Server& server) {
     NumericReplies::Reply::globalUsers(*this, server);
     NumericReplies::Reply::messageOfTheDay(*this, server);
 }
+
+std::string User::defaultNickname = "*";

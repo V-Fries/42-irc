@@ -6,11 +6,12 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netinet/in.h>
-#include <iostream>
 #include <cstring>
 
 ListenSocket::ListenSocket(const uint16_t port):
     _fd(socket(AF_INET, SOCK_STREAM, 0)) {
+    int opt;
+
     ft::Log::debug << "ListenSocket constructor called" << std::endl;
     if (_fd == -1) {
         throw ft::Exception("Failed to create ListenSocket socket", ft::Log::CRITICAL);
@@ -25,13 +26,20 @@ ListenSocket::ListenSocket(const uint16_t port):
         close(_fd);
         throw ft::Exception("Failed to bind ListenSocket socket", ft::Log::CRITICAL);
     }
+    opt = 1;
+    if (setsockopt(_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof (int))) {
+        ft::Log::error << "setsockopt reuse port failed" << std::endl;
+    }
+    if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (int))) {
+        ft::Log::error << "setsockopt reuse addr failed" << std::endl;
+    }
 }
 
 void    ListenSocket::handleEvent(const uint32_t epollEvents, Server& server) {
     static_cast<void>(epollEvents);
 
     ft::Log::info << "Server received a connection request" << std::endl;
-    int userFD = accept(_fd, NULL, NULL);
+    const int userFD = accept(_fd, NULL, NULL);
     if (userFD == -1) {
         ft::Log::error << "Failed to accept connection request" << std::endl;
         return;

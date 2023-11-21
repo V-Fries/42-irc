@@ -13,16 +13,24 @@
 #define RPL_LUSERME "255"
 #define RPL_LOCALUSERS "265"
 #define RPL_GLOBALUSERS "266"
+#define RPL_ENDOFWHO "315"
+#define RPL_WHOREPLY "352"
+#define RPL_NAMREPLY "353"
+#define RPL_ENDOFNAMES "366"
 #define RPL_MOTD "372"
 #define RPL_MOTDSTART "375"
 #define RPL_ENDOFMOTD "376"
 
+#define ERR_NORECIPIENT "411"
+#define ERR_NOTEXTTOSEND "412"
 #define ERR_NONICKNAMEGIVEN "431"
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
+#define ERR_CHANNELISFULL "471"
 
+class Channel;
 class User;
 class Server;
 
@@ -43,6 +51,12 @@ class NumericReplies {
                 static void globalUsers(User& user, const Server& server);
 
                 static void messageOfTheDay(User& user, const Server& server);
+
+                static void namesReply(User& user, const Channel& channel, const Server& server);
+                static void endOfNames(User& user, const Channel& channel, const Server& server);
+
+                static void whoReply(User& user, const Channel& channel, const Server& server);
+                static void endOfwhoReply(User& user, const Channel& channel, const Server& server);
         };
 
         class Error {
@@ -55,7 +69,14 @@ class NumericReplies {
                                           const std::string& newNickname);
                 static void nickInUse(User& user, const Server& server,
                                       const std::string& newNickname);
+                static void channelIsFull(User& user, const Server& server,
+                                          const std::string& channelName);
                 static void noNicknameGiven(User& user, const Server& server);
+
+                static void noRecipient(User& user, const std::string& command, const Server& server);
+
+                static void noTextToSend(User& user, const Server& server);
+
         };
 
     private:

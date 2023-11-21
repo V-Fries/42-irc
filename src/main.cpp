@@ -6,7 +6,6 @@
 #include <sstream>
 #include <cerrno>
 #include <cstdlib>
-#include <iostream>
 
 #define PASS_REQUEST_LENGTH 7
 #define MAX_PASSWORD_LENGHT (REQUEST_LENGTH_LIMIT - PASS_REQUEST_LENGTH)
@@ -14,7 +13,7 @@
 static uint16_t     getPort(const std::string& portStr);
 static std::string  getPassword(const std::string& password);
 
-int main(int argc, char** argv) {
+int main(const int argc, char** argv) {
     ft::Log::setDebugLevel(ft::Log::DEBUG);
     ft::Log::setFileToWriteTo("logs.txt");
 

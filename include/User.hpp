@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ISocket.hpp"
-#include "Command.hpp"
 
 #include <stdint.h>
 #include <string>
@@ -22,6 +21,7 @@ class User : public ISocket {
         void                setIsRegistered(bool isRegistered);
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
+        const std::string&  getRealName() const;
 
         static void initRequestsHandlers();
 
@@ -31,11 +31,13 @@ class User : public ISocket {
 
         void    sendMessage(const std::string &message, const Server& server);
 
+        static std::string    defaultNickname;
+
     private:
         typedef void (User::*RequestHandler)(Server&, const std::vector<std::string>&);
         typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
 
-        void    _flushMessages(Server& server);
+        void    _flushMessages(const Server& server);
 
         void    _handleEPOLLIN(Server& server);
         void    _processRequest(Server& server);
@@ -45,6 +47,9 @@ class User : public ISocket {
         void    _handleUSER(Server& server, const std::vector<std::string>& args);
         void    _handleNICK(Server& server, const std::vector<std::string>& args);
         void    _handlePRIVMSG(Server& server, const std::vector<std::string>& args);
+        void    _handleJOIN(Server& server, const std::vector<std::string>& args);
+        void    _handlePING(Server& server, const std::vector<std::string>& args);
+        void    _handleWHO(Server& server, const std::vector<std::string>& args);
 
         void    _registerUserIfReady(Server& server);
 

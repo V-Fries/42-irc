@@ -2,19 +2,17 @@
 #include "ft.hpp"
 #include "Server.hpp"
 
-#include <iostream>
 #include <vector>
 
 #include "NumericReplies.hpp"
 
 void    User::_handleNICK(Server& server, const std::vector<std::string>& args) {
-    std::string nickname;
-
     if (args.empty()) {
         NumericReplies::Error::noNicknameGiven(*this, server);
         return;
     }
-    nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
+
+    const std::string nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
     if (_checkNickname(nickname, server)) {
         _nickName = nickname;
         _registerUserIfReady(server);

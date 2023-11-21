@@ -43,8 +43,10 @@ add_executable(webserv
 		lib/libftpp/src/Exception.cpp
 		lib/libftpp/src/Log.cpp
 		lib/libftpp/include/ft_Log.hpp
-		"lib/libftpp/include/ft_Io.hpp"
+		lib/libftpp/include/ft_Io.hpp
 		lib/libftpp/src/Io.cpp
 		src/User/_handlePRIVMSG.cpp
-		lib/libftpp/src/Io.cpp
-		lib/libftpp/src/String/toLower.cpp)
+		lib/libftpp/src/String/toLower.cpp
+		src/User/_handleJOIN.cpp
+		src/User/_handlePING.cpp
+		src/User/_handleWHO.cpp)

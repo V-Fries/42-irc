@@ -2,15 +2,12 @@
 #include "ft.hpp"
 
 Command::Command(const std::string &rawCommand) {
-    std::string::const_iterator it;
-    std::string::const_iterator currIterator;
-
-    it = rawCommand.begin();
+    std::string::const_iterator it = rawCommand.begin();
     while (isspace(*it)) ++it;
     _command = ft::String::getFirstWord(it, rawCommand.end(), ": ");
     it += _command.length();
     while (isspace(*it)) ++it;
-    currIterator = it;
+    std::string::const_iterator currIterator = it;
     while (currIterator != rawCommand.end() && \
             *currIterator != ':')
             ++currIterator;

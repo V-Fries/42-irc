@@ -3,8 +3,6 @@
 #include "ft_String.hpp"
 #include "NumericReplies.hpp"
 
-#include <iostream>
-
 void    User::_handleUSER(Server& server, const std::vector<std::string>& args) {
     ft::Log::info << "Received USER request: \"" << args << "\" from user " << _fd
                   << std::endl;

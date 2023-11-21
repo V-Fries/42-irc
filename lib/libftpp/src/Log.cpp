@@ -12,7 +12,7 @@ ft::Log::DebugLevel ft::Log::_debugLevel = WARNING;
 bool                ft::Log::_shouldWriteToTerminal = true;
 std::ofstream       ft::Log::_file;
 
-void  ft::Log::setDebugLevel(ft::Log::DebugLevel newDebugLevel) {
+void  ft::Log::setDebugLevel(const ft::Log::DebugLevel newDebugLevel) {
     _debugLevel = newDebugLevel;
 }
 
@@ -21,13 +21,13 @@ ft::Log::DebugLevel ft::Log::getDebugLevel() {
 }
 
 
-void    ft::Log::setShouldWriteToTerminal(bool shouldWriteToTerminal) {
+void    ft::Log::setShouldWriteToTerminal(const bool shouldWriteToTerminal) {
     _shouldWriteToTerminal = shouldWriteToTerminal;
 }
 
 
 void    ft::Log::setFileToWriteTo(const std::string& fileName) {
-    _file.open(fileName.c_str());
+    _file.open(fileName.c_str(), std::ios_base::app | std::ios_base::ate);
 
     if (!_file.is_open()) {
         throw FailedToOpenFile("ft::Log::setFileToWriteTo(): "
