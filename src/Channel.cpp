@@ -137,18 +137,19 @@ void Channel::removeModes(const uint8_t flags) {
 }
 
 std::string Channel::modesString() const {
-    std::stringstream   modes;
+    std::stringstream   modesString;
 
-    modes << "+";
+    ft::Log::info << "channel " << _name << " raw modes: " << _modes << std::endl;
+    modesString << "+";
     if (_modes & MODE_TOP)
-        modes << "t";
+        modesString << "t";
     if (_modes & MODE_INV)
-        modes << "i";
+        modesString << "i";
     if (_modes & MODE_KEY)
-        modes << "k";
+        modesString << "k";
     if (_modes & MODE_LIM)
-        modes << "l";
-    return (modes.str());
+        modesString << "l";
+    return (modesString.str());
 }
 
 std::string Channel::modesArgs() const {
