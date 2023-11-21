@@ -49,4 +49,5 @@ add_executable(webserv
 		lib/libftpp/src/String/toLower.cpp
 		src/User/_handleJOIN.cpp
 		src/User/_handlePING.cpp
-		src/User/_handleWHO.cpp)
+		src/User/_handleWHO.cpp
+		src/User/_handlePART.cpp)

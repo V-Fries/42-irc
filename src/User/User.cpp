@@ -65,6 +65,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["JOIN"] = &User::_handleJOIN;
     _requestsHandlers["PING"] = &User::_handlePING;
     _requestsHandlers["WHO"] = &User::_handleWHO;
+    _requestsHandlers["PART"] = &User::_handlePART;
 }
 
 void    User::handleEvent(const uint32_t epollEvents, Server& server) {
@@ -121,14 +122,16 @@ void    User::_handleEPOLLIN(Server& server) {
     const std::string stringBuffer = std::string(rcvBuffer, end);
     _requestBuffer += stringBuffer;
     ft::Log::debug << "end = " << end << std::endl;
-    if (_requestBuffer.find("\r\n") != std::string::npos) {
+    if (_requestBuffer.find('\r') != std::string::npos ||
+        _requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
     }
 }
 
 void    User::_processRequest(Server& server) {
 
-    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n");
+    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n",
+                                                             SPLIT_ON_CHARACTER_SET);
     if (*(_requestBuffer.end() - 1) == '\n') {
         _requestBuffer = "";
     } else {

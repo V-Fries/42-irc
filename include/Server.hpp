@@ -31,6 +31,7 @@ class Server {
         size_t              getPeakRegisteredUserCount() const;
         size_t              getNbOfChannels() const;
         void                addChannel(Channel *channel);
+        void                removeChannel(Channel *channel);
         Channel*            getChannelByName(const std::string& name);
         void                addUserToChannel(const std::string& channel, User *user);
         const std::string&  getNicknameByFd(int fd) const;

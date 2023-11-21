@@ -132,6 +132,11 @@ void Server::addChannel(Channel* channel) {
     _channels[channel->getName()] = channel;
 }
 
+void Server::removeChannel(Channel* channel) {
+    _channels.erase(channel->getName());
+    delete channel;
+}
+
 Channel* Server::getChannelByName(const std::string& name) {
     try {
         return (_channels.at(name));
