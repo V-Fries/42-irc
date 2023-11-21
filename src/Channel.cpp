@@ -63,6 +63,7 @@ void    Channel::addMember(User *newMember) throw (Channel::IsFull) {
 }
 
 void    Channel::removeMember(User *member) {
+    this->removeOperator(member->getFD());
     _members.erase(member);
 }
 
