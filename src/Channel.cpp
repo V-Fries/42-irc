@@ -2,6 +2,7 @@
 #include "ft_String.hpp"
 
 #include <limits>
+#include <sstream>
 
 #include "ft_Log.hpp"
 
@@ -25,6 +26,8 @@ Channel::Channel(const std::string& name,
     ft::Log::info << "new channel: " << _name << std::endl;
     _members.insert(creator);
     _operators.insert(creator->getFD());
+    if (_name[0] == '#')
+        this->addModes(MODE_TOP);
 }
 
 const std::string&  Channel::getName() const {
@@ -67,7 +70,7 @@ void    Channel::removeMember(User *member) {
     _members.erase(member);
 }
 
-bool    Channel::doesMemberExist(const int memberFD) {
+bool    Channel::doesMemberExist(const int memberFD) const {
     for (UserContainer::const_iterator it = _members.begin(); it != _members.end(); ++it) {
         if ((*it)->getFD() == memberFD)
             return (true);
@@ -131,6 +134,31 @@ void Channel::addModes(const uint8_t flags) {
 
 void Channel::removeModes(const uint8_t flags) {
     _modes &= ~flags;
+}
+
+std::string Channel::modesString() const {
+    std::stringstream   modes;
+
+    modes << "+";
+    if (_modes & MODE_TOP)
+        modes << "t";
+    if (_modes & MODE_INV)
+        modes << "i";
+    if (_modes & MODE_KEY)
+        modes << "k";
+    if (_modes & MODE_LIM)
+        modes << "l";
+    return (modes.str());
+}
+
+std::string Channel::modesArgs() const {
+    std::stringstream   args;
+
+    if (_modes & MODE_KEY)
+        args << " " << _password;
+    if (_modes & MODE_LIM)
+        args << " " << _userLimit;
+    return (args.str());
 }
 
 size_t  Channel::getUserLimit() const {

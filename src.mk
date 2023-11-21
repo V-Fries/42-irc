@@ -7,6 +7,7 @@ SRC	=\
 	User/_handlePING.cpp	\
 	User/_handleWHO.cpp		\
 	User/_handlePART.cpp	\
+	User/_handleMODE.cpp	\
 	User/User.cpp			\
 \
 	Channel.cpp			\

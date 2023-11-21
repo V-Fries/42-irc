@@ -37,7 +37,7 @@ class Channel {
         void                    addMember(User* newMember)
                                     throw (Channel::IsFull);
         void                    removeMember(User* member);
-        bool                    doesMemberExist(int memberFD);
+        bool                    doesMemberExist(int memberFD) const;
 
         const UsersFdContainer& getOperators();
         bool                    isOperator(int memberFD) const;
@@ -51,9 +51,11 @@ class Channel {
         void                    addInvitedUser(int newInvitedUserFD);
         void                    removeInvitedUser(int invitedUserFD);
 
-        bool    getModes(uint8_t flags) const;
-        void    addModes(uint8_t flags);
-        void    removeModes(uint8_t flags);
+        bool        getModes(uint8_t flags) const;
+        void        addModes(uint8_t flags);
+        void        removeModes(uint8_t flags);
+        std::string modesString() const;
+        std::string modesArgs() const;
 
         size_t          getUserLimit() const;
         void            setUserLimit(size_t newUserLimit)

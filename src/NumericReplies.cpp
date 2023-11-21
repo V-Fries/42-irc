@@ -191,6 +191,25 @@ void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, co
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Reply::currUserModes(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_UMODEIS, SERVER_NAME)
+          << user.getNickName() << " +\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::channelModeIs(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_CHANNELMODEIS, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName() << " " << channel.modesString();
+    if (channel.doesMemberExist(user.getFD()))
+        reply << channel.modesArgs();
+    reply << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 void NumericReplies::Error::noRecipient(User& user, const std::string& command, const Server& server) {
     std::stringstream   reply;
 
@@ -224,6 +243,30 @@ void NumericReplies::Error::notOnChannel(User& user, const Channel& channel, con
 }
 
 // Error
+
+void NumericReplies::Error::userDontMatchSet(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERSDONTMATCH, SERVER_NAME)
+          << user.getNickName() << " :Can't change mode for other users\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::noSuchNickname(User& user, const std::string& nickname, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NOSUCHNICK, SERVER_NAME)
+          << user.getNickName() << " " << nickname << " :No such nick\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::userDontMatchView(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERSDONTMATCH, SERVER_NAME)
+          << user.getNickName() << " :Can't view modes for other users\r\n";
+    user.sendMessage(reply.str(), server);
+}
 
 void    NumericReplies::Error::alreadyRegistered(User& user, const Server& server) {
     std::stringstream   reply;

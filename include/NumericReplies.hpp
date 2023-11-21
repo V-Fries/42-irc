@@ -4,18 +4,21 @@
 #include <sstream>
 
 #include "Channel.hpp"
+#include "Server.hpp"
 
 #define RPL_WELCOME "001"
 #define RPL_YOURHOST "002"
 #define RPL_CREATE "003"
 #define RPL_MYINFO "004"
 #define RPL_ISUPPORT "005"
+#define RPL_UMODEIS "221"
 #define RPL_LUSERCLIENT "251"
 #define RPL_LUSERCHANNELS "254"
 #define RPL_LUSERME "255"
 #define RPL_LOCALUSERS "265"
 #define RPL_GLOBALUSERS "266"
 #define RPL_ENDOFWHO "315"
+#define RPL_CHANNELMODEIS "324"
 #define RPL_WHOREPLY "352"
 #define RPL_NAMREPLY "353"
 #define RPL_ENDOFNAMES "366"
@@ -23,6 +26,7 @@
 #define RPL_MOTDSTART "375"
 #define RPL_ENDOFMOTD "376"
 
+#define ERR_NOSUCHNICK "401"
 #define ERR_NOSUCHCHANNEL "403"
 #define ERR_NORECIPIENT "411"
 #define ERR_NOTEXTTOSEND "412"
@@ -33,6 +37,7 @@
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 #define ERR_CHANNELISFULL "471"
+#define ERR_USERSDONTMATCH "502"
 
 class Channel;
 class User;
@@ -61,6 +66,9 @@ class NumericReplies {
 
                 static void whoReply(User& user, const Channel& channel, const Server& server);
                 static void endOfwhoReply(User& user, const Channel& channel, const Server& server);
+
+                static void currUserModes(User& user, const Server& server);
+                static void channelModeIs(User& user, const Channel& channel, const Server& server);
         };
 
         class Error {
@@ -85,6 +93,10 @@ class NumericReplies {
 
                 static void notOnChannel(User& user, const Channel& channel, const Server& server);
 
+                static void userDontMatchView(User& user, const Server& server);
+                static void userDontMatchSet(User& user, const Server& server);
+
+                static void noSuchNickname(User& user, const std::string& nickname, const Server& server);
         };
 
     private:

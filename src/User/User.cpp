@@ -66,6 +66,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PING"] = &User::_handlePING;
     _requestsHandlers["WHO"] = &User::_handleWHO;
     _requestsHandlers["PART"] = &User::_handlePART;
+    _requestsHandlers["MODE"] = &User::_handleMODE;
 }
 
 void    User::handleEvent(const uint32_t epollEvents, Server& server) {
