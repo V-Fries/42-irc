@@ -194,14 +194,16 @@ void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, co
 void NumericReplies::Error::noRecipient(User& user, const std::string& command, const Server& server) {
     std::stringstream   reply;
 
-    reply << user.getNickName() << " :No recipient given (" << command << ")\r\n";
+    reply << _constructHeader(ERR_NORECIPIENT, SERVER_NAME)
+          << user.getNickName() << " :No recipient given (" << command << ")\r\n";
     user.sendMessage(reply.str(), server);
 }
 
 void NumericReplies::Error::noTextToSend(User& user, const Server& server) {
     std::stringstream   reply;
 
-    reply << user.getNickName() << " :No text to send\r\n";
+    reply << _constructHeader(ERR_NOTEXTTOSEND, SERVER_NAME)
+          << user.getNickName() << " :No text to send\r\n";
     user.sendMessage(reply.str(), server);
 }
 
