@@ -175,7 +175,7 @@ void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const S
          ++it) {
         ft::Log::info << "add " << (*it)->getNickName() << " to WHO list reply" << std::endl;
         reply.str("");
-        reply << replyLineStart << (*it)->getUserName() << " "
+        reply << replyLineStart.str() << (*it)->getUserName() << " "
              << "hostname " << SERVER_NAME << " " << (*it)->getNickName() << " H";
         if (channel.isOperator((*it)->getFD())) reply << "@";
         reply << " :0 " << (*it)->getRealName() << "\r\n";
