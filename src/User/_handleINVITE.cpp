@@ -5,36 +5,39 @@
 static bool userCanInviteAUserToThisChannel(User& user,
                                             const Channel& channel,
                                             const Server& server);
+
 static bool userCanBeInvitedToThisChannel(User& inviter,
                                           const User* invitee,
                                           const std::string& inviteeNickName,
                                           const Server& server,
                                           const Channel& channel);
+
 static void inviteUserToChannel(User& inviter,
                                 User& invitee,
                                 const Server& server,
-                                const Channel& channel);
+                                Channel& channel);
+
 static void sendInvitationToInvitee(const User& inviter,
                                     User& invitee,
                                     const Server& server,
                                     const Channel& channel);
 
-void    User::_handleINVITE(Server& server, const std::vector<std::string>& args) {
+void User::_handleINVITE(Server& server, const std::vector<std::string>& args) {
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "INVITE");
         return;
     }
 
-    Channel* channel(server.getChannelByName(args[0]));
+    Channel* channel(server.getChannelByName(args[1]));
     if (channel == NULL) {
-        NumericReplies::Error::noSuchChannel(*this, args[0], server);
+        NumericReplies::Error::noSuchChannel(*this, args[1], server);
         return;
     }
 
     if (!userCanInviteAUserToThisChannel(*this, *channel, server)) return;
 
-    User* invitedUser = server.getUserByNickname(args[1]);
-    if (!userCanBeInvitedToThisChannel(*this, invitedUser, args[1], server, *channel)) {
+    User* invitedUser = server.getUserByNickname(args[0]);
+    if (!userCanBeInvitedToThisChannel(*this, invitedUser, args[0], server, *channel)) {
         return;
     }
 
@@ -58,10 +61,10 @@ static bool userCanInviteAUserToThisChannel(User& user,
 }
 
 static bool userCanBeInvitedToThisChannel(User& inviter,
-                             const User* invitee,
-                             const std::string& inviteeNickName,
-                             const Server& server,
-                             const Channel& channel) {
+                                          const User* invitee,
+                                          const std::string& inviteeNickName,
+                                          const Server& server,
+                                          const Channel& channel) {
     if (invitee == NULL) {
         NumericReplies::Error::noSuchNick(inviter, server, inviteeNickName);
         return false;
@@ -91,6 +94,6 @@ static void sendInvitationToInvitee(const User& inviter,
                                     const Channel& channel) {
     std::stringstream message;
     message << inviter.getHostMask() << " INVITE " << invitee.getNickName() << ' '
-              << channel.getName() << "\r\n";
+            << channel.getName() << "\r\n";
     invitee.sendMessage(message.str(), server);
 }
