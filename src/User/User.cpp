@@ -68,6 +68,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PART"] = &User::_handlePART;
     _requestsHandlers["TOPIC"] = &User::_handleTOPIC;
     _requestsHandlers["MODE"] = &User::_handleMODE;
+    _requestsHandlers["LIST"] = &User::_handleLIST;
     _requestsHandlers["ISON"] = &User::_handleISON;
 }
 

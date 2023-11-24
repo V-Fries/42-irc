@@ -164,7 +164,11 @@ const std::string& Server::getNicknameByFd(const int fd) const {
     return (user->getNickName());
 }
 
-User*   Server::getUserByNickname(const std::string& nickname) {
+const std::map<std::string, Channel*>& Server::getChannels() const {
+    return (_channels);
+}
+
+User*   Server::getUserByNickname(const std::string& nickname) const {
     try {
         return (_registeredUsers.at(nickname));
     } catch (std::out_of_range& ) {

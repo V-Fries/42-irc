@@ -317,6 +317,39 @@ void NumericReplies::Reply::noTopic(User& user, Channel& channel, const Server& 
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Reply::listStart(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LISTSTART, SERVER_NAME)
+          << user.getNickName() << " Channel :Users  Name\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::list(User& user, Server& server) {
+    std::stringstream   lineStart;
+
+    lineStart << _constructHeader(RPL_LIST, SERVER_NAME)
+              << user.getNickName() << " ";
+    for (std::map<std::string, Channel*>::const_iterator it = server.getChannels().begin();
+         it != server.getChannels().end();
+         ++it) {
+        std::stringstream   reply;
+        reply << lineStart.str()
+              << it->first << " "
+              << it->second->getMembers().size() << " :"
+              << it->second->getTopic().getContent() << "\r\n";
+        user.sendMessage(reply.str(), server);
+    }
+}
+
+void NumericReplies::Reply::listEnd(User& user, Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LISTEND, SERVER_NAME)
+          << user.getNickName() << " :End of /LIST\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 void NumericReplies::Reply::isOn(User& user,
                                  const std::vector<std::string>& nicknames,
                                  Server& server) {

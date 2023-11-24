@@ -19,6 +19,9 @@
 #define RPL_GLOBALUSERS "266"
 #define RPL_ISON "303"
 #define RPL_ENDOFWHO "315"
+#define RPL_LISTSTART "321"
+#define RPL_LIST "322"
+#define RPL_LISTEND "323"
 #define RPL_NOTOPIC "331"
 #define RPL_TOPIC "332"
 #define RPL_TOPICWHOTIME "333"
@@ -75,6 +78,16 @@ class NumericReplies {
 
                 static void currUserModes(User& user, const Server& server);
                 static void channelModeIs(User& user, const Channel& channel, const Server& server);
+
+                static void topic(User& user, const Channel& channel, const Server& server);
+                static void topicWhoTime(User& user, const Channel& channel, const Server& server);
+                static void noTopic(User& user, Channel& channel, const Server& server);
+
+                static void listStart(User& user, const Server& server);
+                static void list(User& user, Server& server);
+                static void listEnd(User& user, Server& server);
+
+                static void isOn(User& user, const std::vector<std::string>& nicknames, Server &server);
         };
 
         class Error {
@@ -103,6 +116,10 @@ class NumericReplies {
                 static void userDontMatchSet(User& user, const Server& server);
 
                 static void noSuchNickname(User& user, const std::string& nickname, const Server& server);
+
+                static void chanOperPrivNeeded(User& user, const Channel& channel, const Server& server);
+
+                static void userNotInChannel(User& user, const std::string& nickname, const Channel& channel, const Server& server);
         };
 
     private:
