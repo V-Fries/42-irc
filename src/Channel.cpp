@@ -77,7 +77,6 @@ bool    Channel::isMember(const int memberFD) const {
 
 bool    Channel::isMember(const User* member) const {
     return _members.contains(const_cast<User*>(member));
-    // TODO check if const_cast is meant to be used like that
 }
 
 
