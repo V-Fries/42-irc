@@ -52,6 +52,7 @@ class User : public ISocket {
         void    _handlePING(Server& server, const std::vector<std::string>& args);
         void    _handleWHO(Server& server, const std::vector<std::string>& args);
         void    _handlePART(Server& server, const std::vector<std::string>& args);
+        void    _handleINVITE(Server& server, const std::vector<std::string>& args);
 
         void    _registerUserIfReady(Server& server);
 
