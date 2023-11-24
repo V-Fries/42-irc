@@ -20,3 +20,4 @@ SRC	=\
 	Server.cpp			\
 	SignalHandler.cpp	\
 	Command.cpp			\
+	Topic.cpp			\

@@ -51,9 +51,9 @@ add_executable(webserv
 		src/User/_handlePING.cpp
 		src/User/_handleWHO.cpp
 		src/User/_handlePART.cpp
-		src/User/_handleMODE.cpp)
+		src/User/_handleMODE.cpp
 		src/User/_handleTOPIC.cpp
 		src/Topic.cpp
 		include/Topic.hpp
 		src/User/_handleLIST.cpp
-		src/User/_handleISON.cpp
+		src/User/_handleISON.cpp)
