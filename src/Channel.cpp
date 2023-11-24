@@ -15,7 +15,7 @@ Channel::Channel(const std::string& name,
     _modes(0),
     _name(ft::String::toLower(name)),
     _password(password),
-    _topic(""),
+    _topic(),
     _members(),
     _operators(),
     _invitedUsersFDs(),
@@ -44,12 +44,13 @@ void    Channel::setPassword(const std::string& newPassword) {
 }
 
 
-const std::string&  Channel::getTopic() const {
+const Topic& Channel::getTopic() const {
     return _topic;
 }
 
-void    Channel::setTopic(const std::string& newTopic) {
-    _topic = newTopic;
+void    Channel::setTopic(const std::string& newTopic,
+                          const std::string& author) {
+    _topic.setContent(newTopic, author);
 }
 
 

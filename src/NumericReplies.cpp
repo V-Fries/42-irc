@@ -260,6 +260,63 @@ void NumericReplies::Error::noSuchNickname(User& user, const std::string& nickna
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::chanOperPrivNeeded(User& user,
+                                               const Channel& channel,
+                                               const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_CHANOPRIVSNEEDED, SERVER_NAME)
+          << user.getNickName() << " "
+          << channel.getName() << " :You're not channel operator\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::userNotInChannel(User& user,
+                                             const std::string& nickname,
+                                             const Channel& channel,
+                                             const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERNOTINCHANNEL, SERVER_NAME)
+          << user.getNickName() << " "
+          << nickname << channel.getName()
+          << " :They aren't on that channel\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::topic(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_TOPIC, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName()
+          << " :" << channel.getTopic().getContent() << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::topicWhoTime(User& user,
+                                         const Channel& channel,
+                                         const Server& server) {
+    std::stringstream   reply;
+
+    if (channel.getTopic().getSetAt().empty())
+        return;
+    reply << _constructHeader(RPL_TOPICWHOTIME, SERVER_NAME)
+          << user.getNickName() << " "
+          << channel.getName() << " "
+          << channel.getTopic().getNickname() << " "
+          << channel.getTopic().getSetAt() << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::noTopic(User& user, Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_NOTOPIC, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName()
+          << " :No topic is set\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 void NumericReplies::Error::userDontMatchView(User& user, const Server& server) {
     std::stringstream   reply;
 

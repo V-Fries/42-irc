@@ -28,7 +28,7 @@ User::User(const int fd):
     len = sizeof (addr);
     getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
-    struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
+    const struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
     if (!host) {
         ft::Log::error << "gethostbyname failed with h error number: " << h_errno << std::endl;
         return;
@@ -66,6 +66,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PING"] = &User::_handlePING;
     _requestsHandlers["WHO"] = &User::_handleWHO;
     _requestsHandlers["PART"] = &User::_handlePART;
+    _requestsHandlers["TOPIC"] = &User::_handleTOPIC;
     _requestsHandlers["MODE"] = &User::_handleMODE;
 }
 
@@ -122,7 +123,7 @@ void    User::_handleEPOLLIN(Server& server) {
     }
     const std::string stringBuffer = std::string(rcvBuffer, end);
     _requestBuffer += stringBuffer;
-    ft::Log::debug << "end = " << end << std::endl;
+    ft::Log::debug << "buffer: " << stringBuffer << std::endl;
     if (_requestBuffer.find('\r') != std::string::npos ||
         _requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
@@ -139,7 +140,7 @@ void    User::_processRequest(Server& server) {
         _requestBuffer = *(messages.end() - 1);
         messages.pop_back();
     }
-    for (std::vector<std::string>::iterator it(messages.begin());
+    for (std::vector<std::string>::iterator it = messages.begin();
          it != messages.end();
          ++it) {
         _handleRequest(server, *it);
@@ -156,7 +157,6 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     } catch (std::out_of_range &) {
         ft::Log::warning << "Request " << cmd << " from user " << _fd
                            << " was not recognized" << std::endl;
-        return;
     }
 }
 

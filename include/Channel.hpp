@@ -4,6 +4,7 @@
 
 #include <string>
 
+#include "Topic.hpp"
 #include "User.hpp"
 
 #define MODE_INV (1 << 0)
@@ -30,8 +31,8 @@ class Channel {
         const std::string&  getPassword() const;
         void                setPassword(const std::string& newPassword);
 
-        const std::string&  getTopic() const;
-        void                setTopic(const std::string& newTopic);
+        const Topic& getTopic() const;
+        void                setTopic(const std::string& newTopic, const std::string& author);
 
         const UserContainer&    getMembers() const;
         void                    addMember(User* newMember)
@@ -73,7 +74,7 @@ class Channel {
 
         std::string _password;
 
-        std::string _topic;
+        Topic   _topic;
 
         UserContainer       _members;
         UsersFdContainer    _operators;
