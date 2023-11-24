@@ -32,7 +32,8 @@ class Channel {
         void                    addMember(User* newMember)
                                     throw (Channel::IsFull);
         void                    removeMember(User* member);
-        bool                    doesMemberExist(int memberFD);
+        bool                    isMember(int memberFD) const; // TODO remove this
+        bool                    isMember(const User* member) const;
 
         const UsersFdContainer& getOperators();
         bool                    isOperator(int memberFD) const;
