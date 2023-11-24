@@ -22,6 +22,7 @@ class User : public ISocket {
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
         const std::string&  getRealName() const;
+        std::string         getHostMask() const;
 
         static void initRequestsHandlers();
 

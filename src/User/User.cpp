@@ -56,6 +56,13 @@ const std::string& User::getRealName() const {
     return _realName;
 }
 
+std::string User::getHostMask() const {
+    std::stringstream message;
+
+    message << ':' << _nickName << '!' << _userName << '@' << _realName;
+    return message.str();
+}
+
 void    User::initRequestsHandlers() {
     ft::Log::debug << "Initializing User::_requestsHandlers" << std::endl;
     _requestsHandlers["PASS"] = &User::_handlePASS;
