@@ -17,6 +17,7 @@
 #define RPL_LUSERME "255"
 #define RPL_LOCALUSERS "265"
 #define RPL_GLOBALUSERS "266"
+#define RPL_ISON "303"
 #define RPL_ENDOFWHO "315"
 #define RPL_NOTOPIC "331"
 #define RPL_TOPIC "332"

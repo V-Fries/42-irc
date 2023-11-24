@@ -68,6 +68,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PART"] = &User::_handlePART;
     _requestsHandlers["TOPIC"] = &User::_handleTOPIC;
     _requestsHandlers["MODE"] = &User::_handleMODE;
+    _requestsHandlers["ISON"] = &User::_handleISON;
 }
 
 void    User::handleEvent(const uint32_t epollEvents, Server& server) {

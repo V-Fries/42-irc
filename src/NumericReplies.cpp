@@ -317,6 +317,23 @@ void NumericReplies::Reply::noTopic(User& user, Channel& channel, const Server& 
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Reply::isOn(User& user,
+                                 const std::vector<std::string>& nicknames,
+                                 Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_ISON, SERVER_NAME)
+          << user.getNickName() << " :";
+    for (std::vector<std::string>::const_iterator it = nicknames.begin();
+         it != nicknames.end();
+         ++it) {
+        if (server.getUserByNickname(*it))
+            reply << *it << " ";
+    }
+    reply << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 void NumericReplies::Error::userDontMatchView(User& user, const Server& server) {
     std::stringstream   reply;
 
