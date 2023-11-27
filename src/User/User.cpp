@@ -34,6 +34,7 @@ User::User(const int fd):
         return;
     }
     ft::Log::debug << "hostname: " << host->h_name << std::endl;
+    _hostname = host->h_name;
 }
 
 int User::getFD() const {
@@ -54,6 +55,10 @@ const std::string&  User::getUserName() const {
 
 const std::string& User::getRealName() const {
     return _realName;
+}
+
+const std::string& User::getHostName() const {
+    return _hostname;
 }
 
 void    User::initRequestsHandlers() {
