@@ -46,7 +46,7 @@ add_executable(webserv
 		lib/libftpp/include/ft_Io.hpp
 		lib/libftpp/src/Io.cpp
 		src/User/_handlePRIVMSG.cpp
-		lib/libftpp/src/String/toLower.cpp
+		lib/libftpp/src/String/toLowerOrUpper.cpp
 		src/User/_handleJOIN.cpp
 		src/User/_handlePING.cpp
 		src/User/_handleWHO.cpp

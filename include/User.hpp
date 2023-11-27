@@ -39,9 +39,10 @@ class User : public ISocket {
 
         void    _flushMessages(const Server& server);
 
-        void    _handleEPOLLIN(Server& server);
-        void    _processRequest(Server& server);
-        void    _handleRequest(Server& server, const std::string& request);
+        void        _handleEPOLLIN(Server& server);
+        void        _processRequest(Server& server);
+        void        _handleRequest(Server& server, const std::string& request);
+        static bool _isCommandAllowedWhenNotRegistered(User::RequestHandler requestHandler);
 
         void    _handlePASS(Server& server, const std::vector<std::string>& args);
         void    _handleUSER(Server& server, const std::vector<std::string>& args);

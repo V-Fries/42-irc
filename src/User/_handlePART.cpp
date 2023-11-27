@@ -20,6 +20,9 @@ static void sendChannelPartMessages(const User& user,
                                     const Channel& channel);
 
 void User::_handlePART(Server& server, const std::vector<std::string>& args) {
+    ft::Log::info << "Received PART request: " << args << " from user " << _fd
+                  << std::endl;
+
     if (args.empty()) {
         NumericReplies::Error::needMoreParameters(*this, server, "PART");
         return;

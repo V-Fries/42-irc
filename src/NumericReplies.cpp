@@ -138,7 +138,9 @@ void    NumericReplies::Reply::messageOfTheDay(User& user, const Server& server)
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Reply::namesReply(User& user, const Channel& channel, const Server& server) {
+void NumericReplies::Reply::namesReply(User& user,
+                                       const Channel& channel,
+                                       const Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(RPL_NAMREPLY, SERVER_NAME)
@@ -156,7 +158,9 @@ void NumericReplies::Reply::namesReply(User& user, const Channel& channel, const
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Reply::endOfNames(User& user, const Channel& channel, const Server& server) {
+void NumericReplies::Reply::endOfNames(User& user,
+                                       const Channel& channel,
+                                       const Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(RPL_ENDOFNAMES, SERVER_NAME) << user.getNickName()
@@ -164,7 +168,9 @@ void NumericReplies::Reply::endOfNames(User& user, const Channel& channel, const
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const Server& server) {
+void NumericReplies::Reply::whoReply(User& user,
+                                     const Channel& channel,
+                                     const Server& server) {
     std::stringstream   reply;
     std::stringstream   replyLineStart;
 
@@ -173,7 +179,8 @@ void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const S
     for (Channel::UserContainer::iterator it = channel.getMembers().begin();
          it != channel.getMembers().end();
          ++it) {
-        ft::Log::info << "add " << (*it)->getNickName() << " to WHO list reply" << std::endl;
+        ft::Log::info << "add " << (*it)->getNickName() << " to WHO list reply"
+                        << std::endl;
         reply.str("");
         reply << replyLineStart << (*it)->getUserName() << " "
              << "hostname " << SERVER_NAME << " " << (*it)->getNickName() << " H";
@@ -183,15 +190,19 @@ void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const S
     }
 }
 
-void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, const Server& server) {
+void NumericReplies::Reply::endOfwhoReply(User& user,
+                                          const Channel& channel,
+                                          const Server& server) {
     std::stringstream   reply;
 
-    reply << _constructHeader(RPL_ENDOFWHO, SERVER_NAME)
-          << user.getNickName() << " " << channel.getName() << " :End of WHO list.\r\n";
+    reply << _constructHeader(RPL_ENDOFWHO, SERVER_NAME) << user.getNickName()
+            << " " << channel.getName() << " :End of WHO list.\r\n";
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Error::noRecipient(User& user, const std::string& command, const Server& server) {
+void NumericReplies::Error::noRecipient(User& user,
+                                        const std::string& command,
+                                        const Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_NORECIPIENT, SERVER_NAME)
@@ -207,7 +218,9 @@ void NumericReplies::Error::noTextToSend(User& user, const Server& server) {
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Error::noSuchChannel(User& user, const std::string& channel, const Server& server) {
+void NumericReplies::Error::noSuchChannel(User& user,
+                                          const std::string& channel,
+                                          const Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_NOSUCHCHANNEL, SERVER_NAME)
@@ -215,11 +228,14 @@ void NumericReplies::Error::noSuchChannel(User& user, const std::string& channel
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Error::notOnChannel(User& user, const Channel& channel, const Server& server) {
+void NumericReplies::Error::notOnChannel(User& user,
+                                         const Channel& channel,
+                                         const Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_NOTONCHANNEL, SERVER_NAME)
-          << user.getNickName() << " " << channel.getName() << " :You're not on that channel\r\n";
+          << user.getNickName() << " " << channel.getName()
+          << " :You're not on that channel\r\n";
     user.sendMessage(reply.str(), server);
 }
 
@@ -262,7 +278,9 @@ void    NumericReplies::Error::nickInUse(User& user, const Server& server,
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Error::channelIsFull(User& user, const Server& server, const std::string& channelName) {
+void NumericReplies::Error::channelIsFull(User& user,
+                                          const Server& server,
+                                          const std::string& channelName) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_CHANNELISFULL, SERVER_NAME)
@@ -278,10 +296,18 @@ void NumericReplies::Error::noNicknameGiven(User &user, const Server &server) {
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::notRegistered(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NOTREGISTERED, SERVER_NAME) << user.getNickName()
+            << " :You have not registered\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
 std::string NumericReplies::_constructHeader(const std::string &requestID,
-                                         const std::string &hostname) {
+                                             const std::string &hostname) {
     std::stringstream   result;
 
     result << ':' << hostname << ' ' << requestID << ' ';

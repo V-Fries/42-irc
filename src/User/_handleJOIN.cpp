@@ -7,6 +7,9 @@
 static void sendChannelWelcomeMessages(User& user, const Server& server, const Channel& channel);
 
 void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
+    ft::Log::info << "Received JOIN request: " << args << " from user " << _fd
+                  << std::endl;
+
     if (args.empty()) {
         NumericReplies::Error::needMoreParameters(*this, server, "JOIN");
         return;
