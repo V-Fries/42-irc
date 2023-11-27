@@ -13,8 +13,14 @@
 
 class Server {
     public:
-        typedef std::map<int, ISocket*>         SocketMap;
-        typedef std::map<std::string, User*>    RegisteredMap;
+        typedef int                     fd;
+        typedef std::map<fd, ISocket*>  SocketMap;
+
+        typedef std::string                 NickName;
+        typedef std::map<NickName, User*>   RegisteredMap;
+
+        typedef std::string                     ChannelName;
+        typedef std::map<ChannelName, Channel*> ChannelMap;
 
         Server(uint16_t port, const std::string& password);
 
@@ -56,5 +62,5 @@ class Server {
 
         size_t          _peakRegisteredUserCount;
 
-        std::map<std::string, Channel*>  _channels;
+        ChannelMap  _channels;
 };

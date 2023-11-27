@@ -51,7 +51,7 @@ Server::~Server() {
             }
         } while (errno == EINTR);
     }
-    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+    for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         delete (it->second);
     }
     delete[] _events;
@@ -88,8 +88,10 @@ epoll_event Server::getBaseUserEpollEvent(const int userFD) {
 
 void    Server::removeUser(User *user) {
     ft::Log::info << "User " << user->getFD() << " disconnected" << std::endl;
-    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+    for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         it->second->removeMember(user);
+        it->second->removeOperator(user->getFD());
+        it->second->removeInvitedUser(user->getFD());
     }
     if (epoll_ctl(_epollFD, EPOLL_CTL_DEL, user->getFD(), NULL) == -1) {
         ft::Log::error << "Failed to remove user " << user->getFD() << " from epoll" << std::endl;
