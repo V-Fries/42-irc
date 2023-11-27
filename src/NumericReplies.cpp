@@ -204,7 +204,7 @@ void NumericReplies::Reply::channelModeIs(User& user, const Channel& channel, co
 
     reply << _constructHeader(RPL_CHANNELMODEIS, SERVER_NAME)
           << user.getNickName() << " " << channel.getName() << " " << channel.modesString();
-    if (channel.doesMemberExist(user.getFD()))
+    if (channel.isMember(user.getFD()))
         reply << channel.modesArgs();
     reply << "\r\n";
     user.sendMessage(reply.str(), server);

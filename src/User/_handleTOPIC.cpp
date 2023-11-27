@@ -12,7 +12,7 @@ void User::_handleTOPIC(Server& server, const std::vector<std::string>& args) {
         NumericReplies::Error::noSuchChannel(*this, args[0], server);
         return;
     }
-    if (!target->doesMemberExist(_fd)) {
+    if (!target->isMember(_fd)) {
         NumericReplies::Error::notOnChannel(*this, *target, server);
         return;
     }
