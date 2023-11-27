@@ -32,7 +32,8 @@ class Channel {
         void                    addMember(User* newMember)
                                     throw (Channel::IsFull);
         void                    removeMember(User* member);
-        bool                    doesMemberExist(int memberFD);
+        bool                    isMember(int memberFD) const; // TODO remove this
+        bool                    isMember(const User* member) const;
 
         const UsersFdContainer& getOperators();
         bool                    isOperator(int memberFD) const;
@@ -42,11 +43,11 @@ class Channel {
         void                    removeOperator(int operatorFd);
 
         const UsersFdContainer&    getInvitedUsers() const;
-        bool                            wasUserInvited(int userFD) const;
-        void                            addInvitedUser(int newInvitedUserFD);
-        void                            removeInvitedUser(int invitedUserFD);
-        bool                            isInviteOnly() const;
-        void                            setIsInviteOnly(bool isInviteOnly);
+        bool                       wasUserInvited(int userFD) const;
+        void                       addInvitedUser(int newInvitedUserFD);
+        void                       removeInvitedUser(int invitedUserFD);
+        bool                       isInviteOnly() const;
+        void                       setIsInviteOnly(bool isInviteOnly);
 
         size_t          getUserLimit() const;
         void            setUserLimit(size_t newUserLimit)
@@ -67,9 +68,9 @@ class Channel {
         std::string _topic;
 
         UserContainer       _members;
-        UsersFdContainer    _operators;
+        UsersFdContainer    _operators; // TODO use pointers
 
-        UsersFdContainer    _invitedUsersFDs;
+        UsersFdContainer    _invitedUsersFDs; // TODO use pointers
         bool                _isInviteOnly;
 
         size_t  _userLimit;

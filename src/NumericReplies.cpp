@@ -191,6 +191,29 @@ void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, co
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Reply::inviting(User& user,
+                                     const Server& server,
+                                     const std::string& invitedUser,
+                                     const Channel& channel) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_INVITING, SERVER_NAME) << user.getNickName()
+            << ' ' << invitedUser << ' ' << channel.getName() << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+// Error
+
+void NumericReplies::Error::noSuchNick(User& user,
+                                       const Server& server,
+                                       const std::string& nickName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_NOSUCHNICK, SERVER_NAME) << user.getNickName()
+            << ' ' << nickName << " :No such nick/channel\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 void NumericReplies::Error::noRecipient(User& user, const std::string& command, const Server& server) {
     std::stringstream   reply;
 
@@ -222,8 +245,6 @@ void NumericReplies::Error::notOnChannel(User& user, const Channel& channel, con
           << user.getNickName() << " " << channel.getName() << " :You're not on that channel\r\n";
     user.sendMessage(reply.str(), server);
 }
-
-// Error
 
 void    NumericReplies::Error::alreadyRegistered(User& user, const Server& server) {
     std::stringstream   reply;
@@ -275,6 +296,27 @@ void NumericReplies::Error::noNicknameGiven(User &user, const Server &server) {
 
     reply << _constructHeader(ERR_NONICKNAMEGIVEN, SERVER_NAME) << user.getNickName()
           << " :No nickname given\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::channelPrivilegesNeeded(User& user,
+                                                    const Server& server,
+                                                    const Channel& channel) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_CHANOPRIVSNEEDED, SERVER_NAME) << user.getNickName()
+            << ' ' << channel.getName() << " :You're not channel operator\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::userOnChannel(User& user,
+                                          const Server& server,
+                                          const std::string& invitedUser,
+                                          const Channel& channel) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERONCHANNEL, SERVER_NAME) << user.getNickName()
+            << ' ' << invitedUser << ' ' << channel.getName() << " :is already on channel\r\n";
     user.sendMessage(reply.str(), server);
 }
 

@@ -1,7 +1,4 @@
 #include "User.hpp"
-
-#include <cstdlib>
-
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "Command.hpp"
@@ -12,9 +9,6 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <sstream>
-#include <unistd.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 
 User::RequestsHandlersMap User::_requestsHandlers;
 
@@ -22,18 +16,7 @@ User::User(const int fd):
     _fd(fd),
     _isRegistered(false),
     _nickName(defaultNickname) {
-    struct sockaddr_in  addr = {};
-    socklen_t           len;
-
-    len = sizeof (addr);
-    getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
-    struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
-    if (!host) {
-        ft::Log::error << "gethostbyname failed with h error number: " << h_errno << std::endl;
-        return;
-    }
-    ft::Log::debug << "hostname: " << host->h_name << std::endl;
 }
 
 int User::getFD() const {
@@ -56,6 +39,13 @@ const std::string& User::getRealName() const {
     return _realName;
 }
 
+std::string User::getHostMask() const {
+    std::stringstream message;
+
+    message << ':' << _nickName << '!' << _userName << '@' << _realName;
+    return message.str();
+}
+
 void    User::initRequestsHandlers() {
     ft::Log::debug << "Initializing User::_requestsHandlers" << std::endl;
     _requestsHandlers["PASS"] = &User::_handlePASS;
@@ -66,6 +56,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PING"] = &User::_handlePING;
     _requestsHandlers["WHO"] = &User::_handleWHO;
     _requestsHandlers["PART"] = &User::_handlePART;
+    _requestsHandlers["INVITE"] = &User::_handleINVITE;
 }
 
 void    User::handleEvent(const uint32_t epollEvents, Server& server) {
