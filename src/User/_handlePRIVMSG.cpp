@@ -53,7 +53,7 @@ static std::string  constructMessageToChannel(const User& sender,
                                               const std::string& body) {
     std::stringstream   message;
 
-    message << ":" << sender.getNickName() << " PRIVMSG " <<
+    message << sender.getHostMask() << " PRIVMSG " <<
             receiver.getName() << " :" << body << "\r\n";
     return (message.str());
 }

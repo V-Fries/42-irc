@@ -46,7 +46,7 @@ void processCurrentChannel(const std::string& channelName,
         NumericReplies::Error::noSuchChannel(*user, channelName, server);
         return;
     }
-    if (!channel->doesMemberExist(user->getFD())) {
+    if (!channel->isMember(user->getFD())) {
         NumericReplies::Error::notOnChannel(*user, *channel, server);
         return;
     }
@@ -67,7 +67,7 @@ void processCurrentChannel(const std::string& channelName,
         NumericReplies::Error::noSuchChannel(*user, channelName, server);
         return;
     }
-    if (!channel->doesMemberExist(user->getFD())) {
+    if (!channel->isMember(user->getFD())) {
         NumericReplies::Error::notOnChannel(*user, *channel, server);
         return;
     }
