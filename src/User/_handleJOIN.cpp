@@ -16,7 +16,7 @@ void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
     for (std::vector<std::string>::const_iterator it = channelsNames.begin(); it != channelsNames.end(); ++it) {
         const Channel *currChannel = server.getChannelByName(*it);
         if (!currChannel) {
-            server.addChannel(new Channel(*it, "", this));
+            server.addChannel(new Channel(*it, "", this)); // TODO try catch here since it will throw if the name is bad
             sendChannelWelcomeMessages(*this, server, *server.getChannelByName(*it));
         } else {
             try {
@@ -32,7 +32,7 @@ void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
 static void sendChannelWelcomeMessages(User& user, const Server& server, const Channel& channel) {
     std::stringstream   message;
 
-    message << ":" << user.getNickName() << " JOIN " << channel.getName() << "\r\n";
+    message << user.getHostMask() << " JOIN " << channel.getName() << "\r\n";
     for (Channel::UserContainer::iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
         (*it)->sendMessage(message.str(), server);
     }

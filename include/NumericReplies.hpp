@@ -26,6 +26,7 @@
 #define RPL_TOPIC "332"
 #define RPL_TOPICWHOTIME "333"
 #define RPL_CHANNELMODEIS "324"
+#define RPL_INVITING "341"
 #define RPL_WHOREPLY "352"
 #define RPL_NAMREPLY "353"
 #define RPL_ENDOFNAMES "366"
@@ -33,6 +34,7 @@
 #define RPL_MOTDSTART "375"
 #define RPL_ENDOFMOTD "376"
 
+// TODO handle 421
 #define ERR_NOSUCHNICK "401"
 #define ERR_NOSUCHCHANNEL "403"
 #define ERR_NORECIPIENT "411"
@@ -42,6 +44,7 @@
 #define ERR_NICKNAMEINUSE "433"
 #define ERR_USERNOTINCHANNEL "441"
 #define ERR_NOTONCHANNEL "442"
+#define ERR_USERONCHANNEL "443"
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 #define ERR_CHANNELISFULL "471"
@@ -76,6 +79,11 @@ class NumericReplies {
                 static void whoReply(User& user, const Channel& channel, const Server& server);
                 static void endOfwhoReply(User& user, const Channel& channel, const Server& server);
 
+                static void inviting(User& user,
+                                     const Server& server,
+                                     const std::string& invitedUser,
+                                     const Channel& channel);
+
                 static void currUserModes(User& user, const Server& server);
                 static void channelModeIs(User& user, const Channel& channel, const Server& server);
 
@@ -92,6 +100,10 @@ class NumericReplies {
 
         class Error {
             public:
+                static void noSuchNick(User& user,
+                                       const Server& server,
+                                       const std::string& nickName);
+
                 static void alreadyRegistered(User& user, const Server& server);
 
                 static void needMoreParameters(User& user, const Server& server,
@@ -120,6 +132,15 @@ class NumericReplies {
                 static void chanOperPrivNeeded(User& user, const Channel& channel, const Server& server);
 
                 static void userNotInChannel(User& user, const std::string& nickname, const Channel& channel, const Server& server);
+                static void channelPrivilegesNeeded(User& user,
+                                                    const Server& server,
+                                                    const Channel& channel);
+
+                static void userOnChannel(User& user,
+                                          const Server& server,
+                                          const std::string& invitedUser,
+                                          const Channel& channel);
+
         };
 
     private:

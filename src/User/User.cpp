@@ -57,6 +57,13 @@ const std::string& User::getRealName() const {
     return _realName;
 }
 
+std::string User::getHostMask() const {
+    std::stringstream message;
+
+    message << ':' << _nickName << '!' << _userName << '@' << _realName;
+    return message.str();
+}
+
 const std::string& User::getHostName() const {
     return _hostname;
 }
@@ -75,6 +82,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["MODE"] = &User::_handleMODE;
     _requestsHandlers["LIST"] = &User::_handleLIST;
     _requestsHandlers["ISON"] = &User::_handleISON;
+    _requestsHandlers["INVITE"] = &User::_handleINVITE;
 }
 
 void    User::handleEvent(const uint32_t epollEvents, Server& server) {

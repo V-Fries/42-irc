@@ -1,4 +1,5 @@
 SRC	=\
+	User/_handleINVITE.cpp	\
 	User/_handleNICK.cpp	\
 	User/_handlePASS.cpp	\
 	User/_handleUSER.cpp	\

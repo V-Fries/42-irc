@@ -71,12 +71,16 @@ void    Channel::removeMember(User *member) {
     _members.erase(member);
 }
 
-bool    Channel::doesMemberExist(const int memberFD) const {
+bool    Channel::isMember(const int memberFD) const {
     for (UserContainer::const_iterator it = _members.begin(); it != _members.end(); ++it) {
         if ((*it)->getFD() == memberFD)
             return (true);
     }
     return (false);
+}
+
+bool    Channel::isMember(const User* member) const {
+    return _members.contains(const_cast<User*>(member));
 }
 
 

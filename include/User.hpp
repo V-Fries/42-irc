@@ -23,6 +23,7 @@ class User : public ISocket {
         const std::string&  getUserName() const;
         const std::string&  getRealName() const;
         const std::string&  getHostName() const;
+        std::string         getHostMask() const;
 
         static void initRequestsHandlers();
 
@@ -56,6 +57,7 @@ class User : public ISocket {
         void    _handleMODE(Server& server, const std::vector<std::string>& args);
         void    _handleLIST(Server& server, const std::vector<std::string>& args);
         void    _handleISON(Server& server, const std::vector<std::string>& args);
+        void    _handleINVITE(Server& server, const std::vector<std::string>& args);
 
         void    _registerUserIfReady(Server& server);
 

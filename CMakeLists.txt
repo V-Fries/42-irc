@@ -56,4 +56,5 @@ add_executable(webserv
 		src/Topic.cpp
 		include/Topic.hpp
 		src/User/_handleLIST.cpp
-		src/User/_handleISON.cpp)
+		src/User/_handleISON.cpp
+		src/User/_handleINVITE.cpp)
