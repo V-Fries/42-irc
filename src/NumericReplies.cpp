@@ -210,6 +210,18 @@ void NumericReplies::Reply::channelModeIs(User& user, const Channel& channel, co
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Reply::creationTime(User& user,
+                                         const Channel& channel,
+                                         const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_CREATIONTIME, SERVER_NAME)
+          << user.getNickName() << " "
+          << channel.getName() << " "
+          << channel.getCreationTime() << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 void NumericReplies::Reply::inviting(User& user,
                                      const Server& server,
                                      const std::string& invitedUser,

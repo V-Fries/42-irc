@@ -22,6 +22,7 @@ static void sendModes(User* user, Server& server, const std::string& target) {
             return;
         }
         NumericReplies::Reply::channelModeIs(*user, *channelTarget, server);
+        NumericReplies::Reply::creationTime(*user, *channelTarget, server);
         return;
     }
     if (!server.getUserByNickname(target)) {

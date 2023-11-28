@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <sstream>
+#include <ctime>
 
 #include "ft_Log.hpp"
 
@@ -28,6 +29,7 @@ Channel::Channel(const std::string& name,
     _operators.insert(creator->getFD());
     if (_name[0] == '#')
         this->addModes(MODE_TOP);
+    _creationTine = std::time(NULL);
 }
 
 const std::string&  Channel::getName() const {
@@ -180,6 +182,10 @@ void    Channel::setUserLimit(const size_t newUserLimit)
 
 size_t  Channel::getMaxPossibleUserLimit() {
     return std::numeric_limits<size_t>::max();
+}
+
+time_t Channel::getCreationTime() const {
+    return _creationTine;
 }
 
 void Channel::sendMessage(const int senderFd, const std::string& message, const Server& server) {

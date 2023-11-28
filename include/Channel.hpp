@@ -64,6 +64,8 @@ class Channel {
                             throw (Channel::HasMoreUserThanNewLimit);
         static size_t   getMaxPossibleUserLimit();
 
+        time_t  getCreationTime() const;
+
         void    sendMessage(int senderFd, const std::string& message, const Server& server);
 
     private:
@@ -83,4 +85,6 @@ class Channel {
         UsersFdContainer    _invitedUsersFDs;
 
         size_t  _userLimit;
+
+        time_t  _creationTine;
 };
