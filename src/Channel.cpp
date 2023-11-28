@@ -160,8 +160,6 @@ std::string Channel::modesString() const {
 std::string Channel::modesArgs() const {
     std::stringstream   args;
 
-    if (_modes & MODE_KEY)
-        args << " " << _password;
     if (_modes & MODE_LIM)
         args << " " << _userLimit;
     return (args.str());
