@@ -38,7 +38,7 @@ static std::string getRealName(const int fd, const std::string& userSetRealName)
     const struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
     if (host == NULL) {
         ft::Log::warning << "gethostbyname failed with h error number: " << h_errno
-                         << std::endl;
+                           << std::endl;
         return userSetRealName;
     }
     return host->h_name;

@@ -4,7 +4,13 @@
 
 #include <string>
 
+#include "Topic.hpp"
 #include "User.hpp"
+
+#define MODE_INV (1 << 0)
+#define MODE_TOP (1 << 1)
+#define MODE_KEY (1 << 2)
+#define MODE_LIM (1 << 3)
 
 class Channel {
     public:
@@ -25,8 +31,8 @@ class Channel {
         const std::string&  getPassword() const;
         void                setPassword(const std::string& newPassword);
 
-        const std::string&  getTopic() const;
-        void                setTopic(const std::string& newTopic);
+        const Topic& getTopic() const;
+        void                setTopic(const std::string& newTopic, const std::string& author);
 
         const UserContainer&    getMembers() const;
         void                    addMember(User* newMember)
@@ -42,36 +48,43 @@ class Channel {
         void                    removeOperator(User* operatorPtr);
         void                    removeOperator(int operatorFd);
 
-        const UsersFdContainer&    getInvitedUsers() const;
-        bool                       wasUserInvited(int userFD) const;
-        void                       addInvitedUser(int newInvitedUserFD);
-        void                       removeInvitedUser(int invitedUserFD);
-        bool                       isInviteOnly() const;
-        void                       setIsInviteOnly(bool isInviteOnly);
+        const UsersFdContainer& getInvitedUsers() const;
+        bool                    wasUserInvited(int userFD) const;
+        void                    addInvitedUser(int newInvitedUserFD);
+        void                    removeInvitedUser(int invitedUserFD);
+
+        bool        getModes(uint8_t flags) const;
+        void        addModes(uint8_t flags);
+        void        removeModes(uint8_t flags);
+        std::string modesString() const;
+        std::string modesArgs() const;
 
         size_t          getUserLimit() const;
         void            setUserLimit(size_t newUserLimit)
                             throw (Channel::HasMoreUserThanNewLimit);
-        void            removeUserLimit();
         static size_t   getMaxPossibleUserLimit();
 
-        void            sendMessage(int senderFd, const std::string& message, const Server& server);
+        time_t  getCreationTime() const;
+
+        void    sendMessage(int senderFd, const std::string& message, const Server& server);
 
     private:
         static bool _isNameCorrect(const std::string& name);
 
+        uint8_t _modes;
 
         const std::string   _name;
 
         std::string _password;
 
-        std::string _topic;
+        Topic   _topic;
 
         UserContainer       _members;
         UsersFdContainer    _operators; // TODO use pointers
 
-        UsersFdContainer    _invitedUsersFDs; // TODO use pointers
-        bool                _isInviteOnly;
+        UsersFdContainer    _invitedUsersFDs;
 
         size_t  _userLimit;
+
+        time_t  _creationTine;
 };
