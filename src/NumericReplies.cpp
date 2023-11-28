@@ -275,14 +275,6 @@ void NumericReplies::Error::userDontMatchSet(User& user, const Server& server) {
     user.sendMessage(reply.str(), server);
 }
 
-void NumericReplies::Error::noSuchNickname(User& user, const std::string& nickname, const Server& server) {
-    std::stringstream   reply;
-
-    reply << _constructHeader(ERR_NOSUCHNICK, SERVER_NAME)
-          << user.getNickName() << " " << nickname << " :No such nick\r\n";
-    user.sendMessage(reply.str(), server);
-}
-
 void NumericReplies::Error::chanOperPrivNeeded(User& user,
                                                const Channel& channel,
                                                const Server& server) {

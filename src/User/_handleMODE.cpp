@@ -25,7 +25,7 @@ static void sendModes(User* user, Server& server, const std::string& target) {
         return;
     }
     if (!server.getUserByNickname(target)) {
-        NumericReplies::Error::noSuchNickname(*user, target, server);
+        NumericReplies::Error::noSuchNick(*user, server, target);
         return;
     }
     if (target != user->getNickName()) {

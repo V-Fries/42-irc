@@ -127,8 +127,6 @@ class NumericReplies {
                 static void userDontMatchView(User& user, const Server& server);
                 static void userDontMatchSet(User& user, const Server& server);
 
-                static void noSuchNickname(User& user, const std::string& nickname, const Server& server);
-
                 static void chanOperPrivNeeded(User& user, const Channel& channel, const Server& server);
 
                 static void userNotInChannel(User& user, const std::string& nickname, const Channel& channel, const Server& server);
