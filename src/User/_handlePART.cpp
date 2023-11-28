@@ -92,9 +92,7 @@ static void sendChannelPartMessages(const User& user,
                                     const Channel& channel) {
     std::stringstream message;
 
-    message << ":" << user.getNickName() << "!~"
-            << user.getRealName() << "@"
-            << user.getHostName() << " PART "
+    message << user.getHostMask() << " PART "
             << channel.getName() << "\r\n";
     for (Channel::UserContainer::iterator it = channel.getMembers().begin();
          it != channel.getMembers().end();
