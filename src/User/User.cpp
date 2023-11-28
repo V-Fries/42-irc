@@ -117,7 +117,8 @@ void    User::_handleEPOLLIN(Server& server) {
     }
     const std::string stringBuffer = std::string(rcvBuffer, end);
     _requestBuffer += stringBuffer;
-    ft::Log::debug << "buffer: " << stringBuffer << std::endl;
+    ft::Log::debug << "User(" << _fd << ")::_requestBuffer += \"" << stringBuffer
+                     << '\"' << std::endl;
     if (_requestBuffer.find('\r') != std::string::npos ||
         _requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
