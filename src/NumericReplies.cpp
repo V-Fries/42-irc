@@ -373,7 +373,7 @@ void NumericReplies::Reply::list(User& user, Server& server) {
 
     lineStart << _constructHeader(RPL_LIST, SERVER_NAME)
               << user.getNickName() << " ";
-    for (std::map<std::string, Channel*>::const_iterator it = server.getChannels().begin();
+    for (Server::ChannelMap::const_iterator it = server.getChannels().begin();
          it != server.getChannels().end();
          ++it) {
         std::stringstream   reply;

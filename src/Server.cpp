@@ -166,7 +166,7 @@ const std::string& Server::getNicknameByFd(const int fd) const {
     return (user->getNickName());
 }
 
-const std::map<std::string, Channel*>& Server::getChannels() const {
+const Server::ChannelMap& Server::getChannels() const {
     return (_channels);
 }
 
