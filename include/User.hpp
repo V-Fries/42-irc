@@ -22,7 +22,6 @@ class User : public ISocket {
         const std::string&  getNickName() const;
         const std::string&  getUserName() const;
         const std::string&  getRealName() const;
-        const std::string&  getHostName() const;
         std::string         getHostMask() const;
 
         static void initRequestsHandlers();
@@ -73,7 +72,6 @@ class User : public ISocket {
         std::string _userName;
         std::string _realName;
         std::string _password;
-        std::string _hostname;
 
         std::string _requestBuffer;
 

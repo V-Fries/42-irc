@@ -16,25 +16,14 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-User::RequestsHandlersMap User::_requestsHandlers;
+User::RequestsHandlersMap   User::_requestsHandlers;
+std::string                 User::defaultNickname = "*";
 
 User::User(const int fd):
     _fd(fd),
     _isRegistered(false),
     _nickName(defaultNickname) {
-    struct sockaddr_in  addr = {};
-    socklen_t           len;
-
-    len = sizeof (addr);
-    getsockname(fd, reinterpret_cast<struct sockaddr *>(&addr), &len);
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
-    const struct hostent* host = gethostbyname(inet_ntoa(addr.sin_addr));
-    if (!host) {
-        ft::Log::error << "gethostbyname failed with h error number: " << h_errno << std::endl;
-        return;
-    }
-    ft::Log::debug << "hostname: " << host->h_name << std::endl;
-    _hostname = host->h_name;
 }
 
 int User::getFD() const {
@@ -62,10 +51,6 @@ std::string User::getHostMask() const {
 
     message << ':' << _nickName << '!' << _userName << '@' << _realName;
     return message.str();
-}
-
-const std::string& User::getHostName() const {
-    return _hostname;
 }
 
 void    User::initRequestsHandlers() {
@@ -215,5 +200,3 @@ void    User::_registerUserIfReady(Server& server) {
     NumericReplies::Reply::globalUsers(*this, server);
     NumericReplies::Reply::messageOfTheDay(*this, server);
 }
-
-std::string User::defaultNickname = "*";
