@@ -8,6 +8,10 @@ SRC	=\
 	User/_handlePING.cpp	\
 	User/_handleWHO.cpp		\
 	User/_handlePART.cpp	\
+	User/_handleTOPIC.cpp	\
+	User/_handleMODE.cpp	\
+	User/_handleLIST.cpp	\
+	User/_handleISON.cpp	\
 	User/User.cpp			\
 \
 	Channel.cpp			\
@@ -17,3 +21,4 @@ SRC	=\
 	Server.cpp			\
 	SignalHandler.cpp	\
 	Command.cpp			\
+	Topic.cpp			\
