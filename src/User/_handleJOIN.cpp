@@ -77,6 +77,7 @@ static void joinExistingChannel(User& user,
 
     try {
         server.addUserToChannel(channel, user);
+        channel.removeInvitedUser(user.getFD());
         sendChannelWelcomeMessages(user, server, channel);
     } catch (Channel::IsFull&) {
         NumericReplies::Error::channelIsFull(user, server, channel.getName());
