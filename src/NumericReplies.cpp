@@ -476,6 +476,16 @@ void NumericReplies::Error::userOnChannel(User& user,
     user.sendMessage(reply.str(), server);
 }
 
+void    NumericReplies::Error::unknownCommand(User& user,
+                                              const Server& server,
+                                              const std::string& command) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_UNKNOWNCOMMAND, SERVER_NAME) << user.getNickName()
+            << ' ' << command << " :Unknown command\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
 std::string NumericReplies::_constructHeader(const std::string &requestID,

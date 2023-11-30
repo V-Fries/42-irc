@@ -155,6 +155,7 @@ void    User::_handleRequest(Server& server, const std::string& request) {
         const RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
         (this->*requestHandler)(server, cmd.getArgs());
     } catch (std::out_of_range &) {
+        NumericReplies::Error::unknownCommand(*this, server, cmd.getCommand());
         ft::Log::warning << "Request " << cmd << " from user " << _fd
                            << " was not recognized" << std::endl;
     }
