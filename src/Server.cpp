@@ -145,9 +145,12 @@ Channel* Server::getChannelByName(const std::string& name) {
     }
 }
 
-void Server::addUserToChannel(const std::string& channel, User* user) {
+void    Server::addUserToChannel(const std::string& channel, User& user) {
+    _channels[channel]->addMember(&user);
+}
 
-    _channels[channel]->addMember(user);
+void    Server::addUserToChannel(Channel& channel, User& user) {
+    channel.addMember(&user);
 }
 
 const std::string& Server::getNicknameByFd(const int fd) const {

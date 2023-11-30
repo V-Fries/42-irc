@@ -20,14 +20,40 @@ User::RequestsHandlersMap   User::_requestsHandlers;
 std::string                 User::defaultNickname = "*";
 
 User::User(const int fd):
-    _fd(fd),
-    _isRegistered(false),
-    _nickName(defaultNickname) {
+        _fd(fd),
+        _nbOfJoinedLocalChannels(0),
+        _nbOfJoinedRegularChannels(0),
+        _isRegistered(false),
+        _nickName(defaultNickname) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
 int User::getFD() const {
     return _fd;
+}
+
+User::JoinedChannelCounter    User::getNbOfJoinedRegularChannels() const {
+    return _nbOfJoinedRegularChannels;
+}
+
+void    User::setNbOfJoinedRegularChannels(JoinedChannelCounter nbOfJoinedRegularChannels) {
+    _nbOfJoinedRegularChannels = nbOfJoinedRegularChannels;
+}
+
+bool User::hasJoinedTheMaxNbOfRegularChannels() const {
+    return this->getNbOfJoinedRegularChannels() >= maxNbOfJoinedRegularChannels;
+}
+
+User::JoinedChannelCounter    User::getNbOfJoinedLocalChannels() const {
+    return _nbOfJoinedLocalChannels;
+}
+
+void    User::setNbOfJoinedLocalChannels(JoinedChannelCounter nbOfJoinedLocalChannels) {
+    _nbOfJoinedLocalChannels = nbOfJoinedLocalChannels;
+}
+
+bool User::hasJoinedTheMaxNbOfLocalChannels() const {
+    return this->getNbOfJoinedLocalChannels() >= maxNbOfJoinedLocalChannels;
 }
 
 void    User::setIsRegistered(const bool isRegistered) {

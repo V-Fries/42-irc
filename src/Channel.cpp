@@ -11,7 +11,7 @@
 
 Channel::Channel(const std::string& name,
                  const std::string& password,
-                 User *creator)
+                 User& creator)
         throw (IncorrectName):
     _modes(0),
     _name(ft::String::toLower(name)),
@@ -25,8 +25,8 @@ Channel::Channel(const std::string& name,
     if (!Channel::_isNameCorrect(_name)) throw (IncorrectName());
 
     ft::Log::info << "new channel: " << _name << std::endl;
-    _members.insert(creator);
-    _operators.insert(creator->getFD());
+    _members.insert(&creator);
+    _operators.insert(creator.getFD());
     if (_name[0] == '#')
         this->addModes(MODE_TOP);
     _creationTine = std::time(NULL);
@@ -131,6 +131,10 @@ void    Channel::removeInvitedUser(const int invitedUserFD) {
     _invitedUsersFDs.erase(invitedUserFD);
 }
 
+bool Channel::isInviteOnly() const {
+    return _modes & MODE_INV;
+}
+
 bool Channel::getModes(const uint8_t flags) const {
     return (_modes & flags);
 }
@@ -191,7 +195,7 @@ time_t Channel::getCreationTime() const {
 void Channel::sendMessage(const int senderFd, const std::string& message, const Server& server) {
     ft::Log::info << _name << " send message: " << message << std::endl;
     for(UserContainer::iterator it = _members.begin(); it != _members.end(); ++it) {
-            if ((*it)->getFD() != senderFd) (*it)->sendMessage(message, server);
+        if ((*it)->getFD() != senderFd) (*it)->sendMessage(message, server);
     }
 }
 

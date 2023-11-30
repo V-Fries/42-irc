@@ -4,6 +4,7 @@
 
 #include <string>
 
+#include "ft_Exception.hpp"
 #include "Topic.hpp"
 #include "User.hpp"
 
@@ -23,7 +24,7 @@ class Channel {
 
         Channel(const std::string& name,
                 const std::string& password,
-                User *creator)
+                User& creator)
             throw (IncorrectName);
 
         const std::string&  getName() const;
@@ -31,8 +32,8 @@ class Channel {
         const std::string&  getPassword() const;
         void                setPassword(const std::string& newPassword);
 
-        const Topic& getTopic() const;
-        void                setTopic(const std::string& newTopic, const std::string& author);
+        const Topic&    getTopic() const;
+        void            setTopic(const std::string& newTopic, const std::string& author);
 
         const UserContainer&    getMembers() const;
         void                    addMember(User* newMember)
@@ -52,6 +53,7 @@ class Channel {
         bool                    wasUserInvited(int userFD) const;
         void                    addInvitedUser(int newInvitedUserFD);
         void                    removeInvitedUser(int invitedUserFD);
+        bool                    isInviteOnly() const;
 
         bool        getModes(uint8_t flags) const;
         void        addModes(uint8_t flags);
