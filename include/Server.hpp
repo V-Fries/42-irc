@@ -13,8 +13,8 @@
 
 class Server {
     public:
-        typedef int                     fd;
-        typedef std::map<fd, ISocket*>  SocketMap;
+        typedef int                       fd_t;
+        typedef std::map<fd_t, ISocket*>  SocketMap;
 
         typedef std::string                 NickName;
         typedef std::map<NickName, User*>   RegisteredMap;
