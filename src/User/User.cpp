@@ -1,7 +1,4 @@
 #include "User.hpp"
-
-#include <cstdlib>
-
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "Command.hpp"
@@ -12,22 +9,29 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <sstream>
-#include <unistd.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 
 User::RequestsHandlersMap   User::_requestsHandlers;
 std::string                 User::defaultNickname = "*";
 
 User::User(const int fd):
-    _fd(fd),
-    _isRegistered(false),
-    _nickName(defaultNickname) {
+        _fd(fd),
+        _nbOfJoinedLocalChannels(0),
+        _nbOfJoinedRegularChannels(0),
+        _isRegistered(false),
+        _nickName(defaultNickname) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
 int User::getFD() const {
     return _fd;
+}
+
+bool User::hasJoinedTheMaxNbOfRegularChannels() const {
+    return this->_nbOfJoinedRegularChannels >= maxNbOfJoinedRegularChannels;
+}
+
+bool User::hasJoinedTheMaxNbOfLocalChannels() const {
+    return this->_nbOfJoinedLocalChannels >= maxNbOfJoinedLocalChannels;
 }
 
 void    User::setIsRegistered(const bool isRegistered) {
@@ -123,7 +127,8 @@ void    User::_handleEPOLLIN(Server& server) {
     }
     const std::string stringBuffer = std::string(rcvBuffer, end);
     _requestBuffer += stringBuffer;
-    ft::Log::debug << "buffer: " << stringBuffer << std::endl;
+    ft::Log::debug << "User(" << _fd << ")::_requestBuffer += \"" << stringBuffer
+                     << '\"' << std::endl;
     if (_requestBuffer.find('\r') != std::string::npos ||
         _requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
@@ -148,17 +153,30 @@ void    User::_processRequest(Server& server) {
 }
 
 void    User::_handleRequest(Server& server, const std::string& request) {
-    ft::Log::info << "Processing request from user " << _fd << std::endl;
-
     const Command cmd(request);
+    ft::Log::info << "Processing request " << cmd.getCommand() << " from user "
+                    << _fd << std::endl;
+
+    RequestHandler requestHandler;
     try {
-        const RequestHandler requestHandler = _requestsHandlers.at(cmd.getCommand());
-        (this->*requestHandler)(server, cmd.getArgs());
-    } catch (std::out_of_range &) {
+        requestHandler = _requestsHandlers.at(cmd.getCommand());
+    } catch (std::out_of_range&) {
         NumericReplies::Error::unknownCommand(*this, server, cmd.getCommand());
-        ft::Log::warning << "Request " << cmd << " from user " << _fd
-                           << " was not recognized" << std::endl;
+        ft::Log::warning << "Request was not recognized" << std::endl;
+        return;
     }
+
+    if (this->isRegistered() || _isCommandAllowedWhenNotRegistered(requestHandler)) {
+        (this->*requestHandler)(server, cmd.getArgs());
+    } else {
+        NumericReplies::Error::notRegistered(*this, server);
+    }
+}
+
+bool    User::_isCommandAllowedWhenNotRegistered(RequestHandler requestHandler) {
+    return requestHandler == &User::_handlePASS
+            || requestHandler == &User::_handleUSER
+            || requestHandler == &User::_handleNICK;
 }
 
 void User::_flushMessages(const Server& server) {

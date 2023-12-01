@@ -7,6 +7,9 @@
 #include "User.hpp"
 
 void User::_handlePING(Server& server, const std::vector<std::string>& args) {
+    ft::Log::info << "Received PING request: " << args << " from user " << _fd
+                  << std::endl;
+
     if (!args.empty()) {
         std::stringstream reply;
 
