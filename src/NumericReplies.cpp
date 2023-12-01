@@ -502,6 +502,16 @@ void NumericReplies::Error::userOnChannel(User& user,
     user.sendMessage(reply.str(), server);
 }
 
+void    NumericReplies::Error::unknownCommand(User& user,
+                                              const Server& server,
+                                              const std::string& command) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_UNKNOWNCOMMAND, SERVER_NAME) << user.getNickName()
+            << ' ' << command << " :Unknown command\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 void    NumericReplies::Error::badChannelMask(User& user,
                                               const Server& server,
                                               const std::string& channelName) {
