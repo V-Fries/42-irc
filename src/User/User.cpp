@@ -32,28 +32,12 @@ int User::getFD() const {
     return _fd;
 }
 
-User::JoinedChannelCounter    User::getNbOfJoinedRegularChannels() const {
-    return _nbOfJoinedRegularChannels;
-}
-
-void    User::setNbOfJoinedRegularChannels(JoinedChannelCounter nbOfJoinedRegularChannels) {
-    _nbOfJoinedRegularChannels = nbOfJoinedRegularChannels;
-}
-
 bool User::hasJoinedTheMaxNbOfRegularChannels() const {
-    return this->getNbOfJoinedRegularChannels() >= maxNbOfJoinedRegularChannels;
-}
-
-User::JoinedChannelCounter    User::getNbOfJoinedLocalChannels() const {
-    return _nbOfJoinedLocalChannels;
-}
-
-void    User::setNbOfJoinedLocalChannels(JoinedChannelCounter nbOfJoinedLocalChannels) {
-    _nbOfJoinedLocalChannels = nbOfJoinedLocalChannels;
+    return this->_nbOfJoinedRegularChannels >= maxNbOfJoinedRegularChannels;
 }
 
 bool User::hasJoinedTheMaxNbOfLocalChannels() const {
-    return this->getNbOfJoinedLocalChannels() >= maxNbOfJoinedLocalChannels;
+    return this->_nbOfJoinedLocalChannels >= maxNbOfJoinedLocalChannels;
 }
 
 void    User::setIsRegistered(const bool isRegistered) {

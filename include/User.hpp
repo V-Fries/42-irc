@@ -15,18 +15,14 @@ class User : public ISocket {
 
         static const JoinedChannelCounter maxNbOfJoinedRegularChannels = 42; // # channels
         static const JoinedChannelCounter maxNbOfJoinedLocalChannels = 42; // & channels
-        static const JoinedChannelCounter maxNickNameLength = 42;
+        static const size_t maxNickNameLength = 42;
 
         explicit User(int fd);
 
         int                     getFD() const;
 
-        JoinedChannelCounter    getNbOfJoinedRegularChannels() const;
-        void                    setNbOfJoinedRegularChannels(JoinedChannelCounter nbOfRegularRegularChannels);
-        bool                    hasJoinedTheMaxNbOfRegularChannels() const;
-        JoinedChannelCounter    getNbOfJoinedLocalChannels() const;
-        void                    setNbOfJoinedLocalChannels(JoinedChannelCounter nbOfJoinedLocalChannels);
-        bool                    hasJoinedTheMaxNbOfLocalChannels() const;
+        bool    hasJoinedTheMaxNbOfRegularChannels() const;
+        bool    hasJoinedTheMaxNbOfLocalChannels() const;
 
         void                    setIsRegistered(bool isRegistered);
         const std::string&      getNickName() const;
