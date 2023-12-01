@@ -175,7 +175,7 @@ void NumericReplies::Reply::whoReply(User& user, const Channel& channel, const S
          ++it) {
         ft::Log::info << "add " << (*it)->getNickName() << " to WHO list reply" << std::endl;
         reply.str("");
-        reply << replyLineStart << (*it)->getUserName() << " "
+        reply << replyLineStart.str() << (*it)->getUserName() << " "
              << "hostname " << SERVER_NAME << " " << (*it)->getNickName() << " H";
         if (channel.isOperator((*it)->getFD())) reply << "@";
         reply << " :0 " << (*it)->getRealName() << "\r\n";
@@ -188,6 +188,37 @@ void NumericReplies::Reply::endOfwhoReply(User& user, const Channel& channel, co
 
     reply << _constructHeader(RPL_ENDOFWHO, SERVER_NAME)
           << user.getNickName() << " " << channel.getName() << " :End of WHO list.\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::currUserModes(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_UMODEIS, SERVER_NAME)
+          << user.getNickName() << " +\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::channelModeIs(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_CHANNELMODEIS, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName() << " " << channel.modesString();
+    if (channel.isMember(user.getFD()))
+        reply << channel.modesArgs();
+    reply << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::creationTime(User& user,
+                                         const Channel& channel,
+                                         const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_CREATIONTIME, SERVER_NAME)
+          << user.getNickName() << " "
+          << channel.getName() << " "
+          << channel.getCreationTime() << "\r\n";
     user.sendMessage(reply.str(), server);
 }
 
@@ -243,6 +274,131 @@ void NumericReplies::Error::notOnChannel(User& user, const Channel& channel, con
 
     reply << _constructHeader(ERR_NOTONCHANNEL, SERVER_NAME)
           << user.getNickName() << " " << channel.getName() << " :You're not on that channel\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+// Error
+
+void NumericReplies::Error::userDontMatchSet(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERSDONTMATCH, SERVER_NAME)
+          << user.getNickName() << " :Can't change mode for other users\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::chanOperPrivNeeded(User& user,
+                                               const Channel& channel,
+                                               const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_CHANOPRIVSNEEDED, SERVER_NAME)
+          << user.getNickName() << " "
+          << channel.getName() << " :You're not channel operator\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::userNotInChannel(User& user,
+                                             const std::string& nickname,
+                                             const Channel& channel,
+                                             const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERNOTINCHANNEL, SERVER_NAME)
+          << user.getNickName() << " "
+          << nickname << channel.getName()
+          << " :They aren't on that channel\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::topic(User& user, const Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_TOPIC, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName()
+          << " :" << channel.getTopic().getContent() << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::topicWhoTime(User& user,
+                                         const Channel& channel,
+                                         const Server& server) {
+    std::stringstream   reply;
+
+    if (channel.getTopic().getSetAt().empty())
+        return;
+    reply << _constructHeader(RPL_TOPICWHOTIME, SERVER_NAME)
+          << user.getNickName() << " "
+          << channel.getName() << " "
+          << channel.getTopic().getNickname() << " "
+          << channel.getTopic().getSetAt() << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::noTopic(User& user, Channel& channel, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_NOTOPIC, SERVER_NAME)
+          << user.getNickName() << " " << channel.getName()
+          << " :No topic is set\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::listStart(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LISTSTART, SERVER_NAME)
+          << user.getNickName() << " Channel :Users  Name\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::list(User& user, Server& server) {
+    std::stringstream   lineStart;
+
+    lineStart << _constructHeader(RPL_LIST, SERVER_NAME)
+              << user.getNickName() << " ";
+    for (std::map<std::string, Channel*>::const_iterator it = server.getChannels().begin();
+         it != server.getChannels().end();
+         ++it) {
+        std::stringstream   reply;
+        reply << lineStart.str()
+              << it->first << " "
+              << it->second->getMembers().size() << " :"
+              << it->second->getTopic().getContent() << "\r\n";
+        user.sendMessage(reply.str(), server);
+    }
+}
+
+void NumericReplies::Reply::listEnd(User& user, Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_LISTEND, SERVER_NAME)
+          << user.getNickName() << " :End of /LIST\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Reply::isOn(User& user,
+                                 const std::vector<std::string>& nicknames,
+                                 Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(RPL_ISON, SERVER_NAME)
+          << user.getNickName() << " :";
+    for (std::vector<std::string>::const_iterator it = nicknames.begin();
+         it != nicknames.end();
+         ++it) {
+        if (server.getUserByNickname(*it))
+            reply << *it << " ";
+    }
+    reply << "\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::userDontMatchView(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERSDONTMATCH, SERVER_NAME)
+          << user.getNickName() << " :Can't view modes for other users\r\n";
     user.sendMessage(reply.str(), server);
 }
 
@@ -320,12 +476,52 @@ void NumericReplies::Error::userOnChannel(User& user,
     user.sendMessage(reply.str(), server);
 }
 
+void    NumericReplies::Error::badChannelMask(User& user,
+                                              const Server& server,
+                                              const std::string& channelName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERONCHANNEL, SERVER_NAME) << channelName
+            << " :Bad Channel Mask\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::tooManyChannels(User& user,
+                                            const Server& server,
+                                            const std::string& channelName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_TOOMANYCHANNELS, SERVER_NAME) << user.getNickName()
+            << ' ' << channelName << " :You have joined too many channels\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void    NumericReplies::Error::inviteOnlyChannel(User& user,
+                                                 const Server& server,
+                                                 const Channel& channel) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_INVITEONLYCHAN, SERVER_NAME) << user.getNickName()
+            << ' ' << channel.getName() << " :Cannot join channel (+i)\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void    NumericReplies::Error::badChannelKey(User& user,
+                                             const Server& server,
+                                             const Channel& channel) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_BADCHANMASK, SERVER_NAME) << user.getNickName()
+            << ' ' << channel.getName() << " :Cannot join channel (+k)\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
-std::string NumericReplies::_constructHeader(const std::string &requestID,
+std::string NumericReplies::_constructHeader(const std::string &numericID,
                                          const std::string &hostname) {
     std::stringstream   result;
 
-    result << ':' << hostname << ' ' << requestID << ' ';
+    result << ':' << hostname << ' ' << numericID << ' ';
     return result.str();
 }

@@ -1,4 +1,7 @@
 #include "User.hpp"
+
+#include <cstdlib>
+
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "Command.hpp"
@@ -9,13 +12,19 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <sstream>
+#include <unistd.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 
-User::RequestsHandlersMap User::_requestsHandlers;
+User::RequestsHandlersMap   User::_requestsHandlers;
+std::string                 User::defaultNickname = "*";
 
 User::User(const int fd):
-    _fd(fd),
-    _isRegistered(false),
-    _nickName(defaultNickname) {
+        _fd(fd),
+        _nbOfJoinedLocalChannels(0),
+        _nbOfJoinedRegularChannels(0),
+        _isRegistered(false),
+        _nickName(defaultNickname) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
@@ -25,6 +34,14 @@ bool User::operator==(const User& rhs) const {
 
 int User::getFD() const {
     return _fd;
+}
+
+bool User::hasJoinedTheMaxNbOfRegularChannels() const {
+    return this->_nbOfJoinedRegularChannels >= maxNbOfJoinedRegularChannels;
+}
+
+bool User::hasJoinedTheMaxNbOfLocalChannels() const {
+    return this->_nbOfJoinedLocalChannels >= maxNbOfJoinedLocalChannels;
 }
 
 void    User::setIsRegistered(const bool isRegistered) {
@@ -60,6 +77,10 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["PING"] = &User::_handlePING;
     _requestsHandlers["WHO"] = &User::_handleWHO;
     _requestsHandlers["PART"] = &User::_handlePART;
+    _requestsHandlers["TOPIC"] = &User::_handleTOPIC;
+    _requestsHandlers["MODE"] = &User::_handleMODE;
+    _requestsHandlers["LIST"] = &User::_handleLIST;
+    _requestsHandlers["ISON"] = &User::_handleISON;
     _requestsHandlers["INVITE"] = &User::_handleINVITE;
     _requestsHandlers["QUIT"] = &User::_handleQUIT;
 }
@@ -116,7 +137,7 @@ void    User::_handleEPOLLIN(Server& server) {
     }
     const std::string stringBuffer = std::string(rcvBuffer, end);
     _requestBuffer += stringBuffer;
-    ft::Log::debug << "end = " << end << std::endl;
+    ft::Log::debug << "buffer: " << stringBuffer << std::endl;
     if (_requestBuffer.find('\r') != std::string::npos ||
         _requestBuffer.find('\n') != std::string::npos) {
         _processRequest(server);
@@ -125,15 +146,15 @@ void    User::_handleEPOLLIN(Server& server) {
 
 void    User::_processRequest(Server& server) {
 
-    std::vector<std::string>    messages = ft::String::split(_requestBuffer, "\r\n",
-                                                             SPLIT_ON_CHARACTER_SET);
+    std::vector<std::string>    messages = ft::String::split(_requestBuffer,
+                                                             "\r\n");
     if (*(_requestBuffer.end() - 1) == '\n') {
         _requestBuffer = "";
     } else {
         _requestBuffer = *(messages.end() - 1);
         messages.pop_back();
     }
-    for (std::vector<std::string>::iterator it(messages.begin());
+    for (std::vector<std::string>::iterator it = messages.begin();
          it != messages.end();
          ++it) {
         _handleRequest(server, *it);
@@ -150,7 +171,6 @@ void    User::_handleRequest(Server& server, const std::string& request) {
     } catch (std::out_of_range &) {
         ft::Log::warning << "Request " << cmd << " from user " << _fd
                            << " was not recognized" << std::endl;
-        return;
     }
 }
 
@@ -194,5 +214,3 @@ void    User::_registerUserIfReady(Server& server) {
     NumericReplies::Reply::globalUsers(*this, server);
     NumericReplies::Reply::messageOfTheDay(*this, server);
 }
-
-std::string User::defaultNickname = "*";

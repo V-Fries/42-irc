@@ -2,6 +2,8 @@
 #include "ft_String.hpp"
 
 #include <limits>
+#include <sstream>
+#include <ctime>
 
 #include "ft_Log.hpp"
 #include "User.hpp"
@@ -10,22 +12,25 @@
 
 Channel::Channel(const std::string& name,
                  const std::string& password,
-                 User *creator)
+                 User& creator)
         throw (IncorrectName):
+    _modes(0),
     _name(ft::String::toLower(name)),
     _password(password),
-    _topic(""),
+    _topic(),
     _members(),
     _operators(),
     _invitedUsersFDs(),
-    _isInviteOnly(false),
     _userLimit(Channel::getMaxPossibleUserLimit())
 {
     if (!Channel::_isNameCorrect(_name)) throw (IncorrectName());
 
     ft::Log::info << "new channel: " << _name << std::endl;
-    _members.insert(creator);
-    _operators.insert(creator->getFD());
+    _members.insert(&creator);
+    _operators.insert(creator.getFD());
+    if (_name[0] == '#')
+        this->addModes(MODE_TOP);
+    _creationTine = std::time(NULL);
 }
 
 const std::string&  Channel::getName() const {
@@ -42,12 +47,13 @@ void    Channel::setPassword(const std::string& newPassword) {
 }
 
 
-const std::string&  Channel::getTopic() const {
+const Topic& Channel::getTopic() const {
     return _topic;
 }
 
-void    Channel::setTopic(const std::string& newTopic) {
-    _topic = newTopic;
+void    Channel::setTopic(const std::string& newTopic,
+                          const std::string& author) {
+    _topic.setContent(newTopic, author);
 }
 
 
@@ -125,14 +131,45 @@ void    Channel::removeInvitedUser(const int invitedUserFD) {
     _invitedUsersFDs.erase(invitedUserFD);
 }
 
-bool    Channel::isInviteOnly() const {
-    return _isInviteOnly;
+bool Channel::isInviteOnly() const {
+    return _modes & MODE_INV;
 }
 
-void    Channel::setIsInviteOnly(const bool isInviteOnly) {
-    _isInviteOnly = isInviteOnly;
+bool Channel::getModes(const uint8_t flags) const {
+    return (_modes & flags);
 }
 
+void Channel::addModes(const uint8_t flags) {
+    _modes |= flags;
+}
+
+void Channel::removeModes(const uint8_t flags) {
+    _modes &= ~flags;
+}
+
+std::string Channel::modesString() const {
+    std::stringstream   modesString;
+
+    ft::Log::info << "channel " << _name << " raw modes: " << _modes << std::endl;
+    modesString << "+";
+    if (_modes & MODE_TOP)
+        modesString << "t";
+    if (_modes & MODE_INV)
+        modesString << "i";
+    if (_modes & MODE_KEY)
+        modesString << "k";
+    if (_modes & MODE_LIM)
+        modesString << "l";
+    return (modesString.str());
+}
+
+std::string Channel::modesArgs() const {
+    std::stringstream   args;
+
+    if (_modes & MODE_LIM)
+        args << " " << _userLimit;
+    return (args.str());
+}
 
 size_t  Channel::getUserLimit() const {
     return _userLimit;
@@ -147,18 +184,18 @@ void    Channel::setUserLimit(const size_t newUserLimit)
     _userLimit = newUserLimit;
 }
 
-void    Channel::removeUserLimit() {
-    this->setUserLimit(Channel::getMaxPossibleUserLimit());
-}
-
 size_t  Channel::getMaxPossibleUserLimit() {
     return std::numeric_limits<size_t>::max();
+}
+
+time_t Channel::getCreationTime() const {
+    return _creationTine;
 }
 
 void Channel::sendMessage(const int senderFd, const std::string& message, const Server& server) {
     ft::Log::info << _name << " send message: " << message << std::endl;
     for(UserContainer::iterator it = _members.begin(); it != _members.end(); ++it) {
-            if ((*it)->getFD() != senderFd) (*it)->sendMessage(message, server);
+        if ((*it)->getFD() != senderFd) (*it)->sendMessage(message, server);
     }
 }
 

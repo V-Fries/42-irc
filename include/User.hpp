@@ -13,20 +13,25 @@ class Server;
 
 class User : public ISocket {
     public:
-        static const int maxNbOfJoinedRegularChannels = 42; // # channels
-        static const int maxNbOfJoinedLocalChannels = 42; // & channels
-        static const int maxNickNameLength = 42;
+        typedef int JoinedChannelCounter;
+
+        static const JoinedChannelCounter maxNbOfJoinedRegularChannels = 42; // # channels
+        static const JoinedChannelCounter maxNbOfJoinedLocalChannels = 42; // & channels
+        static const size_t maxNickNameLength = 42;
 
         explicit User(int fd);
 
         bool    operator==(const User& rhs) const;
 
-        int                 getFD() const;
-        void                setIsRegistered(bool isRegistered);
-        const std::string&  getNickName() const;
-        const std::string&  getUserName() const;
-        const std::string&  getRealName() const;
-        std::string         getHostMask() const;
+        bool    hasJoinedTheMaxNbOfRegularChannels() const;
+        bool    hasJoinedTheMaxNbOfLocalChannels() const;
+
+        void                    setIsRegistered(bool isRegistered);
+        int                     getFD() const;
+        const std::string&      getNickName() const;
+        const std::string&      getUserName() const;
+        const std::string&      getRealName() const;
+        std::string             getHostMask() const;
 
         static void initRequestsHandlers();
 
@@ -56,6 +61,10 @@ class User : public ISocket {
         void    _handlePING(Server& server, const std::vector<std::string>& args);
         void    _handleWHO(Server& server, const std::vector<std::string>& args);
         void    _handlePART(Server& server, const std::vector<std::string>& args);
+        void    _handleTOPIC(Server& server, const std::vector<std::string>& args);
+        void    _handleMODE(Server& server, const std::vector<std::string>& args);
+        void    _handleLIST(Server& server, const std::vector<std::string>& args);
+        void    _handleISON(Server& server, const std::vector<std::string>& args);
         void    _handleINVITE(Server& server, const std::vector<std::string>& args);
         void    _handleQUIT(Server& server, const std::vector<std::string>& args);
 
@@ -66,6 +75,9 @@ class User : public ISocket {
         static RequestsHandlersMap _requestsHandlers;
 
         const int   _fd;
+
+        JoinedChannelCounter    _nbOfJoinedLocalChannels;
+        JoinedChannelCounter    _nbOfJoinedRegularChannels;
 
         bool        _isRegistered;
 

@@ -153,9 +153,12 @@ Channel* Server::getChannelByName(const std::string& name) {
     }
 }
 
-void Server::addUserToChannel(const std::string& channel, User* user) {
+void    Server::addUserToChannel(const std::string& channel, User& user) {
+    _channels[channel]->addMember(&user);
+}
 
-    _channels[channel]->addMember(user);
+void    Server::addUserToChannel(Channel& channel, User& user) {
+    channel.addMember(&user);
 }
 
 const std::string& Server::getNicknameByFd(const int fd) const {
@@ -172,7 +175,11 @@ const std::string& Server::getNicknameByFd(const int fd) const {
     return (user->getNickName());
 }
 
-User*   Server::getUserByNickname(const std::string& nickname) {
+const std::map<std::string, Channel*>& Server::getChannels() const {
+    return (_channels);
+}
+
+User*   Server::getUserByNickname(const std::string& nickname) const {
     try {
         return (_registeredUsers.at(nickname));
     } catch (std::out_of_range& ) {
