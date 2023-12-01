@@ -38,6 +38,7 @@
 // TODO handle 421
 #define ERR_NOSUCHNICK "401"
 #define ERR_NOSUCHCHANNEL "403"
+#define ERR_TOOMANYCHANNELS "405"
 #define ERR_NORECIPIENT "411"
 #define ERR_NOTEXTTOSEND "412"
 #define ERR_NONICKNAMEGIVEN "431"
@@ -49,6 +50,9 @@
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 #define ERR_CHANNELISFULL "471"
+#define ERR_INVITEONLYCHAN "473"
+#define ERR_BADCHANNELKEY "475"
+#define ERR_BADCHANMASK "476"
 #define ERR_CHANOPRIVSNEEDED "482"
 #define ERR_USERSDONTMATCH "502"
 
@@ -141,9 +145,23 @@ class NumericReplies {
                                           const std::string& invitedUser,
                                           const Channel& channel);
 
+                static void badChannelMask(User& user,
+                                           const Server& server,
+                                           const std::string& channelName);
+
+                static void tooManyChannels(User& user,
+                                            const Server& server,
+                                            const std::string& channelName);
+                static void inviteOnlyChannel(User& user,
+                                              const Server& server,
+                                              const Channel& channel);
+
+                static void badChannelKey(User& user,
+                                          const Server& server,
+                                          const Channel& channel);
         };
 
     private:
-        static std::string  _constructHeader(const std::string& requestID,
+        static std::string  _constructHeader(const std::string& numericID,
                                              const std::string& hostname);
 };

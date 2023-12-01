@@ -11,18 +11,24 @@ class Server;
 
 class User : public ISocket {
     public:
-        static const int maxNbOfJoinedRegularChannels = 42; // # channels
-        static const int maxNbOfJoinedLocalChannels = 42; // & channels
-        static const int maxNickNameLength = 42;
+        typedef int JoinedChannelCounter;
+
+        static const JoinedChannelCounter maxNbOfJoinedRegularChannels = 42; // # channels
+        static const JoinedChannelCounter maxNbOfJoinedLocalChannels = 42; // & channels
+        static const size_t maxNickNameLength = 42;
 
         explicit User(int fd);
 
-        int                 getFD() const;
-        void                setIsRegistered(bool isRegistered);
-        const std::string&  getNickName() const;
-        const std::string&  getUserName() const;
-        const std::string&  getRealName() const;
-        std::string         getHostMask() const;
+        int                     getFD() const;
+
+        bool    hasJoinedTheMaxNbOfRegularChannels() const;
+        bool    hasJoinedTheMaxNbOfLocalChannels() const;
+
+        void                    setIsRegistered(bool isRegistered);
+        const std::string&      getNickName() const;
+        const std::string&      getUserName() const;
+        const std::string&      getRealName() const;
+        std::string             getHostMask() const;
 
         static void initRequestsHandlers();
 
@@ -65,6 +71,9 @@ class User : public ISocket {
         static RequestsHandlersMap _requestsHandlers;
 
         const int   _fd;
+
+        JoinedChannelCounter    _nbOfJoinedLocalChannels;
+        JoinedChannelCounter    _nbOfJoinedRegularChannels;
 
         bool        _isRegistered;
 
