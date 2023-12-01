@@ -35,18 +35,19 @@
 #define RPL_MOTDSTART "375"
 #define RPL_ENDOFMOTD "376"
 
-// TODO handle 421
 #define ERR_NOSUCHNICK "401"
 #define ERR_NOSUCHCHANNEL "403"
 #define ERR_TOOMANYCHANNELS "405"
 #define ERR_NORECIPIENT "411"
 #define ERR_NOTEXTTOSEND "412"
+#define ERR_UNKNOWNCOMMAND "421"
 #define ERR_NONICKNAMEGIVEN "431"
 #define ERR_ERRONEUSNICKNAME "432"
 #define ERR_NICKNAMEINUSE "433"
 #define ERR_USERNOTINCHANNEL "441"
 #define ERR_NOTONCHANNEL "442"
 #define ERR_USERONCHANNEL "443"
+#define ERR_NOTREGISTERED "451"
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
 #define ERR_CHANNELISFULL "471"
@@ -78,11 +79,19 @@ class NumericReplies {
 
                 static void messageOfTheDay(User& user, const Server& server);
 
-                static void namesReply(User& user, const Channel& channel, const Server& server);
-                static void endOfNames(User& user, const Channel& channel, const Server& server);
+                static void namesReply(User& user,
+                                       const Channel& channel,
+                                       const Server& server);
+                static void endOfNames(User& user,
+                                       const Channel& channel,
+                                       const Server& server);
 
-                static void whoReply(User& user, const Channel& channel, const Server& server);
-                static void endOfwhoReply(User& user, const Channel& channel, const Server& server);
+                static void whoReply(User& user,
+                                     const Channel& channel,
+                                     const Server& server);
+                static void endOfwhoReply(User& user,
+                                          const Channel& channel,
+                                          const Server& server);
 
                 static void inviting(User& user,
                                      const Server& server,
@@ -112,23 +121,35 @@ class NumericReplies {
 
                 static void alreadyRegistered(User& user, const Server& server);
 
-                static void needMoreParameters(User& user, const Server& server,
+                static void needMoreParameters(User& user,
+                                               const Server& server,
                                                const std::string& cmdName);
-                static void erroneousNick(User& user, const Server& server,
+                static void erroneousNick(User& user,
+                                          const Server& server,
                                           const std::string& newNickname);
-                static void nickInUse(User& user, const Server& server,
+                static void nickInUse(User& user,
+                                      const Server& server,
                                       const std::string& newNickname);
-                static void channelIsFull(User& user, const Server& server,
+                static void channelIsFull(User& user,
+                                          const Server& server,
                                           const std::string& channelName);
                 static void noNicknameGiven(User& user, const Server& server);
 
-                static void noRecipient(User& user, const std::string& command, const Server& server);
+                static void noRecipient(User& user,
+                                        const std::string& command,
+                                        const Server& server);
 
                 static void noTextToSend(User& user, const Server& server);
 
-                static void noSuchChannel(User& user, const std::string& channel, const Server& server);
+                static void noSuchChannel(User& user,
+                                          const std::string& channel,
+                                          const Server& server);
 
-                static void notOnChannel(User& user, const Channel& channel, const Server& server);
+                static void notOnChannel(User& user,
+                                         const Channel& channel,
+                                         const Server& server);
+
+                static void notRegistered(User& user, const Server& server);
 
                 static void userDontMatchView(User& user, const Server& server);
                 static void userDontMatchSet(User& user, const Server& server);
@@ -144,6 +165,10 @@ class NumericReplies {
                                           const Server& server,
                                           const std::string& invitedUser,
                                           const Channel& channel);
+
+                static void unknownCommand(User& user,
+                                           const Server& server,
+                                           const std::string& command);
 
                 static void badChannelMask(User& user,
                                            const Server& server,

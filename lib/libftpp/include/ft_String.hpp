@@ -57,7 +57,12 @@ class ft::String {
                                          std::string::const_iterator end,
                                          char charConsideredAsWordSeparator);
 
-        static std::string toLower(const std::string& string);
+        static std::string  toLower(const std::string& string);
+        static std::string  toLower(std::string::const_iterator start,
+                                    std::string::const_iterator end);
+        static std::string  toUpper(const std::string& string);
+        static std::string  toUpper(std::string::const_iterator start,
+                                    std::string::const_iterator end);
 
 };
 

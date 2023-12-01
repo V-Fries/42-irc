@@ -10,8 +10,9 @@
 static std::string getRealName(int fd, const std::string& userSetRealName);
 
 void    User::_handleUSER(Server& server, const std::vector<std::string>& args) {
-    ft::Log::info << "Received USER request: \"" << args << "\" from user " << _fd
+    ft::Log::info << "Received USER request: " << args << " from user " << _fd
                   << std::endl;
+
     if (args.size() < 4) {
         NumericReplies::Error::needMoreParameters(*this, server, "USER");
         return;
