@@ -502,12 +502,52 @@ void NumericReplies::Error::userOnChannel(User& user,
     user.sendMessage(reply.str(), server);
 }
 
+void    NumericReplies::Error::badChannelMask(User& user,
+                                              const Server& server,
+                                              const std::string& channelName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_USERONCHANNEL, SERVER_NAME) << channelName
+            << " :Bad Channel Mask\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void NumericReplies::Error::tooManyChannels(User& user,
+                                            const Server& server,
+                                            const std::string& channelName) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_TOOMANYCHANNELS, SERVER_NAME) << user.getNickName()
+            << ' ' << channelName << " :You have joined too many channels\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void    NumericReplies::Error::inviteOnlyChannel(User& user,
+                                                 const Server& server,
+                                                 const Channel& channel) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_INVITEONLYCHAN, SERVER_NAME) << user.getNickName()
+            << ' ' << channel.getName() << " :Cannot join channel (+i)\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
+void    NumericReplies::Error::badChannelKey(User& user,
+                                             const Server& server,
+                                             const Channel& channel) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_BADCHANMASK, SERVER_NAME) << user.getNickName()
+            << ' ' << channel.getName() << " :Cannot join channel (+k)\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
-std::string NumericReplies::_constructHeader(const std::string &requestID,
+std::string NumericReplies::_constructHeader(const std::string &numericID,
                                              const std::string &hostname) {
     std::stringstream   result;
 
-    result << ':' << hostname << ' ' << requestID << ' ';
+    result << ':' << hostname << ' ' << numericID << ' ';
     return result.str();
 }
