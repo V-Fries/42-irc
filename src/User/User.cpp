@@ -11,7 +11,7 @@
 #include <sstream>
 
 User::RequestsHandlersMap   User::_requestsHandlers;
-std::string                 User::defaultNickname = "*";
+ft::String                 User::defaultNickname = "*";
 
 User::User(const int fd):
         _fd(fd),
@@ -38,19 +38,19 @@ void    User::setIsRegistered(const bool isRegistered) {
     _isRegistered = isRegistered;
 }
 
-const std::string&  User::getNickName() const {
+const ft::String&  User::getNickName() const {
     return _nickName;
 }
 
-const std::string&  User::getUserName() const {
+const ft::String&  User::getUserName() const {
     return _userName;
 }
 
-const std::string& User::getRealName() const {
+const ft::String& User::getRealName() const {
     return _realName;
 }
 
-std::string User::getHostMask() const {
+ft::String User::getHostMask() const {
     std::stringstream message;
 
     message << ':' << _nickName << '!' << _userName << '@' << _realName;
@@ -95,9 +95,9 @@ bool User::isRegistered() const {
     return (_isRegistered);
 }
 
-void User::sendMessage(const std::string &message, const Server& server) {
+void User::sendMessage(const ft::String &message, const Server& server) {
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
-        const std::string   messageToPrint(message.begin(), message.end() - 2);
+        const ft::String   messageToPrint(message.begin(), message.end() - 2);
         ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
                         << _fd << " _messagesBuffer" << std::endl;
     }
@@ -125,34 +125,33 @@ void    User::_handleEPOLLIN(Server& server) {
         errorMessage << "Failed to read from socket " << _fd;
         throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
     }
-    const std::string stringBuffer = std::string(rcvBuffer, end);
+    const ft::String stringBuffer = ft::String(rcvBuffer, end);
     _requestBuffer += stringBuffer;
     ft::Log::debug << "User(" << _fd << ")::_requestBuffer += \"" << stringBuffer
                      << '\"' << std::endl;
-    if (_requestBuffer.find('\r') != std::string::npos ||
-        _requestBuffer.find('\n') != std::string::npos) {
+    if (_requestBuffer.find('\r') != ft::String::npos ||
+        _requestBuffer.find('\n') != ft::String::npos) {
         _processRequest(server);
     }
 }
 
 void    User::_processRequest(Server& server) {
 
-    std::vector<std::string>    messages = ft::String::split(_requestBuffer,
-                                                             "\r\n");
+    std::vector<ft::String>    messages = _requestBuffer.split("\r\n");
     if (*(_requestBuffer.end() - 1) == '\n') {
         _requestBuffer = "";
     } else {
         _requestBuffer = *(messages.end() - 1);
         messages.pop_back();
     }
-    for (std::vector<std::string>::iterator it = messages.begin();
+    for (std::vector<ft::String>::iterator it = messages.begin();
          it != messages.end();
          ++it) {
         _handleRequest(server, *it);
     }
 }
 
-void    User::_handleRequest(Server& server, const std::string& request) {
+void    User::_handleRequest(Server& server, const ft::String& request) {
     const Command cmd(request);
     ft::Log::info << "Processing request " << cmd.getCommand() << " from user "
                     << _fd << std::endl;
@@ -182,7 +181,7 @@ bool    User::_isCommandAllowedWhenNotRegistered(RequestHandler requestHandler) 
 void User::_flushMessages(const Server& server) {
     ft::Log::info << "Flushing messages destined to user " << _fd << std::endl;
 
-    std::string messages;
+    ft::String messages;
     while (!_messagesBuffer.empty()) {
         messages += _messagesBuffer.front();
         _messagesBuffer.pop();

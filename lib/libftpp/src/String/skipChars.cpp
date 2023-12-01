@@ -1,35 +1,35 @@
 #include "ft_String.hpp"
 
-std::string::iterator    ft::String::skipChars(std::string::iterator it,
-                                               const std::string::iterator end,
-                                               const std::string& charsToSkip) {
-    while (it != end && charsToSkip.find(*it) != std::string::npos) {
+ft::String::iterator    ft::String::skipChars(iterator it,
+                                              const iterator end,
+                                              const String& charsToSkip) {
+    while (it != end && charsToSkip.find(*it) != npos) {
         ++it;
     }
     return it;
 }
 
-std::string::const_iterator  ft::String::skipChars(std::string::const_iterator it,
-                                                   const std::string::const_iterator end,
-                                                   const std::string& charsToSkip) {
-    while (it != end && charsToSkip.find(*it) != std::string::npos) {
+ft::String::const_iterator  ft::String::skipChars(const_iterator it,
+                                                  const const_iterator end,
+                                                  const String& charsToSkip) {
+    while (it != end && charsToSkip.find(*it) != npos) {
         ++it;
     }
     return it;
 }
 
-std::string::iterator    ft::String::skipChar(std::string::iterator it,
-                                              const std::string::iterator end,
-                                              const char charToSkip) {
+ft::String::iterator    ft::String::skipChar(iterator it,
+                                             const iterator end,
+                                             const char charToSkip) {
     while (it != end && *it == charToSkip) {
         ++it;
     }
     return it;
 }
 
-std::string::const_iterator  ft::String::skipChar(std::string::const_iterator it,
-                                                  const std::string::const_iterator end,
-                                                  const char charToSkip) {
+ft::String::const_iterator  ft::String::skipChar(const_iterator it,
+                                                 const const_iterator end,
+                                                 const char charToSkip) {
     while (it != end && *it == charToSkip) {
         ++it;
     }

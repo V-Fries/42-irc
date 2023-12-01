@@ -6,7 +6,7 @@
 #include "Server.hpp"
 #include "User.hpp"
 
-void User::_handlePING(Server& server, const std::vector<std::string>& args) {
+void User::_handlePING(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received PING request: " << args << " from user " << _fd
                   << std::endl;
 

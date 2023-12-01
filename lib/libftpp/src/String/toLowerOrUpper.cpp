@@ -2,31 +2,37 @@
 
 #include <cctype>
 
-std::string ft::String::toLower(const std::string& string) {
-    return toLower(string.begin(), string.end());
+void    ft::String::toLower() {
+    return toLower(this->begin(), this->end());
 }
 
-std::string ft::String::toLower(const std::string::const_iterator start,
-                                const std::string::const_iterator end) {
-    std::string result(start, end);
+ft::String  ft::String::copyToLower() const {
+    String  copy(*this);
+    copy.toLower();
+    return copy;
+}
 
-    for (std::string::iterator it(result.begin()); it != result.end(); ++it) {
-        *it = static_cast<char>(std::tolower(static_cast<unsigned char>(*it)));
+void    ft::String::toLower(iterator start,
+                            const const_iterator end) {
+    for (; start != end; ++start) {
+        *start = static_cast<char>(std::tolower(static_cast<unsigned char>(*start)));
     }
-    return result;
 }
 
 
-std::string ft::String::toUpper(const std::string& string) {
-    return toUpper(string.begin(), string.end());
+void    ft::String::toUpper() {
+    return toUpper(this->begin(), this->end());
 }
 
-std::string ft::String::toUpper(const std::string::const_iterator start,
-                                const std::string::const_iterator end) {
-    std::string result(start, end);
+ft::String  ft::String::copyToUpper() const {
+    String  copy(*this);
+    copy.toUpper();
+    return copy;
+}
 
-    for (std::string::iterator it(result.begin()); it != result.end(); ++it) {
-        *it = static_cast<char>(std::toupper(static_cast<unsigned char>(*it)));
+void    ft::String::toUpper(iterator start,
+                            const const_iterator end) {
+    for (; start != end; ++start) {
+        *start = static_cast<char>(std::toupper(static_cast<unsigned char>(*start)));
     }
-    return result;
 }

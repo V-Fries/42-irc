@@ -126,7 +126,7 @@ void    NumericReplies::Reply::messageOfTheDay(User& user, const Server& server)
         reply << _constructHeader(RPL_MOTD, SERVER_NAME) << user.getNickName()
                 << " :Failed to open file " PATH_TO_MOTD "\r\n";
     } else {
-        std::string line;
+        ft::String line;
         while (std::getline(file, line)) {
             reply << _constructHeader(RPL_MOTD, SERVER_NAME) << user.getNickName()
                     << " :" << line << "\r\n";
@@ -233,7 +233,7 @@ void NumericReplies::Reply::creationTime(User& user,
 
 void NumericReplies::Reply::inviting(User& user,
                                      const Server& server,
-                                     const std::string& invitedUser,
+                                     const ft::String& invitedUser,
                                      const Channel& channel) {
     std::stringstream   reply;
 
@@ -246,7 +246,7 @@ void NumericReplies::Reply::inviting(User& user,
 
 void NumericReplies::Error::noSuchNick(User& user,
                                        const Server& server,
-                                       const std::string& nickName) {
+                                       const ft::String& nickName) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_NOSUCHNICK, SERVER_NAME) << user.getNickName()
@@ -255,7 +255,7 @@ void NumericReplies::Error::noSuchNick(User& user,
 }
 
 void NumericReplies::Error::noRecipient(User& user,
-                                        const std::string& command,
+                                        const ft::String& command,
                                         const Server& server) {
     std::stringstream   reply;
 
@@ -273,7 +273,7 @@ void NumericReplies::Error::noTextToSend(User& user, const Server& server) {
 }
 
 void NumericReplies::Error::noSuchChannel(User& user,
-                                          const std::string& channel,
+                                          const ft::String& channel,
                                           const Server& server) {
     std::stringstream   reply;
 
@@ -315,7 +315,7 @@ void NumericReplies::Error::chanOperPrivNeeded(User& user,
 }
 
 void NumericReplies::Error::userNotInChannel(User& user,
-                                             const std::string& nickname,
+                                             const ft::String& nickname,
                                              const Channel& channel,
                                              const Server& server) {
     std::stringstream   reply;
@@ -394,13 +394,13 @@ void NumericReplies::Reply::listEnd(User& user, Server& server) {
 }
 
 void NumericReplies::Reply::isOn(User& user,
-                                 const std::vector<std::string>& nicknames,
+                                 const std::vector<ft::String>& nicknames,
                                  Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(RPL_ISON, SERVER_NAME)
           << user.getNickName() << " :";
-    for (std::vector<std::string>::const_iterator it = nicknames.begin();
+    for (std::vector<ft::String>::const_iterator it = nicknames.begin();
          it != nicknames.end();
          ++it) {
         if (server.getUserByNickname(*it))
@@ -427,7 +427,7 @@ void    NumericReplies::Error::alreadyRegistered(User& user, const Server& serve
 }
 
 void    NumericReplies::Error::needMoreParameters(User& user, const Server& server,
-                                                  const std::string& cmdName) {
+                                                  const ft::String& cmdName) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_NEEDMOREPARAMS, SERVER_NAME) << user.getNickName()
@@ -436,7 +436,7 @@ void    NumericReplies::Error::needMoreParameters(User& user, const Server& serv
 }
 
 void    NumericReplies::Error::erroneousNick(User& user, const Server& server,
-                                             const std::string& newNickname) {
+                                             const ft::String& newNickname) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_ERRONEUSNICKNAME, SERVER_NAME)
@@ -446,7 +446,7 @@ void    NumericReplies::Error::erroneousNick(User& user, const Server& server,
 }
 
 void    NumericReplies::Error::nickInUse(User& user, const Server& server,
-                                         const std::string& newNickname) {
+                                         const ft::String& newNickname) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_NICKNAMEINUSE, SERVER_NAME)
@@ -457,7 +457,7 @@ void    NumericReplies::Error::nickInUse(User& user, const Server& server,
 
 void NumericReplies::Error::channelIsFull(User& user,
                                           const Server& server,
-                                          const std::string& channelName) {
+                                          const ft::String& channelName) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_CHANNELISFULL, SERVER_NAME)
@@ -493,7 +493,7 @@ void NumericReplies::Error::channelPrivilegesNeeded(User& user,
 
 void NumericReplies::Error::userOnChannel(User& user,
                                           const Server& server,
-                                          const std::string& invitedUser,
+                                          const ft::String& invitedUser,
                                           const Channel& channel) {
     std::stringstream   reply;
 
@@ -504,7 +504,7 @@ void NumericReplies::Error::userOnChannel(User& user,
 
 void    NumericReplies::Error::unknownCommand(User& user,
                                               const Server& server,
-                                              const std::string& command) {
+                                              const ft::String& command) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_UNKNOWNCOMMAND, SERVER_NAME) << user.getNickName()
@@ -514,7 +514,7 @@ void    NumericReplies::Error::unknownCommand(User& user,
 
 void    NumericReplies::Error::badChannelMask(User& user,
                                               const Server& server,
-                                              const std::string& channelName) {
+                                              const ft::String& channelName) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_USERONCHANNEL, SERVER_NAME) << channelName
@@ -524,7 +524,7 @@ void    NumericReplies::Error::badChannelMask(User& user,
 
 void NumericReplies::Error::tooManyChannels(User& user,
                                             const Server& server,
-                                            const std::string& channelName) {
+                                            const ft::String& channelName) {
     std::stringstream   reply;
 
     reply << _constructHeader(ERR_TOOMANYCHANNELS, SERVER_NAME) << user.getNickName()
@@ -554,8 +554,8 @@ void    NumericReplies::Error::badChannelKey(User& user,
 
 // _constructHeader
 
-std::string NumericReplies::_constructHeader(const std::string &numericID,
-                                             const std::string &hostname) {
+ft::String NumericReplies::_constructHeader(const ft::String &numericID,
+                                             const ft::String &hostname) {
     std::stringstream   result;
 
     result << ':' << hostname << ' ' << numericID << ' ';

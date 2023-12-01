@@ -16,13 +16,13 @@ class Server {
         typedef int                       fd_t;
         typedef std::map<fd_t, ISocket*>  SocketMap;
 
-        typedef std::string                 NickName;
+        typedef ft::String                 NickName;
         typedef std::map<NickName, User*>   RegisteredMap;
 
-        typedef std::string                     ChannelName;
+        typedef ft::String                     ChannelName;
         typedef std::map<ChannelName, Channel*> ChannelMap;
 
-        Server(uint16_t port, const std::string& password);
+        Server(uint16_t port, const ft::String& password);
 
         ~Server();
 
@@ -31,8 +31,8 @@ class Server {
         void                addUser(User* user);
         static epoll_event  getBaseUserEpollEvent(int userFD);
         void                removeUser(User* user);
-        User*               getUserByNickname(const std::string&) const;
-        bool                nicknameIsTaken(const std::string &nick) const;
+        User*               getUserByNickname(const ft::String&) const;
+        bool                nicknameIsTaken(const ft::String &nick) const;
         void                registerUser(User *user);
         size_t              getNbOfRegisteredUsers() const;
         size_t              getPeakRegisteredUserCount() const;
@@ -40,13 +40,13 @@ class Server {
         size_t              getNbOfChannels() const;
         void                addChannel(Channel *channel);
         void                removeChannel(Channel *channel);
-        Channel*            getChannelByName(const std::string& name);
-        void                addUserToChannel(const std::string& channel, User *user);
+        Channel*            getChannelByName(const ft::String& name);
+        void                addUserToChannel(const ft::String& channel, User *user);
         const ChannelMap&   getChannels() const;
-        void                addUserToChannel(const std::string& channel, User& user);
+        void                addUserToChannel(const ft::String& channel, User& user);
         void                addUserToChannel(Channel& channel, User& user);
 
-        const std::string&  getNicknameByFd(int fd) const;
+        const ft::String&  getNicknameByFd(int fd) const;
 
         void    waitForEvents();
         void    handleEvents();
@@ -54,7 +54,7 @@ class Server {
         void    stop(int exitCode);
 
     private:
-        const std::string   _password;
+        const ft::String   _password;
 
         const int   _epollFD;
         int         _listenSocketFD;

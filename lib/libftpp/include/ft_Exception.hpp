@@ -49,7 +49,7 @@ class ft::Exception : public std::exception {
         };
 
     public:
-        Exception(const std::string& whatMessage, Log::DebugLevel debugLevel);
+        Exception(const ft::String& whatMessage, Log::DebugLevel debugLevel);
 
         virtual ~Exception() throw();
 
@@ -61,11 +61,11 @@ class ft::Exception : public std::exception {
 
     private:
 
-        const std::string   _whatMessage;
+        const ft::String   _whatMessage;
 };
 
 class ft::FailedToOpenFile : public ft::Exception {
     public:
-        FailedToOpenFile(const std::string& whatMessage,
+        FailedToOpenFile(const ft::String& whatMessage,
                          ft::Log::DebugLevel debugLevel);
 };

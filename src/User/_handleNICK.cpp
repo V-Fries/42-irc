@@ -6,7 +6,7 @@
 
 #include "NumericReplies.hpp"
 
-void    User::_handleNICK(Server& server, const std::vector<std::string>& args) {
+void    User::_handleNICK(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received NICK request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -15,19 +15,20 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
         return;
     }
 
-    const std::string nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
+    ft::String nickname = args[0].substr(0,  User::maxNickNameLength);
+    nickname.toLower();
     if (_checkNickname(nickname, server)) {
         _nickName = nickname;
         _registerUserIfReady(server);
     }
 }
 
-bool    User::_checkNickname(const std::string &nickName, const Server &server) {
-    if (std::string("$:#&").find(nickName[0]) != std::string::npos) {
+bool    User::_checkNickname(const ft::String &nickName, const Server &server) {
+    if (ft::String("$:#&").find(nickName[0]) != ft::String::npos) {
         NumericReplies::Error::erroneousNick(*this, server, nickName);
         return (false);
     }
-    if (nickName.find_first_of(" ,*?!@.") != std::string::npos) {
+    if (nickName.find_first_of(" ,*?!@.") != ft::String::npos) {
         NumericReplies::Error::erroneousNick(*this, server, nickName);
         return (false);
     }

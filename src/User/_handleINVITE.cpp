@@ -8,7 +8,7 @@ static bool userCanInviteAUserToThisChannel(User& user,
 
 static bool userCanBeInvitedToThisChannel(User& inviter,
                                           const User* invitee,
-                                          const std::string& inviteeNickName,
+                                          const ft::String& inviteeNickName,
                                           const Server& server,
                                           const Channel& channel);
 
@@ -22,7 +22,7 @@ static void sendInvitationToInvitee(const User& inviter,
                                     const Server& server,
                                     const Channel& channel);
 
-void User::_handleINVITE(Server& server, const std::vector<std::string>& args) {
+void User::_handleINVITE(Server& server, const std::vector<ft::String>& args) {
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "INVITE");
         return;
@@ -62,7 +62,7 @@ static bool userCanInviteAUserToThisChannel(User& user,
 
 static bool userCanBeInvitedToThisChannel(User& inviter,
                                           const User* invitee,
-                                          const std::string& inviteeNickName,
+                                          const ft::String& inviteeNickName,
                                           const Server& server,
                                           const Channel& channel) {
     if (invitee == NULL) {

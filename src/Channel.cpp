@@ -9,12 +9,12 @@
 
 // public:
 
-Channel::Channel(const std::string& name,
-                 const std::string& password,
+Channel::Channel(const ft::String& name,
+                 const ft::String& password,
                  User& creator)
         throw (IncorrectName):
     _modes(0),
-    _name(ft::String::toLower(name)),
+    _name(name.copyToLower()),
     _password(password),
     _topic(),
     _members(),
@@ -32,16 +32,16 @@ Channel::Channel(const std::string& name,
     _creationTine = std::time(NULL);
 }
 
-const std::string&  Channel::getName() const {
+const ft::String&  Channel::getName() const {
     return _name;
 }
 
 
-const std::string&  Channel::getPassword() const {
+const ft::String&  Channel::getPassword() const {
     return _password;
 }
 
-void    Channel::setPassword(const std::string& newPassword) {
+void    Channel::setPassword(const ft::String& newPassword) {
     _password = newPassword;
 }
 
@@ -50,8 +50,8 @@ const Topic& Channel::getTopic() const {
     return _topic;
 }
 
-void    Channel::setTopic(const std::string& newTopic,
-                          const std::string& author) {
+void    Channel::setTopic(const ft::String& newTopic,
+                          const ft::String& author) {
     _topic.setContent(newTopic, author);
 }
 
@@ -147,7 +147,7 @@ void Channel::removeModes(const uint8_t flags) {
     _modes &= ~flags;
 }
 
-std::string Channel::modesString() const {
+ft::String Channel::modesString() const {
     std::stringstream   modesString;
 
     ft::Log::info << "channel " << _name << " raw modes: " << _modes << std::endl;
@@ -163,7 +163,7 @@ std::string Channel::modesString() const {
     return (modesString.str());
 }
 
-std::string Channel::modesArgs() const {
+ft::String Channel::modesArgs() const {
     std::stringstream   args;
 
     if (_modes & MODE_LIM)
@@ -192,7 +192,7 @@ time_t Channel::getCreationTime() const {
     return _creationTine;
 }
 
-void Channel::sendMessage(const int senderFd, const std::string& message, const Server& server) {
+void Channel::sendMessage(const int senderFd, const ft::String& message, const Server& server) {
     ft::Log::info << _name << " send message: " << message << std::endl;
     for(UserContainer::iterator it = _members.begin(); it != _members.end(); ++it) {
         if ((*it)->getFD() != senderFd) (*it)->sendMessage(message, server);
@@ -201,12 +201,12 @@ void Channel::sendMessage(const int senderFd, const std::string& message, const 
 
 // private:
 
-bool    Channel::_isNameCorrect(const std::string& name) {
+bool    Channel::_isNameCorrect(const ft::String& name) {
     if (name.length() == 0 || (name[0] != '#' && name[0] != '&')) {
         return false;
     }
 
-    for (std::string::const_iterator it = name.begin() + 1; it != name.end(); ++it) {
+    for (ft::String::const_iterator it = name.begin() + 1; it != name.end(); ++it) {
         if (*it == ' ' || *it == ',' || *it == '\a') {
             return false;
         }
