@@ -4,6 +4,7 @@
 
 #include <unistd.h>
 #include <cstdlib>
+#include <algorithm>
 
 Server::Server(const uint16_t port, const std::string& password):
     _password(password),
@@ -103,6 +104,13 @@ void    Server::removeUser(User *user) {
     _sockets.erase(user->getFD());
     delete user;
     _shouldUpdateEventsSize = true;
+}
+
+void Server::removeUser(const std::string& nickName) {
+    if (_registeredUsers.at(nickName)) {
+        ft::Log::debug << "remove: " << nickName << std::endl;
+        this->removeUser((_registeredUsers.at(nickName)));
+    }
 }
 
 bool Server::nicknameIsTaken(const std::string &nick) const {

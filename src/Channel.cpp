@@ -4,6 +4,7 @@
 #include <limits>
 
 #include "ft_Log.hpp"
+#include "User.hpp"
 
 // public:
 
@@ -79,7 +80,6 @@ bool    Channel::isMember(const User* member) const {
     return _members.contains(const_cast<User*>(member));
 }
 
-
 const Channel::UsersFdContainer& Channel::getOperators() {
     return _operators;
 }
@@ -96,11 +96,11 @@ void    Channel::addOperator(User *newOperator) {
     _operators.insert(newOperator->getFD());
 }
 
-void Channel::addOperator(int newOperatorFd) {
+void Channel::addOperator(const int newOperatorFd) {
     _operators.insert(newOperatorFd);
 }
 
-void    Channel::removeOperator(User *operatorPtr) {
+void    Channel::removeOperator(const User *operatorPtr) {
     _operators.erase(operatorPtr->getFD());
 }
 

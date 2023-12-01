@@ -51,4 +51,6 @@ add_executable(webserv
 		src/User/_handlePING.cpp
 		src/User/_handleWHO.cpp
 		src/User/_handlePART.cpp
-		src/User/_handleINVITE.cpp)
+		src/User/_handleINVITE.cpp
+		src/User/_handleQUIT.cpp
+)

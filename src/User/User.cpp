@@ -19,6 +19,10 @@ User::User(const int fd):
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
+bool User::operator==(const User& rhs) const {
+    return (_nickName == rhs._nickName && _fd == rhs._fd);
+}
+
 int User::getFD() const {
     return _fd;
 }
@@ -57,6 +61,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["WHO"] = &User::_handleWHO;
     _requestsHandlers["PART"] = &User::_handlePART;
     _requestsHandlers["INVITE"] = &User::_handleINVITE;
+    _requestsHandlers["QUIT"] = &User::_handleQUIT;
 }
 
 void    User::handleEvent(const uint32_t epollEvents, Server& server) {
@@ -100,9 +105,8 @@ void User::sendMessage(const std::string &message, const Server& server) {
 
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
-    ssize_t     end;
 
-    end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
+    const ssize_t end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
     // TODO if we failed to read the whole
     // TODO request in one go?
     if (end < 0) {

@@ -16,11 +16,15 @@ void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
     for (std::vector<std::string>::const_iterator it = channelsNames.begin(); it != channelsNames.end(); ++it) {
         const Channel *currChannel = server.getChannelByName(*it);
         if (!currChannel) {
-            server.addChannel(new Channel(*it, "", this)); // TODO try catch here since it will throw if the name is bad
+            Channel*    newChannel = new Channel(*it, "", this);
+
+            server.addChannel(newChannel); // TODO try catch here since it will throw if the name is bad
             sendChannelWelcomeMessages(*this, server, *server.getChannelByName(*it));
+            _channels.push_back(newChannel);
         } else {
             try {
                 server.addUserToChannel(*it, this);
+                _channels.push_back(server.getChannelByName(*it));
                 sendChannelWelcomeMessages(*this, server, *server.getChannelByName(*it));
             } catch (Channel::IsFull& ) {
                 NumericReplies::Error::channelIsFull(*this, server, *it);

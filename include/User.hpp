@@ -7,6 +7,8 @@
 #include <map>
 #include <queue>
 
+#include "Channel.hpp"
+
 class Server;
 
 class User : public ISocket {
@@ -16,6 +18,8 @@ class User : public ISocket {
         static const int maxNickNameLength = 42;
 
         explicit User(int fd);
+
+        bool    operator==(const User& rhs) const;
 
         int                 getFD() const;
         void                setIsRegistered(bool isRegistered);
@@ -53,6 +57,7 @@ class User : public ISocket {
         void    _handleWHO(Server& server, const std::vector<std::string>& args);
         void    _handlePART(Server& server, const std::vector<std::string>& args);
         void    _handleINVITE(Server& server, const std::vector<std::string>& args);
+        void    _handleQUIT(Server& server, const std::vector<std::string>& args);
 
         void    _registerUserIfReady(Server& server);
 
@@ -72,4 +77,6 @@ class User : public ISocket {
         std::string _requestBuffer;
 
         std::queue<std::string> _messagesBuffer;
+
+        std::vector<Channel*>   _channels;
 };

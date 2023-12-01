@@ -4,7 +4,8 @@
 
 #include <string>
 
-#include "User.hpp"
+class Server;
+class User;
 
 class Channel {
     public:
@@ -39,7 +40,7 @@ class Channel {
         bool                    isOperator(int memberFD) const;
         void                    addOperator(User* newOperator);
         void                    addOperator(int newOperatorFd);
-        void                    removeOperator(User* operatorPtr);
+        void                    removeOperator(const User* operatorPtr);
         void                    removeOperator(int operatorFd);
 
         const UsersFdContainer&    getInvitedUsers() const;
@@ -59,7 +60,6 @@ class Channel {
 
     private:
         static bool _isNameCorrect(const std::string& name);
-
 
         const std::string   _name;
 
