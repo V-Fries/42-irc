@@ -11,6 +11,9 @@ static std::string  constructMessageToChannel(const User& sender,
                                               const std::string& body);
 
 void User::_handlePRIVMSG(Server& server, const std::vector<std::string>& args) {
+    ft::Log::info << "Received PRIVMSG request: " << args << " from user " << _fd
+                  << std::endl;
+
     if (args.empty()) {
         NumericReplies::Error::noRecipient(*this, "PRIVMSG", server);
     }

@@ -4,7 +4,7 @@ SRC	=\
 	String/join.cpp						\
 	String/skipChars.cpp				\
 	String/split.cpp					\
-	String/toLower.cpp					\
+	String/toLowerOrUpper.cpp			\
 	String/vector_string_operators.cpp	\
 	\
 	Exception.cpp	\

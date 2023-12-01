@@ -4,7 +4,7 @@
 Command::Command(const std::string &rawCommand) {
     std::string::const_iterator it = rawCommand.begin();
     while (isspace(*it)) ++it;
-    _command = ft::String::getFirstWord(it, rawCommand.end(), ": ");
+    _command = ft::String::toUpper(ft::String::getFirstWord(it, rawCommand.end(), ": "));
     it += _command.length();
     while (isspace(*it)) ++it;
     std::string::const_iterator currIterator = it;
