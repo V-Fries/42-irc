@@ -109,9 +109,11 @@ void    Server::removeUser(User *user) {
 }
 
 void Server::removeUser(const std::string& nickName) {
-    if (_registeredUsers.at(nickName)) {
+    User*   user = _registeredUsers.at(nickName);
+
+    if (user) {
         ft::Log::debug << "remove: " << nickName << std::endl;
-        this->removeUser((_registeredUsers.at(nickName)));
+        this->removeUser(user);
     }
 }
 

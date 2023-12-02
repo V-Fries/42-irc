@@ -69,5 +69,5 @@ class Server {
 
         size_t          _peakRegisteredUserCount;
 
-        std::map<std::string, Channel*>  _channels;
+        ChannelMap  _channels;
 };

@@ -2,17 +2,14 @@
 #include "Channel.hpp"
 #include "ft.hpp"
 
-#include <algorithm>
 #include <sstream>
 #include <vector>
 
 #include "Server.hpp"
 
-static void addUsers(std::vector<User*>& users, const Channel* channel);
-
 void    User::_handleQUIT(Server& server,
                           const std::vector<std::string>& args) {
-    std::vector<User*>  users;
+    std::set<User*>     users;
     std::stringstream   message;
     std::stringstream   reply;
 
@@ -31,29 +28,16 @@ void    User::_handleQUIT(Server& server,
         message << args[0];
     message << "\r\n";
 
-    for (std::vector<Channel*>::iterator it = _channels.begin();
-         it != _channels.end();
-         ++it) {
-        addUsers(users, *it);
-    }
-
-    for (std::vector<User*>::iterator it = users.begin();
+    for (std::set<User*>::iterator it = users.begin();
          it != users.end();
          ++it) {
-        (*it)->sendMessage(message.str(), server);
+        if (users.find(*it) == users.end()) {
+            (*it)->sendMessage(message.str(), server);
+            users.insert(*it);
+        }
     }
 
     this->sendMessage(reply.str(), server);
     _flushMessages(server);
     server.removeUser(_nickName);
-}
-
-static void    addUsers(std::vector<User*>& users, const Channel* channel) {
-    for (Channel::UserContainer::const_iterator it = channel->getMembers().begin();
-         it != channel->getMembers().end();
-         ++it) {
-        if (std::find(users.begin(), users.end(), *it) == users.end()) {
-            users.push_back(*it);
-        }
-    }
 }

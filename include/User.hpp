@@ -21,8 +21,6 @@ class User : public ISocket {
 
         explicit User(int fd);
 
-        bool    operator==(const User& rhs) const;
-
         bool    hasJoinedTheMaxNbOfRegularChannels() const;
         bool    hasJoinedTheMaxNbOfLocalChannels() const;
 

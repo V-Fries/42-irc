@@ -22,10 +22,6 @@ User::User(const int fd):
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
-bool User::operator==(const User& rhs) const {
-    return (_nickName == rhs._nickName && _fd == rhs._fd);
-}
-
 int User::getFD() const {
     return _fd;
 }
