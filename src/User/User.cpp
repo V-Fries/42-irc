@@ -72,6 +72,7 @@ void    User::initRequestsHandlers() {
     _requestsHandlers["LIST"] = &User::_handleLIST;
     _requestsHandlers["ISON"] = &User::_handleISON;
     _requestsHandlers["INVITE"] = &User::_handleINVITE;
+    _requestsHandlers["KICK"] = &User::_handleKICK;
 }
 
 void    User::handleEvent(const uint32_t epollEvents, Server& server) {
