@@ -40,6 +40,7 @@ class Channel {
                                     throw (Channel::IsFull);
         void                    removeMember(User* member);
         bool                    isMember(int memberFD) const; // TODO remove this
+        bool                    isMember(const std::string& nickname) const;
         bool                    isMember(const User* member) const;
 
         const UsersFdContainer& getOperators();
