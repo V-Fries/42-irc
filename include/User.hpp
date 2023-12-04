@@ -39,6 +39,8 @@ class User : public ISocket {
 
         void    sendMessage(const std::string &message, const Server& server);
 
+        void    leaveChannel(const std::string&channelName);
+
         static std::string    defaultNickname;
 
     private:
@@ -89,5 +91,5 @@ class User : public ISocket {
 
         std::queue<std::string> _messagesBuffer;
 
-        std::vector<Channel*>   _channels;
+        std::map<std::string, Channel*> _channels;
 };

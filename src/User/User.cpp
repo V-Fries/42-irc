@@ -114,6 +114,14 @@ void User::sendMessage(const std::string &message, const Server& server) {
     }
 }
 
+void User::leaveChannel(const std::string&channelName) {
+    if (*channelName.begin() == '#')
+        _nbOfJoinedRegularChannels--;
+    else if (*channelName.begin() == '&')
+        _nbOfJoinedLocalChannels--;
+    _channels.erase(channelName);
+}
+
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
 

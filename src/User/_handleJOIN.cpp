@@ -45,7 +45,11 @@ void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
             if (!channel) continue;
         }
         joinExistingChannel(*this, server, *channel, password);
-        _channels.push_back(channel);
+        _channels[channel->getName()] = channel;
+        if (*channel->getName().begin() == '#')
+            _nbOfJoinedRegularChannels++;
+        else if (*channel->getName().begin() == '&')
+            _nbOfJoinedLocalChannels++;
     }
 }
 
