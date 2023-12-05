@@ -17,10 +17,10 @@ class ft::String : public std::string {
         String():
             std::string() {}
 
-        String (const String& str):
+        String(const String& str):
             std::string(str) {}
 
-        String (const std::string& str):
+        String(const std::string& str):
             std::string(str) {}
 
         String(const String& str, size_t pos, size_t len = npos):
@@ -80,13 +80,16 @@ class ft::String : public std::string {
                                      const_iterator end,
                                      char charConsideredAsWordSeparator);
 
-        void    toLower();
-        String  copyToLower() const;
-        static void toLower(iterator start, const_iterator end);
-        void    toUpper();
-        String  copyToUpper() const;
-        static void toUpper(iterator start, const_iterator end);
+        void        map(int (*fn)(int));
+        String      copyAndMap(int (*fn)(int)) const;
+        static void map(iterator start, const_iterator end, int (*fn)(int));
 
+        void        toLower();
+        String      copyToLower() const;
+        static void toLower(iterator start, const_iterator end);
+        void        toUpper();
+        String      copyToUpper() const;
+        static void toUpper(iterator start, const_iterator end);
 };
 
 std::ostream&   operator<<(std::ostream& os, const std::vector<ft::String>& strings);

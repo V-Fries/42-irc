@@ -3,36 +3,28 @@
 #include <cctype>
 
 void    ft::String::toLower() {
-    return toLower(this->begin(), this->end());
+    map(&std::tolower);
 }
 
 ft::String  ft::String::copyToLower() const {
-    String  copy(*this);
-    copy.toLower();
-    return copy;
+    return copyAndMap(&std::tolower);
 }
 
 void    ft::String::toLower(iterator start,
                             const const_iterator end) {
-    for (; start != end; ++start) {
-        *start = static_cast<char>(std::tolower(static_cast<unsigned char>(*start)));
-    }
+    map(start, end, &std::tolower);
 }
 
 
 void    ft::String::toUpper() {
-    return toUpper(this->begin(), this->end());
+    map(&std::toupper);
 }
 
 ft::String  ft::String::copyToUpper() const {
-    String  copy(*this);
-    copy.toUpper();
-    return copy;
+    return copyAndMap(&std::toupper);
 }
 
 void    ft::String::toUpper(iterator start,
                             const const_iterator end) {
-    for (; start != end; ++start) {
-        *start = static_cast<char>(std::toupper(static_cast<unsigned char>(*start)));
-    }
+    map(start, end, &std::toupper);
 }
