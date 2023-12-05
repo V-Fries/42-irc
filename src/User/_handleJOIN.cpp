@@ -15,7 +15,7 @@ static void joinExistingChannel(User& user,
                                 const ft::String& password);
 static void sendChannelWelcomeMessages(User& user,
                                        const Server& server,
-                                       const Channel& channel);
+                                       Channel& channel);
 
 void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received JOIN request: " << args << " from user " << _fd
@@ -89,15 +89,12 @@ static void joinExistingChannel(User& user,
 
 static void sendChannelWelcomeMessages(User& user,
                                        const Server& server,
-                                       const Channel& channel) {
+                                       Channel& channel) {
     std::stringstream   message;
 
     message << user.getHostMask() << " JOIN " << channel.getName() << "\r\n";
-    for (Channel::UserContainer::iterator it = channel.getMembers().begin();
-         it != channel.getMembers().end();
-         ++it) {
-        (*it)->sendMessage(message.str(), server);
-    }
+
+    channel.sendMessage(-1, message.str(), server);
     NumericReplies::Reply::topic(user, channel, server);
     NumericReplies::Reply::topicWhoTime(user, channel, server);
     NumericReplies::Reply::namesReply(user, channel, server);

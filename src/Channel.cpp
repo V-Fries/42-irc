@@ -81,6 +81,14 @@ bool    Channel::isMember(const int memberFD) const {
     return (false);
 }
 
+bool Channel::isMember(const std::string& nickname) const {
+    for (UserContainer::const_iterator it = _members.begin(); it != _members.end(); ++it) {
+        if ((*it)->getNickName() == nickname)
+            return (true);
+    }
+    return (false);
+}
+
 bool    Channel::isMember(const User* member) const {
     return _members.contains(const_cast<User*>(member));
 }

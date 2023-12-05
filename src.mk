@@ -12,6 +12,7 @@ SRC	=\
 	User/_handleMODE.cpp	\
 	User/_handleLIST.cpp	\
 	User/_handleISON.cpp	\
+	User/_handleKICK.cpp	\
 	User/User.cpp			\
 \
 	Channel.cpp			\

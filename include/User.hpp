@@ -64,6 +64,7 @@ class User : public ISocket {
         void    _handleLIST(Server& server, const std::vector<ft::String>& args);
         void    _handleISON(Server& server, const std::vector<ft::String>& args);
         void    _handleINVITE(Server& server, const std::vector<ft::String>& args);
+        void    _handleKICK(Server& server, const std::vector<ft::String>& args);
 
         void    _registerUserIfReady(Server& server);
 
