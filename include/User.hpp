@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ISocket.hpp"
+#include "ft_String.hpp"
 
 #include <stdint.h>
-#include <string>
 #include <map>
 #include <queue>
 
@@ -25,10 +25,10 @@ class User : public ISocket {
         bool    hasJoinedTheMaxNbOfLocalChannels() const;
 
         void                    setIsRegistered(bool isRegistered);
-        const std::string&      getNickName() const;
-        const std::string&      getUserName() const;
-        const std::string&      getRealName() const;
-        std::string             getHostMask() const;
+        const ft::String&      getNickName() const;
+        const ft::String&      getUserName() const;
+        const ft::String&      getRealName() const;
+        ft::String             getHostMask() const;
 
         static void initRequestsHandlers();
 
@@ -36,39 +36,39 @@ class User : public ISocket {
 
         bool    isRegistered() const;
 
-        void    sendMessage(const std::string &message, const Server& server);
+        void    sendMessage(const ft::String &message, const Server& server);
 
-        static std::string    defaultNickname;
+        static ft::String    defaultNickname;
 
     private:
-        typedef void (User::*RequestHandler)(Server&, const std::vector<std::string>&);
-        typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
+        typedef void (User::*RequestHandler)(Server&, const std::vector<ft::String>&);
+        typedef std::map<ft::String, RequestHandler>   RequestsHandlersMap;
 
         void    _flushMessages(const Server& server);
 
         void        _handleEPOLLIN(Server& server);
         void        _processRequest(Server& server);
-        void        _handleRequest(Server& server, const std::string& request);
+        void        _handleRequest(Server& server, const ft::String& request);
         static bool _isCommandAllowedWhenNotRegistered(User::RequestHandler requestHandler);
 
-        void    _handlePASS(Server& server, const std::vector<std::string>& args);
-        void    _handleUSER(Server& server, const std::vector<std::string>& args);
-        void    _handleNICK(Server& server, const std::vector<std::string>& args);
-        void    _handlePRIVMSG(Server& server, const std::vector<std::string>& args);
-        void    _handleJOIN(Server& server, const std::vector<std::string>& args);
-        void    _handlePING(Server& server, const std::vector<std::string>& args);
-        void    _handleWHO(Server& server, const std::vector<std::string>& args);
-        void    _handlePART(Server& server, const std::vector<std::string>& args);
-        void    _handleTOPIC(Server& server, const std::vector<std::string>& args);
-        void    _handleMODE(Server& server, const std::vector<std::string>& args);
-        void    _handleLIST(Server& server, const std::vector<std::string>& args);
-        void    _handleISON(Server& server, const std::vector<std::string>& args);
-        void    _handleINVITE(Server& server, const std::vector<std::string>& args);
-        void    _handleKICK(Server& server, const std::vector<std::string>& args);
+        void    _handlePASS(Server& server, const std::vector<ft::String>& args);
+        void    _handleUSER(Server& server, const std::vector<ft::String>& args);
+        void    _handleNICK(Server& server, const std::vector<ft::String>& args);
+        void    _handlePRIVMSG(Server& server, const std::vector<ft::String>& args);
+        void    _handleJOIN(Server& server, const std::vector<ft::String>& args);
+        void    _handlePING(Server& server, const std::vector<ft::String>& args);
+        void    _handleWHO(Server& server, const std::vector<ft::String>& args);
+        void    _handlePART(Server& server, const std::vector<ft::String>& args);
+        void    _handleTOPIC(Server& server, const std::vector<ft::String>& args);
+        void    _handleMODE(Server& server, const std::vector<ft::String>& args);
+        void    _handleLIST(Server& server, const std::vector<ft::String>& args);
+        void    _handleISON(Server& server, const std::vector<ft::String>& args);
+        void    _handleINVITE(Server& server, const std::vector<ft::String>& args);
+        void    _handleKICK(Server& server, const std::vector<ft::String>& args);
 
         void    _registerUserIfReady(Server& server);
 
-        bool    _checkNickname(const std::string &nickName, const Server &server);
+        bool    _checkNickname(const ft::String &nickName, const Server &server);
 
         static RequestsHandlersMap _requestsHandlers;
 
@@ -79,12 +79,12 @@ class User : public ISocket {
 
         bool        _isRegistered;
 
-        std::string _nickName;
-        std::string _userName;
-        std::string _realName;
-        std::string _password;
+        ft::String _nickName;
+        ft::String _userName;
+        ft::String _realName;
+        ft::String _password;
 
-        std::string _requestBuffer;
+        ft::String _requestBuffer;
 
-        std::queue<std::string> _messagesBuffer;
+        std::queue<ft::String> _messagesBuffer;
 };

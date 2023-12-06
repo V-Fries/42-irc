@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <cstdlib>
 
-Server::Server(const uint16_t port, const std::string& password):
+Server::Server(const uint16_t port, const ft::String& password):
     _password(password),
     _epollFD(epoll_create1(0)),
     _listenSocketFD(-1),
@@ -107,7 +107,7 @@ void    Server::removeUser(User *user) {
     _shouldUpdateEventsSize = true;
 }
 
-bool Server::nicknameIsTaken(const std::string &nick) const {
+bool Server::nicknameIsTaken(const ft::String &nick) const {
     return (_registeredUsers.find(nick) != _registeredUsers.end());
 }
 
@@ -139,7 +139,7 @@ void Server::removeChannel(Channel* channel) {
     delete channel;
 }
 
-Channel* Server::getChannelByName(const std::string& name) {
+Channel* Server::getChannelByName(const ft::String& name) {
     try {
         return (_channels.at(name));
     } catch (std::out_of_range& ) {
@@ -147,7 +147,7 @@ Channel* Server::getChannelByName(const std::string& name) {
     }
 }
 
-void    Server::addUserToChannel(const std::string& channel, User& user) {
+void    Server::addUserToChannel(const ft::String& channel, User& user) {
     _channels[channel]->addMember(&user);
 }
 
@@ -155,7 +155,7 @@ void    Server::addUserToChannel(Channel& channel, User& user) {
     channel.addMember(&user);
 }
 
-const std::string& Server::getNicknameByFd(const int fd) const {
+const ft::String& Server::getNicknameByFd(const int fd) const {
     User*   user;
 
     try {
@@ -173,7 +173,7 @@ const Server::ChannelMap& Server::getChannels() const {
     return (_channels);
 }
 
-User*   Server::getUserByNickname(const std::string& nickname) const {
+User*   Server::getUserByNickname(const ft::String& nickname) const {
     try {
         return (_registeredUsers.at(nickname));
     } catch (std::out_of_range& ) {

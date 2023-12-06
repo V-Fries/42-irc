@@ -3,14 +3,14 @@
 #include "Server.hpp"
 #include "User.hpp"
 
-static std::string  constructMessageToUser(const User& sender,
+static ft::String  constructMessageToUser(const User& sender,
                                            const User& receiver,
-                                           const std::string& body);
-static std::string  constructMessageToChannel(const User& sender,
+                                           const ft::String& body);
+static ft::String  constructMessageToChannel(const User& sender,
                                               const Channel& receiver,
-                                              const std::string& body);
+                                              const ft::String& body);
 
-void User::_handlePRIVMSG(Server& server, const std::vector<std::string>& args) {
+void User::_handlePRIVMSG(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received PRIVMSG request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -20,8 +20,8 @@ void User::_handlePRIVMSG(Server& server, const std::vector<std::string>& args) 
     if (args.size() < 2) {
         NumericReplies::Error::noTextToSend(*this, server);
     }
-    std::vector<std::string> targets = ft::String::split(args[0], ",");
-    for (std::vector<std::string>::const_iterator it = targets.begin();
+    std::vector<ft::String> targets = args[0].split(",");
+    for (std::vector<ft::String>::const_iterator it = targets.begin();
          it != targets.end();
          ++it) {
         User* currUserTarget = server.getUserByNickname(*it);
@@ -38,9 +38,9 @@ void User::_handlePRIVMSG(Server& server, const std::vector<std::string>& args) 
     }
 }
 
-static std::string  constructMessageToUser(const User& sender,
+static ft::String  constructMessageToUser(const User& sender,
                                            const User& receiver,
-                                           const std::string& body) {
+                                           const ft::String& body) {
     std::stringstream   message;
 
     message << ":" << sender.getNickName() << " PRIVMSG " <<
@@ -48,9 +48,9 @@ static std::string  constructMessageToUser(const User& sender,
     return (message.str());
 }
 
-static std::string  constructMessageToChannel(const User& sender,
+static ft::String  constructMessageToChannel(const User& sender,
                                               const Channel& receiver,
-                                              const std::string& body) {
+                                              const ft::String& body) {
     std::stringstream   message;
 
     message << sender.getHostMask() << " PRIVMSG " <<

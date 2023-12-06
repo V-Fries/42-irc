@@ -32,7 +32,7 @@ const Exception::ExceptionStream&  Exception::ExceptionStream::operator<<(
     }
 }
 
-Exception::Exception(const std::string& whatMessage,
+Exception::Exception(const ft::String& whatMessage,
                          const ft::Log::DebugLevel debugLevel):
     stream(debugLevel),
     _whatMessage(whatMessage) {
@@ -50,7 +50,7 @@ const char* Exception::what() const throw() {
 }
 
 
-ft::FailedToOpenFile::FailedToOpenFile(const std::string& whatMessage,
+ft::FailedToOpenFile::FailedToOpenFile(const ft::String& whatMessage,
                                        const ft::Log::DebugLevel debugLevel):
     Exception(whatMessage, debugLevel) {
 }

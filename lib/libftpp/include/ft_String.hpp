@@ -12,10 +12,38 @@ namespace ft {
     class String;
 };
 
-class ft::String {
+class ft::String : public std::string {
     public:
-        static std::string  join(const std::vector<std::string>& strings,
-                                 const std::string& separator);
+        String():
+            std::string() {}
+
+        String(const String& str):
+            std::string(str) {}
+
+        String(const std::string& str):
+            std::string(str) {}
+
+        String(const String& str, size_t pos, size_t len = npos):
+            std::string(str, pos, len) {}
+
+        String(const std::string& str, size_t pos, size_t len = npos):
+            std::string(str, pos, len) {}
+
+        String(const char* s):
+            std::string(s) {}
+
+        String(const char* s, const size_t n):
+            std::string(s, n) {}
+
+        String(size_t n, char c):
+            std::string(n, c) {}
+
+        template <class InputIterator>
+        String(InputIterator first, InputIterator last):
+            std::string(first, last) {}
+
+        static String   join(const std::vector<String>& strings,
+                             const String& separator);
 
         ///
         /// \param string string to split
@@ -24,52 +52,50 @@ class ft::String {
         ///              will split on each chars of the delimiter ignoring the chars
         ///              that are between quotes
         /// \return
-        static std::vector<std::string> split(const std::string& string,
-                                              const std::string& delimiter,
-                                              const uint8_t flags = 0)
-                                              throw(std::invalid_argument);
+        std::vector<String> split(const String& delimiter,
+                                  uint8_t flags = 0) const
+                                throw(std::invalid_argument) ; // TODO test with delimiter == ""
 
-        static size_t   findFirstNotOfString(const std::string& string,
-                                             const std::string& toFind,
-                                             size_t i = 0);
+        size_t   findFirstNotOfString(const String& toFind, size_t i = 0) const;
 
-        static std::string::iterator        skipChars(std::string::iterator it,
-                                                      std::string::iterator end,
-                                                      const std::string& charsToSkip);
-        static std::string::const_iterator  skipChars(std::string::const_iterator it,
-                                                      std::string::const_iterator end,
-                                                      const std::string& charsToSkip);
-        static std::string::iterator        skipChar(std::string::iterator it,
-                                                     std::string::iterator end,
-                                                     char charToSkip);
-        static std::string::const_iterator  skipChar(std::string::const_iterator it,
-                                                     std::string::const_iterator end,
-                                                     char charToSkip);
+        static iterator         skipChars(iterator it,
+                                          iterator end,
+                                          const String& charsToSkip);
+        static const_iterator   skipChars(const_iterator it,
+                                          const_iterator end,
+                                          const String& charsToSkip);
+        static iterator         skipChar(iterator it,
+                                         iterator end,
+                                         char charToSkip);
+        static const_iterator   skipChar(const_iterator it,
+                                         const_iterator end,
+                                         char charToSkip);
 
-        static std::string  getFirstWord(const std::string& string,
-                                         const std::string& charsConsideredAsWordSeparators);
-        static std::string  getFirstWord(const std::string& string,
-                                         char charConsideredAsWordSeparator);
-        static std::string  getFirstWord(std::string::const_iterator it,
-                                         std::string::const_iterator end,
-                                         const std::string& charsConsideredAsWordSeparators);
-        static std::string  getFirstWord(std::string::const_iterator it,
-                                         std::string::const_iterator end,
-                                         char charConsideredAsWordSeparator);
+        String          getFirstWord(const String& charsConsideredAsWordSeparators) const;
+        String          getFirstWord(char charConsideredAsWordSeparator) const;
+        static String   getFirstWord(const_iterator it,
+                                     const_iterator end,
+                                     const String& charsConsideredAsWordSeparators);
+        static String   getFirstWord(const_iterator it,
+                                     const_iterator end,
+                                     char charConsideredAsWordSeparator);
 
-        static std::string  toLower(const std::string& string);
-        static std::string  toLower(std::string::const_iterator start,
-                                    std::string::const_iterator end);
-        static std::string  toUpper(const std::string& string);
-        static std::string  toUpper(std::string::const_iterator start,
-                                    std::string::const_iterator end);
+        void        map(int (*fn)(int));
+        String      copyAndMap(int (*fn)(int)) const;
+        static void map(iterator start, const_iterator end, int (*fn)(int));
 
+        void        toLower();
+        String      copyToLower() const;
+        static void toLower(iterator start, const_iterator end);
+        void        toUpper();
+        String      copyToUpper() const;
+        static void toUpper(iterator start, const_iterator end);
 };
 
-std::ostream&   operator<<(std::ostream& os, const std::vector<std::string>& strings);
+std::ostream&   operator<<(std::ostream& os, const std::vector<ft::String>& strings);
 
-std::vector<std::string>    operator+(const std::vector<std::string>& leftValue,
-                                      const std::vector<std::string>& rightValue);
+std::vector<ft::String> operator+(const std::vector<ft::String>& leftValue,
+                                  const std::vector<ft::String>& rightValue);
 
-std::vector<std::string>&    operator+=(std::vector<std::string>& leftValue,
-                                        const std::vector<std::string>& rightValue);
+std::vector<ft::String>&    operator+=(std::vector<ft::String>& leftValue,
+                                       const std::vector<ft::String>& rightValue);

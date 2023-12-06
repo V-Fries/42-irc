@@ -1,7 +1,8 @@
 #ifndef TOPIC_HPP
 # define TOPIC_HPP
 
-#include <string>
+#include "ft_String.hpp"
+
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -11,16 +12,16 @@ class Topic {
 
         ~Topic();
 
-        void    setContent(const std::string& content, const std::string& nickname);
+        void    setContent(const ft::String& content, const ft::String& nickname);
 
-        const std::string&  getContent() const;
-        const std::string&  getNickname() const;
-        const std::string&  getSetAt() const;
+        const ft::String&  getContent() const;
+        const ft::String&  getNickname() const;
+        const ft::String&  getSetAt() const;
 
     private:
-        std::string _content;
-        std::string _nickname;
-        std::string _setAt;
+        ft::String _content;
+        ft::String _nickname;
+        ft::String _setAt;
 };
 
 #endif
