@@ -1,0 +1,45 @@
+# Debuging
+logs.txt
+
+# Prerequisites
+*.d
+
+#junk
+.DS_Store
+
+# Compiled Object files
+.build
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+libftpp_test
+*.exe
+*.out
+*.app
+
+# IDE
+cmake-build-debug
+.idea
+.vscode

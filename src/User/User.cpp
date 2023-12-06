@@ -18,7 +18,8 @@ User::User(const int fd):
         _nbOfJoinedLocalChannels(0),
         _nbOfJoinedRegularChannels(0),
         _isRegistered(false),
-        _nickName(defaultNickname) {
+        _nickName(defaultNickname),
+        _lastIndexOfBufferWithNoDelimiters(0) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
@@ -130,8 +131,7 @@ void    User::_handleEPOLLIN(Server& server) {
     _requestBuffer += stringBuffer;
     ft::Log::debug << "User(" << _fd << ")::_requestBuffer += \"" << stringBuffer
                      << '\"' << std::endl;
-    if (_requestBuffer.find('\r') != ft::String::npos ||
-        _requestBuffer.find('\n') != ft::String::npos) {
+    if (_requestBuffer.find("\r\n", _lastIndexOfBufferWithNoDelimiters) != ft::String::npos) {
         _processRequest(server);
     }
 }
@@ -139,10 +139,12 @@ void    User::_handleEPOLLIN(Server& server) {
 void    User::_processRequest(Server& server) {
 
     std::vector<ft::String>    messages = _requestBuffer.split("\r\n");
-    if (*(_requestBuffer.end() - 1) == '\n') {
+    if (_requestBuffer.endsWith("\r\n")) {
         _requestBuffer = "";
+        _lastIndexOfBufferWithNoDelimiters = 0;
     } else {
         _requestBuffer = *(messages.end() - 1);
+        _lastIndexOfBufferWithNoDelimiters = _requestBuffer.length() - 1;
         messages.pop_back();
     }
     for (std::vector<ft::String>::iterator it = messages.begin();
@@ -159,7 +161,7 @@ void    User::_handleRequest(Server& server, const ft::String& request) {
 
     RequestHandler requestHandler;
     try {
-        requestHandler = _requestsHandlers.at(cmd.getCommand());
+        requestHandler = _requestsHandlers.at(cmd.getCommand().copyToUpper());
     } catch (std::out_of_range&) {
         NumericReplies::Error::unknownCommand(*this, server, cmd.getCommand());
         ft::Log::warning << "Request was not recognized" << std::endl;

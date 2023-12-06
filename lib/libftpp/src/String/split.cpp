@@ -10,6 +10,12 @@ static std::vector<ft::String>  splitOnCharacterSet(const ft::String& string,
 std::vector<ft::String> ft::String::split(const String& delimiter,
                                           const uint8_t flags) const
                                         throw(std::invalid_argument) {
+    if (delimiter.empty()) {
+        std::vector<ft::String> result;
+        result.push_back(*this);
+        return result;
+    }
+
     switch (flags) {
         case 0:
             return splitOnDelimiter(*this, delimiter);
@@ -23,18 +29,17 @@ std::vector<ft::String> ft::String::split(const String& delimiter,
 static std::vector<ft::String>  splitOnDelimiter(const ft::String& string,
                                                  const ft::String& delimiter) {
     std::vector<ft::String> result;
-    size_t                  postNextDelimiter;
 
+    size_t  postNextDelimiter;
     for (size_t i = string.findFirstNotOfString(delimiter);
          i != ft::String::npos;
          i = string.findFirstNotOfString(delimiter, postNextDelimiter)) {
         const size_t    nextDelimiter = string.find(delimiter, i);
-        if (nextDelimiter != ft::String::npos) {
-            result.push_back(string.substr(i, nextDelimiter - i));
-        } else {
+        if (nextDelimiter == ft::String::npos) {
             result.push_back(string.substr(i));
             return result;
         }
+        result.push_back(string.substr(i, nextDelimiter - i));
         postNextDelimiter = nextDelimiter + delimiter.length();
     }
 
@@ -44,19 +49,18 @@ static std::vector<ft::String>  splitOnDelimiter(const ft::String& string,
 static std::vector<ft::String>  splitOnCharacterSet(const ft::String& string,
                                                     const ft::String& set) {
     std::vector<ft::String> result;
-    size_t                  postNextDelimiter;
 
+    size_t  postNextDelimiter;
     for (size_t i = string.find_first_not_of(set);
          i != ft::String::npos;
          i = string.find_first_not_of(set, postNextDelimiter)) {
         const size_t    nextDelimiter = string.find_first_of(set, i);
-        if (nextDelimiter != ft::String::npos) {
-            result.push_back(string.substr(i, nextDelimiter - i));
-        } else {
+        if (nextDelimiter == ft::String::npos) {
             result.push_back(string.substr(i));
             return result;
         }
-        postNextDelimiter = nextDelimiter + set.length();
+        result.push_back(string.substr(i, nextDelimiter - i));
+        postNextDelimiter = nextDelimiter + 1;
     }
 
     return result;

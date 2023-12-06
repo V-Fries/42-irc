@@ -85,6 +85,7 @@ class User : public ISocket {
         ft::String _password;
 
         ft::String _requestBuffer;
+        size_t     _lastIndexOfBufferWithNoDelimiters;
 
         std::queue<ft::String> _messagesBuffer;
 };
