@@ -19,7 +19,7 @@ User::User(const int fd):
         _isRegistered(false),
         _nickName(defaultNickname),
         _passwordWasGiven(false),
-        _shouldKillUser(false) {
+        _shouldDestroyUserAfterFlush(false) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
@@ -87,7 +87,7 @@ void    User::handleEvent(const uint32_t epollEvents, Server& server) {
         server.addUserToDestroyList(*this);
         return;
     }
-    if (epollEvents & EPOLLIN && !_shouldKillUser) {
+    if (epollEvents & EPOLLIN && !_shouldDestroyUserAfterFlush) {
         ft::Log::debug << "User " << _fd << " received EPOLLIN" << std::endl;
         _handleEPOLLIN(server);
     }
@@ -102,7 +102,7 @@ bool User::isRegistered() const {
 }
 
 void User::sendMessage(const std::string &message, const Server& server) {
-    if (_shouldKillUser) return;
+    if (_shouldDestroyUserAfterFlush) return;
 
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
         const std::string   messageToPrint(message.begin(), message.end() - 2);
@@ -192,12 +192,12 @@ bool    User::_isCommandAllowedWhenNotRegistered(RequestHandler requestHandler) 
             || requestHandler == &User::_handleNICK;
 }
 
-void    User::sendErrorAndKillUser(const std::string& message, Server& server) {
+void    User::sendErrorAndDestroyUser(const std::string& message, Server& server) {
     std::stringstream   error;
 
     error << "ERROR :Closing Link: " << message << "\r\n";
     this->sendMessage(error.str(), server);
-    _shouldKillUser = true;
+    _shouldDestroyUserAfterFlush = true;
     epoll_event event = {};
     event.events = EPOLLOUT | EPOLLRDHUP;
     event.data.fd = _fd;
@@ -230,7 +230,7 @@ void User::_flushMessages(Server& server) {
         ft::Log::info << "User " << _fd << " stopped waiting for EPOLLOUT" << std::endl;
     }
 
-    if (_shouldKillUser) server.addUserToDestroyList(*this);
+    if (_shouldDestroyUserAfterFlush) server.addUserToDestroyList(*this);
 }
 
 void    User::_registerUserIfReady(Server& server) {

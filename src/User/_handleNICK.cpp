@@ -16,7 +16,7 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
                   << std::endl;
 
     if (!_passwordWasGiven) {
-        this->sendErrorAndKillUser("Password was not given", server);
+        this->sendErrorAndDestroyUser("Password was not given", server);
         return;
     }
 

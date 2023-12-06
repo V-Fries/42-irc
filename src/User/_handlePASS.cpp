@@ -20,7 +20,7 @@ void    User::_handlePASS(Server& server, const std::vector<std::string>& args) 
 
     if (args[0] != server.getPassword()) {
         NumericReplies::Error::passwordMissMatch(*this, server);
-        this->sendErrorAndKillUser("Wrong password", server);
+        this->sendErrorAndDestroyUser("Wrong password", server);
         return;
     }
 

@@ -59,7 +59,7 @@ class User : public ISocket {
         void        _handleRequest(Server& server, const std::string& request);
         static bool _isCommandAllowedWhenNotRegistered(User::RequestHandler requestHandler);
 
-        void    sendErrorAndKillUser(const std::string& message, Server& server);
+        void    sendErrorAndDestroyUser(const std::string& message, Server& server);
 
         void    _handlePASS(Server& server, const std::vector<std::string>& args);
         void    _handleUSER(Server& server, const std::vector<std::string>& args);
@@ -96,5 +96,5 @@ class User : public ISocket {
 
         std::queue<std::string> _messagesBuffer;
 
-        bool    _shouldKillUser;
+        bool    _shouldDestroyUserAfterFlush;
 };
