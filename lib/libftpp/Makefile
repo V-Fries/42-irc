@@ -72,6 +72,7 @@ all:
 		$(MAKE) $(NAME)
 
 $(NAME):	$(OBJS)
+		$(RM) $(NAME)
 		$(AR) $(NAME) $(OBJS)
 
 

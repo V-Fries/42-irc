@@ -28,7 +28,7 @@ Server::Server(const uint16_t port, const ft::String& password):
     _listenSocketFD = listenSocket->getFD();
     _sockets[_listenSocketFD] = listenSocket;
 
-    epoll_event event;
+    epoll_event event = {};
     event.events = EPOLLIN;
     event.data.fd = _listenSocketFD;
     if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, _listenSocketFD, &event) == -1) {
