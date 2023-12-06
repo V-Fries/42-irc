@@ -50,6 +50,7 @@
 #define ERR_NOTREGISTERED "451"
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_ALREADYREGISTERED "462"
+#define ERR_PASSWDMISMATCH "464"
 #define ERR_CHANNELISFULL "471"
 #define ERR_INVITEONLYCHAN "473"
 #define ERR_BADCHANNELKEY "475"
@@ -184,6 +185,8 @@ class NumericReplies {
                 static void badChannelKey(User& user,
                                           const Server& server,
                                           const Channel& channel);
+
+                static void passwordMissMatch(User& user, const Server& server);
         };
 
     private:

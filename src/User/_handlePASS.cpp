@@ -18,6 +18,11 @@ void    User::_handlePASS(Server& server, const std::vector<std::string>& args) 
         return;
     }
 
-    _password = args[0];
-    _registerUserIfReady(server);
+    if (args[0] != server.getPassword()) {
+        NumericReplies::Error::passwordMissMatch(*this, server);
+        this->sendErrorAndKillUser("Wrong password", server);
+        return;
+    }
+
+    _passwordWasGiven = true;
 }

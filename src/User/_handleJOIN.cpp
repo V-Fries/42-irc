@@ -57,8 +57,9 @@ static void createNewChannel(User& user,
                              const std::string& newChannelName,
                              const std::string& password) {
     try {
-        server.addChannel(new Channel(newChannelName, password, user));
-        sendChannelWelcomeMessages(user, server, *server.getChannelByName(newChannelName));
+        Channel* newChannel = new Channel(newChannelName, password, user);
+        server.addChannel(*newChannel);
+        sendChannelWelcomeMessages(user, server, *newChannel);
     } catch (Channel::IncorrectName&) {
         NumericReplies::Error::badChannelMask(user, server, newChannelName);
     }

@@ -552,6 +552,14 @@ void    NumericReplies::Error::badChannelKey(User& user,
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::passwordMissMatch(User& user, const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_PASSWDMISMATCH, SERVER_NAME) << user.getNickName()
+            << " :Password incorrect\r\n";
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
 std::string NumericReplies::_constructHeader(const std::string &numericID,

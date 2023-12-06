@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <queue>
+#include <sstream>
 
 class Server;
 
@@ -19,16 +20,21 @@ class User : public ISocket {
 
         explicit User(int fd);
 
-        int                     getFD() const;
+        int getFD() const;
 
         bool    hasJoinedTheMaxNbOfRegularChannels() const;
         bool    hasJoinedTheMaxNbOfLocalChannels() const;
 
-        void                    setIsRegistered(bool isRegistered);
+        void    setIsRegistered(bool isRegistered);
+
+        void                    setNickName(const std::string& newNickName);
         const std::string&      getNickName() const;
-        const std::string&      getUserName() const;
-        const std::string&      getRealName() const;
-        std::string             getHostMask() const;
+
+        const std::string&  getUserName() const;
+
+        const std::string&  getRealName() const;
+
+        std::string getHostMask() const;
 
         static void initRequestsHandlers();
 
@@ -37,6 +43,8 @@ class User : public ISocket {
         bool    isRegistered() const;
 
         void    sendMessage(const std::string &message, const Server& server);
+        void    sendMessageToConnections(const std::string& message, const Server& server);
+
 
         static std::string    defaultNickname;
 
@@ -44,12 +52,14 @@ class User : public ISocket {
         typedef void (User::*RequestHandler)(Server&, const std::vector<std::string>&);
         typedef std::map<std::string, RequestHandler>   RequestsHandlersMap;
 
-        void    _flushMessages(const Server& server);
+        void    _flushMessages(Server& server);
 
         void        _handleEPOLLIN(Server& server);
         void        _processRequest(Server& server);
         void        _handleRequest(Server& server, const std::string& request);
         static bool _isCommandAllowedWhenNotRegistered(User::RequestHandler requestHandler);
+
+        void    sendErrorAndKillUser(const std::string& message, Server& server);
 
         void    _handlePASS(Server& server, const std::vector<std::string>& args);
         void    _handleUSER(Server& server, const std::vector<std::string>& args);
@@ -68,8 +78,6 @@ class User : public ISocket {
 
         void    _registerUserIfReady(Server& server);
 
-        bool    _checkNickname(const std::string &nickName, const Server &server);
-
         static RequestsHandlersMap _requestsHandlers;
 
         const int   _fd;
@@ -82,9 +90,11 @@ class User : public ISocket {
         std::string _nickName;
         std::string _userName;
         std::string _realName;
-        std::string _password;
+        bool        _passwordWasGiven;
 
         std::string _requestBuffer;
 
         std::queue<std::string> _messagesBuffer;
+
+        bool    _shouldKillUser;
 };

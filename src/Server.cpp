@@ -41,42 +41,77 @@ Server::Server(const uint16_t port, const std::string& password):
 
 Server::~Server() {
     ft::Log::debug << "Server destructor called" << std::endl;
+    delete _sockets[_listenSocketFD];
+    _sockets.erase(_listenSocketFD);
     for (SocketMap::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
-        epoll_ctl(_epollFD, EPOLL_CTL_DEL, it->first, NULL);
+        this->closeSocket(it->first);
         delete it->second;
-        do {
-            errno = 0;
-            if (close(it->first) < 0 && errno != EINTR) {
-                ft::Log::error << "Error while closing socket " << it->first << std::endl;
-            }
-        } while (errno == EINTR);
     }
+    closeSocket(_listenSocketFD, true);
     for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-        delete (it->second);
+        delete it->second;
     }
     delete[] _events;
-    _sockets.clear();
+    Server::closeFd(_epollFD);
+}
+
+void Server::closeSocket(int fd, bool isListenSocket) const {
+    if (!isListenSocket
+            && epoll_ctl(_epollFD, EPOLL_CTL_DEL, fd, NULL) == -1) {
+        ft::Log::warning << "Failed to del epoll_ctl for socket " << fd << std::endl;
+    }
+
+    Server::closeFd(fd);
+}
+
+void Server::closeFd(int fd) {
+    int i = 0;
     do {
         errno = 0;
-        if (close(_epollFD) < 0 && errno != EINTR) {
-            ft::Log::error << "Error while closing epoll " << _epollFD << std::endl;
+        if (close(fd) < 0 && errno != EINTR) {
+            ft::Log::error << "Error while closing socket " << fd << std::endl;
         }
-    } while (errno == EINTR);
+        ++i;
+    } while (errno == EINTR && i < 10);
+}
+
+const std::string& Server::getPassword() const {
+    return _password;
 }
 
 int     Server::getEpollFD() const {
     return _epollFD;
 }
 
-void    Server::addUser(User* user) {
-    ft::Log::debug << "Adding user " << user->getFD() << " to server" << std::endl;
+void    Server::addUser(User& user) {
+    ft::Log::debug << "Adding user " << user.getFD() << " to server" << std::endl;
 
-    epoll_event event = getBaseUserEpollEvent(user->getFD());
-    if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, user->getFD(), &event) == -1) {
+    epoll_event event = getBaseUserEpollEvent(user.getFD());
+    if (epoll_ctl(_epollFD, EPOLL_CTL_ADD, user.getFD(), &event) == -1) {
         throw ft::Exception("Failed to add new user to epoll", ft::Log::ERROR);
     }
-    _sockets[user->getFD()] = user;
+    _sockets[user.getFD()] = &user;
     _shouldUpdateEventsSize = true;
+}
+
+void Server::renameUser(User& user, const std::string& newNickName) {
+    std::stringstream   message;
+    message << user.getHostMask() << " NICK :" << newNickName << "\r\n";
+
+    _registeredUsers.erase(user.getNickName());
+    user.setNickName(newNickName);
+    _registeredUsers[user.getNickName()] = &user;
+
+    user.sendMessage(message.str(), *this);
+    user.sendMessageToConnections(message.str(), *this);
+}
+
+void Server::removeNickNameOfUserCurrentlyRegistering(const std::string& nickName) {
+    _nickNamesOfUsersCurrentlyRegistering.erase(nickName);
+}
+
+void Server::addNickNameOfUserCurrentlyRegistering(const std::string& nickName) {
+    _nickNamesOfUsersCurrentlyRegistering.insert(nickName);
 }
 
 epoll_event Server::getBaseUserEpollEvent(const int userFD) {
@@ -86,34 +121,46 @@ epoll_event Server::getBaseUserEpollEvent(const int userFD) {
     return event;
 }
 
-void    Server::removeUser(User *user) {
-    ft::Log::info << "User " << user->getFD() << " disconnected" << std::endl;
-    for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-        it->second->removeMember(user);
-        it->second->removeOperator(user->getFD());
-        it->second->removeInvitedUser(user->getFD());
+void    Server::_removeUser(User& user) {
+    ft::Log::info << "User " << user.getFD() << " disconnected" << std::endl;
+    for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) { // TODO once user has a list of channels they are a member of we'll be able to use that instead
+        it->second->removeMember(&user);
+        it->second->removeOperator(user.getFD());
+        it->second->removeInvitedUser(user.getFD());
     }
-    if (epoll_ctl(_epollFD, EPOLL_CTL_DEL, user->getFD(), NULL) == -1) {
-        ft::Log::error << "Failed to remove user " << user->getFD() << " from epoll" << std::endl;
+    if (epoll_ctl(_epollFD, EPOLL_CTL_DEL, user.getFD(), NULL) == -1) {
+        ft::Log::error << "Failed to remove user " << user.getFD() << " from epoll" << std::endl;
     }
-    if (close(user->getFD()) != 0) {
-        ft::Log::error << "Failed to close socket " << user->getFD() << std::endl;
+    if (close(user.getFD()) != 0) {
+        ft::Log::error << "Failed to close socket " << user.getFD() << std::endl;
     }
-    if (user) {
-        _registeredUsers.erase(user->getNickName());
-    }
-    _sockets.erase(user->getFD());
-    delete user;
+    _registeredUsers.erase(user.getNickName());
+    _nickNamesOfUsersCurrentlyRegistering.erase(user.getNickName());
+    _sockets.erase(user.getFD());
+    delete &user;
     _shouldUpdateEventsSize = true;
 }
 
-bool Server::nicknameIsTaken(const std::string &nick) const {
-    return (_registeredUsers.find(nick) != _registeredUsers.end());
+void Server::addUserToDestroyList(User& user) {
+    _usersToDestroy.push(&user);
 }
 
-void Server::registerUser(User* user) {
-    user->setIsRegistered(true);
-    _registeredUsers[user->getNickName()] = user;
+void Server::_destroyUsersToDestroy() {
+    while (!_usersToDestroy.empty()) {
+        this->_removeUser(*_usersToDestroy.front());
+        _usersToDestroy.pop();
+    }
+}
+
+bool Server::nicknameIsTaken(const std::string &nick) const {
+    return _registeredUsers.find(nick) != _registeredUsers.end()
+            || _nickNamesOfUsersCurrentlyRegistering.contains(nick);
+}
+
+void Server::registerUser(User& user) {
+    user.setIsRegistered(true);
+    _registeredUsers[user.getNickName()] = &user;
+    _nickNamesOfUsersCurrentlyRegistering.erase(user.getNickName());
     _peakRegisteredUserCount = std::max(_peakRegisteredUserCount,
                                         _registeredUsers.size());
 }
@@ -130,20 +177,20 @@ size_t  Server::getNbOfChannels() const {
     return _channels.size();
 }
 
-void Server::addChannel(Channel* channel) {
-    _channels[channel->getName()] = channel;
+void Server::addChannel(Channel& channel) {
+    _channels[channel.getName()] = &channel;
 }
 
-void Server::removeChannel(Channel* channel) {
-    _channels.erase(channel->getName());
-    delete channel;
+void Server::removeChannel(Channel& channel) {
+    _channels.erase(channel.getName());
+    delete &channel;
 }
 
 Channel* Server::getChannelByName(const std::string& name) {
     try {
-        return (_channels.at(name));
+        return _channels.at(name);
     } catch (std::out_of_range& ) {
-        return (NULL);
+        return NULL;
     }
 }
 
@@ -181,7 +228,7 @@ User*   Server::getUserByNickname(const std::string& nickname) const {
     }
 }
 
-void Server::waitForEvents() {
+void Server::_waitForEvents() {
     ft::Log::info << "Waiting for events" << std::endl;
     _numberOfEvents = epoll_wait(_epollFD, _events, _sockets.size(), -1);
     if (_numberOfEvents == -1) {
@@ -189,7 +236,7 @@ void Server::waitForEvents() {
     }
 }
 
-void    Server::handleEvents() {
+void    Server::_handleEvents() {
     ft::Log::info << "Handling events" << std::endl;
 
     const epoll_event* eventsEnd = _events + _numberOfEvents;
@@ -213,17 +260,19 @@ void    Server::run() {
 
     while (true) {
         try {
-            this->waitForEvents();
+            this->_waitForEvents();
         } catch (const ft::Exception& e) {
             e.printError();
             continue;
         }
 
         try {
-            this->handleEvents();
+            this->_handleEvents();
         } catch (const ft::Exception& e) {
             e.printError();
         }
+
+        this->_destroyUsersToDestroy();
     }
 }
 

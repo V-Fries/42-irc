@@ -13,6 +13,11 @@ void    User::_handleUSER(Server& server, const std::vector<std::string>& args) 
     ft::Log::info << "Received USER request: " << args << " from user " << _fd
                   << std::endl;
 
+    if (!_passwordWasGiven) {
+        this->sendErrorAndKillUser("Password was not given", server);
+        return;
+    }
+
     if (args.size() < 4) {
         NumericReplies::Error::needMoreParameters(*this, server, "USER");
         return;
@@ -23,7 +28,6 @@ void    User::_handleUSER(Server& server, const std::vector<std::string>& args) 
         return;
     }
 
-    // TODO check behaviour when too many parameters are received
     _userName = '~' + args[0];
     _realName = ::getRealName(_fd, args[3]);
     ft::Log::debug << "username: " << _userName << " hostname: " << _realName
