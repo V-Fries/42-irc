@@ -80,7 +80,7 @@ class Server {
         SocketMap       _sockets;
         RegisteredMap   _registeredUsers;
 
-        ft::Set<std::string>   _nickNamesOfUsersCurrentlyRegistering;
+        ft::Set<ft::String> _nickNamesOfUsersCurrentlyRegistering;
 
         std::queue<User*>   _usersToDestroy;
 
