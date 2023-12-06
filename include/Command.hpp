@@ -1,18 +1,19 @@
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
 
-# include <string>
+# include "ft_String.hpp"
+
 # include <vector>
 
 class Command {
     public:
-        explicit Command(const std::string &rawCommand);
+        explicit Command(const ft::String &rawCommand);
 
-        const std::string               &getCommand() const;
-        const std::vector<std::string>  &getArgs() const;
+        const ft::String               &getCommand() const;
+        const std::vector<ft::String>  &getArgs() const;
     private:
-        std::string                 _command;
-        std::vector<std::string>    _args;
+        ft::String                 _command;
+        std::vector<ft::String>    _args;
 };
 
 std::ostream& operator<<(std::ostream& os, const Command& cmd);

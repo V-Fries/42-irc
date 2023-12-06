@@ -3,23 +3,23 @@
 #include "Server.hpp"
 #include "User.hpp"
 
-static void processCurrentChannel(const std::string& channelName,
+static void processCurrentChannel(const ft::String& channelName,
                                   User* user,
                                   Server& server);
-static void processCurrentChannel(const std::string& channelName,
+static void processCurrentChannel(const ft::String& channelName,
                                   User* user,
                                   Server& server,
-                                  const std::string& reason);
+                                  const ft::String& reason);
 
 static void sendChannelPartMessages(const User& user,
                                     const Server& server,
                                     const Channel& channel,
-                                    const std::string& reason);
+                                    const ft::String& reason);
 static void sendChannelPartMessages(const User& user,
                                     const Server& server,
                                     const Channel& channel);
 
-void User::_handlePART(Server& server, const std::vector<std::string>& args) {
+void User::_handlePART(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received PART request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -28,8 +28,8 @@ void User::_handlePART(Server& server, const std::vector<std::string>& args) {
         return;
     }
 
-    std::vector<std::string> channelsNames = ft::String::split(args[0], ",");
-    for (std::vector<std::string>::const_iterator it = channelsNames.begin(); it != channelsNames.end(); ++it) {
+    std::vector<ft::String> channelsNames = args[0].split(",");
+    for (std::vector<ft::String>::const_iterator it = channelsNames.begin(); it != channelsNames.end(); ++it) {
         if (args.size() > 1)
             processCurrentChannel(*it, this, server, args[1]);
         else
@@ -37,7 +37,7 @@ void User::_handlePART(Server& server, const std::vector<std::string>& args) {
     }
 }
 
-void processCurrentChannel(const std::string& channelName,
+void processCurrentChannel(const ft::String& channelName,
                            User* user,
                            Server& server) {
     Channel *channel = server.getChannelByName(channelName);
@@ -53,14 +53,14 @@ void processCurrentChannel(const std::string& channelName,
     sendChannelPartMessages(*user, server, *channel);
     channel->removeMember(user);
     if (channel->getMembers().empty()) {
-        server.removeChannel(channel);
+        server.removeChannel(*channel);
     }
 }
 
-void processCurrentChannel(const std::string& channelName,
+void processCurrentChannel(const ft::String& channelName,
                            User* user,
                            Server& server,
-                           const std::string& reason) {
+                           const ft::String& reason) {
     Channel *channel = server.getChannelByName(channelName);
 
     if (!channel) {
@@ -74,14 +74,14 @@ void processCurrentChannel(const std::string& channelName,
     sendChannelPartMessages(*user, server, *channel, reason);
     channel->removeMember(user);
     if (channel->getMembers().empty()) {
-        server.removeChannel(channel);
+        server.removeChannel(*channel);
     }
 }
 
 static void sendChannelPartMessages(const User& user,
                                     const Server& server,
                                     const Channel& channel,
-                                    const std::string& reason) {
+                                    const ft::String& reason) {
     std::stringstream message;
     message << ":" << user.getNickName() << " PART " << channel.getName() << " :" << reason << "\r\n";
 

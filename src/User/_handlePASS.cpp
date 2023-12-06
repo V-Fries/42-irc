@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-void    User::_handlePASS(Server& server, const std::vector<std::string>& args) {
+void    User::_handlePASS(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received PASS request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -18,6 +18,11 @@ void    User::_handlePASS(Server& server, const std::vector<std::string>& args) 
         return;
     }
 
-    _password = args[0];
-    _registerUserIfReady(server);
+    if (args[0] != server.getPassword()) {
+        NumericReplies::Error::passwordMissMatch(*this, server);
+        this->sendErrorAndDestroyUser("Wrong password", server);
+        return;
+    }
+
+    _passwordWasGiven = true;
 }

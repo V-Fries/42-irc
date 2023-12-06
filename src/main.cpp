@@ -10,8 +10,8 @@
 #define PASS_REQUEST_LENGTH 7
 #define MAX_PASSWORD_LENGHT (REQUEST_LENGTH_LIMIT - PASS_REQUEST_LENGTH)
 
-static uint16_t     getPort(const std::string& portStr);
-static std::string  getPassword(const std::string& password);
+static uint16_t     getPort(const ft::String& portStr);
+static ft::String  getPassword(const ft::String& password);
 
 int main(const int argc, char** argv) {
     ft::Log::setDebugLevel(ft::Log::DEBUG);
@@ -34,7 +34,7 @@ int main(const int argc, char** argv) {
     }
 }
 
-static uint16_t getPort(const std::string& portStr) {
+static uint16_t getPort(const ft::String& portStr) {
     if (portStr.empty()) {
         throw ft::Exception("Port argument should not be empty", ft::Log::CRITICAL);
     }
@@ -55,7 +55,7 @@ static uint16_t getPort(const std::string& portStr) {
     return static_cast<uint16_t>(port);
 }
 
-static std::string getPassword(const std::string& password) {
+static ft::String getPassword(const ft::String& password) {
     if (password.empty()) {
         throw ft::Exception("Password argument should not be empty", ft::Log::CRITICAL);
     }
@@ -66,7 +66,7 @@ static std::string getPassword(const std::string& password) {
         throw ft::Exception(errorMessage.str(), ft::Log::CRITICAL);
     }
 
-    for (std::string::const_iterator it(password.begin()); it != password.end(); ++it) {
+    for (ft::String::const_iterator it(password.begin()); it != password.end(); ++it) {
         if (std::isspace(static_cast<unsigned char>(*it))) {
             throw ft::Exception("Password argument should not contain any whitespaces",
                                 ft::Log::CRITICAL);

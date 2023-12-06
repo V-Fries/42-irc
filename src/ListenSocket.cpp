@@ -10,7 +10,6 @@
 
 ListenSocket::ListenSocket(const uint16_t port):
     _fd(socket(AF_INET, SOCK_STREAM, 0)) {
-    int opt;
 
     ft::Log::debug << "ListenSocket constructor called" << std::endl;
     if (_fd == -1) {
@@ -26,10 +25,11 @@ ListenSocket::ListenSocket(const uint16_t port):
         close(_fd);
         throw ft::Exception("Failed to bind ListenSocket socket", ft::Log::CRITICAL);
     }
-    opt = 1;
+    int opt = 1;
     if (setsockopt(_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof (int))) {
         ft::Log::error << "setsockopt reuse port failed" << std::endl;
     }
+    opt = 1;
     if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (int))) {
         ft::Log::error << "setsockopt reuse addr failed" << std::endl;
     }
@@ -47,7 +47,7 @@ void    ListenSocket::handleEvent(const uint32_t epollEvents, Server& server) {
 
     User*   user = new User(userFD);
     try {
-        server.addUser(user);
+        server.addUser(*user);
         ft::Log::info << "Successfully added new user" << std::endl;
     } catch (const ft::Exception& e) {
         close(userFD);

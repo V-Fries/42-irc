@@ -16,46 +16,60 @@ class Server {
         typedef int                       fd_t;
         typedef std::map<fd_t, ISocket*>  SocketMap;
 
-        typedef std::string                 NickName;
+        typedef ft::String                 NickName;
         typedef std::map<NickName, User*>   RegisteredMap;
 
-        typedef std::string                     ChannelName;
+        typedef ft::String                     ChannelName;
         typedef std::map<ChannelName, Channel*> ChannelMap;
 
-        Server(uint16_t port, const std::string& password);
+        Server(uint16_t port, const ft::String& password);
 
         ~Server();
 
+        const ft::String&  getPassword() const;
+
         int                 getEpollFD() const;
 
-        void                addUser(User* user);
+        void                addUser(User& user);
+
+        void    renameUser(User& user, const ft::String& newNickName);
+
+        void    removeNickNameOfUserCurrentlyRegistering(const ft::String& nickName);
+        void    addNickNameOfUserCurrentlyRegistering(const ft::String& nickName);
+
         static epoll_event  getBaseUserEpollEvent(int userFD);
-        void                removeUser(User* user);
-        void                removeUser(const std::string& nickName);
-        User*               getUserByNickname(const std::string&) const;
-        bool                nicknameIsTaken(const std::string &nick) const;
-        void                registerUser(User *user);
+        void                addUserToDestroyList(User& user);
+        void                removeUser(const ft::String& nickName);
+        User*               getUserByNickname(const ft::String&) const;
+        bool                nicknameIsTaken(const ft::String &nick) const;
+        void                registerUser(User& user);
         size_t              getNbOfRegisteredUsers() const;
         size_t              getPeakRegisteredUserCount() const;
 
         size_t              getNbOfChannels() const;
-        void                addChannel(Channel *channel);
-        void                removeChannel(Channel *channel);
-        Channel*            getChannelByName(const std::string& name);
-        void                addUserToChannel(const std::string& channel, User *user);
+        void                addChannel(Channel& channel);
+        void                removeChannel(Channel& channel);
+        Channel*            getChannelByName(const ft::String& name);
         const ChannelMap&   getChannels() const;
-        void                addUserToChannel(const std::string& channel, User& user);
+        void                addUserToChannel(const ft::String& channel, User& user);
         void                addUserToChannel(Channel& channel, User& user);
 
-        const std::string&  getNicknameByFd(int fd) const;
+        const ft::String&  getNicknameByFd(int fd) const;
 
-        void    waitForEvents();
-        void    handleEvents();
         void    run();
         void    stop(int exitCode);
 
     private:
-        const std::string   _password;
+        void        _closeSocket(int fd, bool isListenSocket) const;
+        static void _closeFd(int fd);
+
+        void    _removeUser(User& user);
+        void    _destroyUsersToDestroy();
+
+        void    _waitForEvents();
+        void    _handleEvents();
+
+        const ft::String   _password;
 
         const int   _epollFD;
         int         _listenSocketFD;
@@ -66,6 +80,10 @@ class Server {
 
         SocketMap       _sockets;
         RegisteredMap   _registeredUsers;
+
+        ft::Set<ft::String> _nickNamesOfUsersCurrentlyRegistering;
+
+        std::queue<User*>   _usersToDestroy;
 
         size_t          _peakRegisteredUserCount;
 

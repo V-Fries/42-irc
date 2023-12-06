@@ -8,7 +8,7 @@
 #include "Server.hpp"
 
 void    User::_handleQUIT(Server& server,
-                          const std::vector<std::string>& args) {
+                          const std::vector<ft::String>& args) {
     std::set<User*>     users;
     std::stringstream   message;
     std::stringstream   reply;

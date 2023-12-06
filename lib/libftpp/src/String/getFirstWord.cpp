@@ -1,43 +1,41 @@
 #include "ft_String.hpp"
 
-std::string  ft::String::getFirstWord(const std::string& string,
-                                      const std::string& charsConsideredAsWordSeparators) {
-    return ft::String::getFirstWord(string.begin(), string.end(),
-                                    charsConsideredAsWordSeparators);
+ft::String  ft::String::getFirstWord(const String& charsConsideredAsWordSeparators) const {
+    return getFirstWord(this->begin(), this->end(),
+                        charsConsideredAsWordSeparators);
 }
 
-std::string  ft::String::getFirstWord(const std::string& string,
-                                      const char charConsideredAsWordSeparator) {
-    return ft::String::getFirstWord(string.begin(), string.end(),
-                                    charConsideredAsWordSeparator);
+ft::String  ft::String::getFirstWord(const char charConsideredAsWordSeparator) const {
+    return getFirstWord(this->begin(), this->end(),
+                        charConsideredAsWordSeparator);
 }
 
-std::string  ft::String::getFirstWord(const std::string::const_iterator it,
-                                      const std::string::const_iterator end,
-                                      const std::string& charsConsideredAsWordSeparators) {
-    std::string::const_iterator firstChar = it;
+ft::String  ft::String::getFirstWord(const const_iterator it,
+                                     const const_iterator end,
+                                     const String& charsConsideredAsWordSeparators) {
+    const_iterator firstChar = it;
     while (firstChar != end
-           && charsConsideredAsWordSeparators.find(*firstChar) != std::string::npos)
+           && charsConsideredAsWordSeparators.find(*firstChar) != npos)
         ++firstChar;
 
-    std::string::const_iterator lastChar = firstChar;
+    const_iterator lastChar = firstChar;
     while (lastChar != end
-           && charsConsideredAsWordSeparators.find(*lastChar) == std::string::npos)
+           && charsConsideredAsWordSeparators.find(*lastChar) == npos)
         ++lastChar;
 
-    return std::string(firstChar, lastChar);
+    return String(firstChar, lastChar);
 }
 
-std::string  ft::String::getFirstWord(const std::string::const_iterator it,
-                                      const std::string::const_iterator end,
-                                      const char charConsideredAsWordSeparator) {
-    std::string::const_iterator firstChar = it;
+ft::String  ft::String::getFirstWord(const const_iterator it,
+                                     const const_iterator end,
+                                     const char charConsideredAsWordSeparator) {
+    const_iterator firstChar = it;
     while (firstChar != end && *firstChar == charConsideredAsWordSeparator)
         ++firstChar;
 
-    std::string::const_iterator lastChar = firstChar;
+    const_iterator lastChar = firstChar;
     while (lastChar != end && *lastChar != charConsideredAsWordSeparator)
         ++lastChar;
 
-    return std::string(firstChar, lastChar);
+    return String(firstChar, lastChar);
 }

@@ -38,7 +38,7 @@ class ft::Log {
         ///
         /// \param fileName Name of the file in which to write the logs
         /// \throw FailedToOpenFile
-        static void setFileToWriteTo(const std::string& fileName);
+        static void setFileToWriteTo(const ft::String& fileName);
 
         static Debug    debug;
         static Info     info;

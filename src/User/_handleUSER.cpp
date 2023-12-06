@@ -7,11 +7,16 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-static std::string getRealName(int fd, const std::string& userSetRealName);
+static ft::String getRealName(int fd, const ft::String& userSetRealName);
 
-void    User::_handleUSER(Server& server, const std::vector<std::string>& args) {
+void    User::_handleUSER(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received USER request: " << args << " from user " << _fd
                   << std::endl;
+
+    if (!_passwordWasGiven) {
+        this->sendErrorAndDestroyUser("Password was not given", server);
+        return;
+    }
 
     if (args.size() < 4) {
         NumericReplies::Error::needMoreParameters(*this, server, "USER");
@@ -23,7 +28,6 @@ void    User::_handleUSER(Server& server, const std::vector<std::string>& args) 
         return;
     }
 
-    // TODO check behaviour when too many parameters are received
     _userName = '~' + args[0];
     _realName = ::getRealName(_fd, args[3]);
     ft::Log::debug << "username: " << _userName << " hostname: " << _realName
@@ -31,7 +35,7 @@ void    User::_handleUSER(Server& server, const std::vector<std::string>& args) 
     _registerUserIfReady(server);
 }
 
-static std::string getRealName(const int fd, const std::string& userSetRealName) {
+static ft::String getRealName(const int fd, const ft::String& userSetRealName) {
     struct sockaddr_in  addr = {};
     socklen_t           len = (sizeof addr);
     getsockname(fd, reinterpret_cast<struct sockaddr*>(&addr), &len);
