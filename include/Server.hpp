@@ -59,7 +59,7 @@ class Server {
         void    stop(int exitCode);
 
     private:
-        void        _closeSocket(int fd, bool isListenSocket = false) const;
+        void        _closeSocket(int fd, bool isListenSocket) const;
         static void _closeFd(int fd);
 
         void    _removeUser(User& user);

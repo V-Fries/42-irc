@@ -44,7 +44,7 @@ Server::~Server() {
     delete _sockets[_listenSocketFD];
     _sockets.erase(_listenSocketFD);
     for (SocketMap::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
-        _closeSocket(it->first);
+        _closeSocket(it->first, false);
         delete it->second;
     }
     _closeSocket(_listenSocketFD, true);
@@ -128,12 +128,7 @@ void    Server::_removeUser(User& user) {
         it->second->removeOperator(user.getFD());
         it->second->removeInvitedUser(user.getFD());
     }
-    if (epoll_ctl(_epollFD, EPOLL_CTL_DEL, user.getFD(), NULL) == -1) {
-        ft::Log::error << "Failed to remove user " << user.getFD() << " from epoll" << std::endl;
-    }
-    if (close(user.getFD()) != 0) {
-        ft::Log::error << "Failed to close socket " << user.getFD() << std::endl;
-    }
+    _closeSocket(user.getFD(), false);
     _registeredUsers.erase(user.getNickName());
     _nickNamesOfUsersCurrentlyRegistering.erase(user.getNickName());
     _sockets.erase(user.getFD());
@@ -230,6 +225,13 @@ User*   Server::getUserByNickname(const std::string& nickname) const {
 
 void Server::_waitForEvents() {
     ft::Log::info << "Waiting for events" << std::endl;
+
+    if (_shouldUpdateEventsSize) {
+        delete[] _events;
+        _events = new epoll_event[_sockets.size()];
+        _shouldUpdateEventsSize = false;
+    }
+
     _numberOfEvents = epoll_wait(_epollFD, _events, _sockets.size(), -1);
     if (_numberOfEvents == -1) {
         throw ft::Exception("Failed to wait for epoll events", ft::Log::ERROR);
@@ -246,12 +248,6 @@ void    Server::_handleEvents() {
         } catch (const ft::Exception& e) {
             e.printError();
         }
-    }
-
-    if (_shouldUpdateEventsSize) {
-        delete[] _events;
-        _events = new epoll_event[_sockets.size()];
-        _shouldUpdateEventsSize = false;
     }
 }
 
