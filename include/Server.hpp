@@ -26,10 +26,6 @@ class Server {
 
         ~Server();
 
-        void    closeSocket(int fd, bool isListenSocket = false) const;
-
-        static void closeFd(int fd);
-
         const std::string&  getPassword() const;
 
         int                 getEpollFD() const;
@@ -63,6 +59,9 @@ class Server {
         void    stop(int exitCode);
 
     private:
+        void        _closeSocket(int fd, bool isListenSocket = false) const;
+        static void _closeFd(int fd);
+
         void    _removeUser(User& user);
         void    _destroyUsersToDestroy();
 

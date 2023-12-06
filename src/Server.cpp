@@ -44,27 +44,27 @@ Server::~Server() {
     delete _sockets[_listenSocketFD];
     _sockets.erase(_listenSocketFD);
     for (SocketMap::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
-        this->closeSocket(it->first);
+        _closeSocket(it->first);
         delete it->second;
     }
-    closeSocket(_listenSocketFD, true);
+    _closeSocket(_listenSocketFD, true);
     for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         delete it->second;
     }
     delete[] _events;
-    Server::closeFd(_epollFD);
+    _closeFd(_epollFD);
 }
 
-void Server::closeSocket(int fd, bool isListenSocket) const {
+void Server::_closeSocket(int fd, bool isListenSocket) const {
     if (!isListenSocket
             && epoll_ctl(_epollFD, EPOLL_CTL_DEL, fd, NULL) == -1) {
         ft::Log::warning << "Failed to del epoll_ctl for socket " << fd << std::endl;
     }
 
-    Server::closeFd(fd);
+    _closeFd(fd);
 }
 
-void Server::closeFd(int fd) {
+void Server::_closeFd(int fd) {
     int i = 0;
     do {
         errno = 0;
