@@ -7,9 +7,9 @@
 #include "NumericReplies.hpp"
 
 static bool isNickNameValid(User& user,
-                          const ft::String &realNickName,
-                          const ft::String& fullNickName,
-                          const Server &server);
+                            const ft::String &realNickName,
+                            const ft::String& fullNickName,
+                            const Server &server);
 
 void    User::_handleNICK(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received NICK request: " << args << " from user " << _fd
