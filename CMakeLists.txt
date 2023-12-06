@@ -60,4 +60,5 @@ add_executable(webserv
 		src/User/_handleINVITE.cpp
 		lib/libftpp/src/String/map.cpp
 		src/User/_handleKICK.cpp
-		src/User/_handleKICK.cpp)
+		src/User/_handleKICK.cpp
+		lib/libftpp/src/String/startsOrEndsWith.cpp)

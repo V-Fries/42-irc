@@ -5,6 +5,7 @@ SRC	=\
 	String/map.cpp						\
 	String/skipChars.cpp				\
 	String/split.cpp					\
+	String/startsOrEndsWith.cpp			\
 	String/toLowerOrUpper.cpp			\
 	String/vector_string_operators.cpp	\
 	\

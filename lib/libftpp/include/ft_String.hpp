@@ -54,9 +54,14 @@ class ft::String : public std::string {
         /// \return
         std::vector<String> split(const String& delimiter,
                                   uint8_t flags = 0) const
-                                throw(std::invalid_argument) ; // TODO test with delimiter == ""
+                                throw(std::invalid_argument);
 
-        size_t   findFirstNotOfString(const String& toFind, size_t i = 0) const;
+        /// \brief "4242a".findFirstNotOfString("42") will return the index of 'a'
+        /// not the index of the first '2'
+        /// \param toFind string to look for
+        /// \param pos position to start at
+        /// \return index of the first char that isn't part of toFind
+        size_t   findFirstNotOfString(const String& toFind, size_t pos = 0) const;
 
         static iterator         skipChars(iterator it,
                                           iterator end,
@@ -79,6 +84,15 @@ class ft::String : public std::string {
         static String   getFirstWord(const_iterator it,
                                      const_iterator end,
                                      char charConsideredAsWordSeparator);
+
+        bool        startsWith(const String& word) const;
+        static bool startsWith(const String& word,
+                               const_iterator start,
+                               const_iterator end);
+        bool        endsWith(const String& word) const;
+        static bool endsWith(const String& word,
+                             const_reverse_iterator rbegin,
+                             const_reverse_iterator rend);
 
         void        map(int (*fn)(int));
         String      copyAndMap(int (*fn)(int)) const;
