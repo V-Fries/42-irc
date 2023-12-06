@@ -10,6 +10,7 @@ Server::Server(const uint16_t port, const std::string& password):
     _epollFD(epoll_create1(0)),
     _listenSocketFD(-1),
     _events(NULL),
+    _shouldUpdateEventsSize(true),
     _numberOfEvents(0),
     _peakRegisteredUserCount(0) {
     ft::Log::debug << "Server constructor called" << std::endl;
@@ -36,7 +37,6 @@ Server::Server(const uint16_t port, const std::string& password):
         close(_epollFD);
         throw ft::Exception("Failed to add listenSocket to epoll_ctl", ft::Log::CRITICAL);
     }
-    _events = new epoll_event[_sockets.size()];
 }
 
 Server::~Server() {
