@@ -560,10 +560,21 @@ void NumericReplies::Error::passwordMissMatch(User& user, const Server& server) 
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::unknowMode(User& user,
+                                       const char modeChar,
+                                       const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_UNKNOWNMODE, SERVER_NAME)
+          << user.getNickName() << " " << modeChar << " :is unknown mode char to me\r\n";
+
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
 ft::String NumericReplies::_constructHeader(const ft::String &numericID,
-                                             const ft::String &hostname) {
+                                            const ft::String &hostname) {
     std::stringstream   result;
 
     result << ':' << hostname << ' ' << numericID << ' ';

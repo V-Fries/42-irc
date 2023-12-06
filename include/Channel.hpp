@@ -15,12 +15,15 @@
 
 class Channel {
     public:
+        static ft::String    availableMhannelModes;
+
         class IncorrectName : public std::exception {};
         class IsFull : public std::exception {};
         class HasMoreUserThanNewLimit : public std::exception {};
 
         typedef ft::Set<User*>  UserContainer;
         typedef ft::Set<int>    UsersFdContainer;
+        typedef void (Channel::*channelSetter)(uint8_t);
 
         Channel(const ft::String& name,
                 const ft::String& password,
@@ -56,9 +59,10 @@ class Channel {
         void                    removeInvitedUser(int invitedUserFD);
         bool                    isInviteOnly() const;
 
-        bool        getModes(uint8_t flags) const;
+        uint8_t     getModes(uint8_t flags) const;
         void        addModes(uint8_t flags);
         void        removeModes(uint8_t flags);
+        void        setMode(char sign, char modeChar, uint8_t save);
         ft::String modesString() const;
         ft::String modesArgs() const;
 

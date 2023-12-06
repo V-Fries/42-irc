@@ -9,6 +9,8 @@
 
 // public:
 
+ft::String Channel::availableMhannelModes = "itkol";
+
 Channel::Channel(const ft::String& name,
                  const ft::String& password,
                  User& creator)
@@ -143,7 +145,7 @@ bool Channel::isInviteOnly() const {
     return _modes & MODE_INV;
 }
 
-bool Channel::getModes(const uint8_t flags) const {
+uint8_t Channel::getModes(const uint8_t flags) const {
     return (_modes & flags);
 }
 
@@ -153,6 +155,24 @@ void Channel::addModes(const uint8_t flags) {
 
 void Channel::removeModes(const uint8_t flags) {
     _modes &= ~flags;
+}
+
+void Channel::setMode(char sign, char modeChar, uint8_t save) {
+    channelSetter   setter = &Channel::addModes;
+    (void) save;
+
+    if (sign == '-') {
+        setter = &Channel::removeModes;
+    }
+
+    switch (modeChar) {
+        case 'i':
+            (this->*setter)(MODE_INV);
+            break;
+        case 't':
+            (this->*setter)(MODE_TOP);
+            break;
+    }
 }
 
 ft::String Channel::modesString() const {
@@ -210,7 +230,7 @@ void Channel::sendMessage(const int senderFd, const ft::String& message, const S
 // private:
 
 bool    Channel::_isNameCorrect(const ft::String& name) {
-    if (name.length() == 0 || (name[0] != '#' && name[0] != '&')) {
+    if (name.empty() || (name[0] != '#' && name[0] != '&')) {
         return false;
     }
 
