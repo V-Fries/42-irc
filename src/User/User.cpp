@@ -28,11 +28,11 @@ int User::getFD() const {
 }
 
 bool User::hasJoinedTheMaxNbOfRegularChannels() const {
-    return this->_nbOfJoinedRegularChannels >= maxNbOfJoinedRegularChannels;
+    return _nbOfJoinedRegularChannels >= maxNbOfJoinedRegularChannels;
 }
 
 bool User::hasJoinedTheMaxNbOfLocalChannels() const {
-    return this->_nbOfJoinedLocalChannels >= maxNbOfJoinedLocalChannels;
+    return _nbOfJoinedLocalChannels >= maxNbOfJoinedLocalChannels;
 }
 
 void    User::setIsRegistered(const bool isRegistered) {

@@ -147,7 +147,7 @@ void Server::addUserToDestroyList(User& user) {
 
 void Server::_destroyUsersToDestroy() {
     while (!_usersToDestroy.empty()) {
-        this->_removeUser(*_usersToDestroy.front());
+        _removeUser(*_usersToDestroy.front());
         _usersToDestroy.pop();
     }
 }
@@ -260,19 +260,19 @@ void    Server::run() {
 
     while (true) {
         try {
-            this->_waitForEvents();
+            _waitForEvents();
         } catch (const ft::Exception& e) {
             e.printError();
             continue;
         }
 
         try {
-            this->_handleEvents();
+            _handleEvents();
         } catch (const ft::Exception& e) {
             e.printError();
         }
 
-        this->_destroyUsersToDestroy();
+        _destroyUsersToDestroy();
     }
 }
 
