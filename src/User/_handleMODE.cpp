@@ -1,9 +1,9 @@
 #include "NumericReplies.hpp"
 #include "User.hpp"
 
-static void sendModes(User* user, Server& server, const std::string& target);
+static void sendModes(User* user, Server& server, const ft::String& target);
 
-void User::_handleMODE(Server& server, const std::vector<std::string>& args) {
+void User::_handleMODE(Server& server, const std::vector<ft::String>& args) {
     if (!args.size()) {
         NumericReplies::Error::needMoreParameters(*this, server, "MODE");
         return;
@@ -14,7 +14,7 @@ void User::_handleMODE(Server& server, const std::vector<std::string>& args) {
     }
 }
 
-static void sendModes(User* user, Server& server, const std::string& target) {
+static void sendModes(User* user, Server& server, const ft::String& target) {
     if (target[0] == '#' || target[0] == '&') {
         const Channel *channelTarget = server.getChannelByName(target);
         if (!channelTarget) {

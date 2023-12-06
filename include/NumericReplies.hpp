@@ -96,7 +96,7 @@ class NumericReplies {
 
                 static void inviting(User& user,
                                      const Server& server,
-                                     const std::string& invitedUser,
+                                     const ft::String& invitedUser,
                                      const Channel& channel);
 
                 static void currUserModes(User& user, const Server& server);
@@ -111,39 +111,39 @@ class NumericReplies {
                 static void list(User& user, Server& server);
                 static void listEnd(User& user, Server& server);
 
-                static void isOn(User& user, const std::vector<std::string>& nicknames, Server &server);
+                static void isOn(User& user, const std::vector<ft::String>& nicknames, Server &server);
         };
 
         class Error {
             public:
                 static void noSuchNick(User& user,
                                        const Server& server,
-                                       const std::string& nickName);
+                                       const ft::String& nickName);
 
                 static void alreadyRegistered(User& user, const Server& server);
 
                 static void needMoreParameters(User& user,
                                                const Server& server,
-                                               const std::string& cmdName);
+                                               const ft::String& cmdName);
                 static void erroneousNick(User& user,
                                           const Server& server,
-                                          const std::string& newNickname);
+                                          const ft::String& newNickname);
                 static void nickInUse(User& user,
                                       const Server& server,
-                                      const std::string& newNickname);
+                                      const ft::String& newNickname);
                 static void channelIsFull(User& user,
                                           const Server& server,
-                                          const std::string& channelName);
+                                          const ft::String& channelName);
                 static void noNicknameGiven(User& user, const Server& server);
 
                 static void noRecipient(User& user,
-                                        const std::string& command,
+                                        const ft::String& command,
                                         const Server& server);
 
                 static void noTextToSend(User& user, const Server& server);
 
                 static void noSuchChannel(User& user,
-                                          const std::string& channel,
+                                          const ft::String& channel,
                                           const Server& server);
 
                 static void notOnChannel(User& user,
@@ -157,27 +157,27 @@ class NumericReplies {
 
                 static void chanOperPrivNeeded(User& user, const Channel& channel, const Server& server);
 
-                static void userNotInChannel(User& user, const std::string& nickname, const Channel& channel, const Server& server);
+                static void userNotInChannel(User& user, const ft::String& nickname, const Channel& channel, const Server& server);
                 static void channelPrivilegesNeeded(User& user,
                                                     const Server& server,
                                                     const Channel& channel);
 
                 static void userOnChannel(User& user,
                                           const Server& server,
-                                          const std::string& invitedUser,
+                                          const ft::String& invitedUser,
                                           const Channel& channel);
 
                 static void unknownCommand(User& user,
                                            const Server& server,
-                                           const std::string& command);
+                                           const ft::String& command);
 
                 static void badChannelMask(User& user,
                                            const Server& server,
-                                           const std::string& channelName);
+                                           const ft::String& channelName);
 
                 static void tooManyChannels(User& user,
                                             const Server& server,
-                                            const std::string& channelName);
+                                            const ft::String& channelName);
                 static void inviteOnlyChannel(User& user,
                                               const Server& server,
                                               const Channel& channel);
@@ -190,6 +190,6 @@ class NumericReplies {
         };
 
     private:
-        static std::string  _constructHeader(const std::string& numericID,
-                                             const std::string& hostname);
+        static ft::String  _constructHeader(const ft::String& numericID,
+                                             const ft::String& hostname);
 };

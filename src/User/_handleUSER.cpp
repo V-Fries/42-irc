@@ -7,9 +7,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-static std::string getRealName(int fd, const std::string& userSetRealName);
+static ft::String getRealName(int fd, const ft::String& userSetRealName);
 
-void    User::_handleUSER(Server& server, const std::vector<std::string>& args) {
+void    User::_handleUSER(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received USER request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -35,7 +35,7 @@ void    User::_handleUSER(Server& server, const std::vector<std::string>& args) 
     _registerUserIfReady(server);
 }
 
-static std::string getRealName(const int fd, const std::string& userSetRealName) {
+static ft::String getRealName(const int fd, const ft::String& userSetRealName) {
     struct sockaddr_in  addr = {};
     socklen_t           len = (sizeof addr);
     getsockname(fd, reinterpret_cast<struct sockaddr*>(&addr), &len);

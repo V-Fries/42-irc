@@ -22,25 +22,25 @@ class Channel {
         typedef ft::Set<User*>  UserContainer;
         typedef ft::Set<int>    UsersFdContainer;
 
-        Channel(const std::string& name,
-                const std::string& password,
+        Channel(const ft::String& name,
+                const ft::String& password,
                 User& creator)
             throw (IncorrectName);
 
-        const std::string&  getName() const;
+        const ft::String&  getName() const;
 
-        const std::string&  getPassword() const;
-        void                setPassword(const std::string& newPassword);
+        const ft::String&  getPassword() const;
+        void                setPassword(const ft::String& newPassword);
 
         const Topic&    getTopic() const;
-        void            setTopic(const std::string& newTopic, const std::string& author);
+        void            setTopic(const ft::String& newTopic, const ft::String& author);
 
         const UserContainer&    getMembers() const;
         void                    addMember(User* newMember)
                                     throw (Channel::IsFull);
         void                    removeMember(User* member);
         bool                    isMember(int memberFD) const; // TODO remove this
-        bool                    isMember(const std::string& nickname) const;
+        bool                    isMember(const ft::String& nickname) const;
         bool                    isMember(const User* member) const;
 
         const UsersFdContainer& getOperators();
@@ -59,8 +59,8 @@ class Channel {
         bool        getModes(uint8_t flags) const;
         void        addModes(uint8_t flags);
         void        removeModes(uint8_t flags);
-        std::string modesString() const;
-        std::string modesArgs() const;
+        ft::String modesString() const;
+        ft::String modesArgs() const;
 
         size_t          getUserLimit() const;
         void            setUserLimit(size_t newUserLimit)
@@ -69,16 +69,16 @@ class Channel {
 
         time_t  getCreationTime() const;
 
-        void    sendMessage(int senderFd, const std::string& message, const Server& server);
+        void    sendMessage(int senderFd, const ft::String& message, const Server& server);
 
     private:
-        static bool _isNameCorrect(const std::string& name);
+        static bool _isNameCorrect(const ft::String& name);
 
         uint8_t _modes;
 
-        const std::string   _name;
+        const ft::String   _name;
 
-        std::string _password;
+        ft::String _password;
 
         Topic   _topic;
 

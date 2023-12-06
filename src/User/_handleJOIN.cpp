@@ -4,20 +4,20 @@
 #include "Server.hpp"
 #include "User.hpp"
 
-static bool didUserReachThisChannelTypeLimit(const User& user, const std::string& channelName);
+static bool didUserReachThisChannelTypeLimit(const User& user, const ft::String& channelName);
 static void createNewChannel(User& user,
                              Server& server,
-                             const std::string& newChannelName,
-                             const std::string& password);
+                             const ft::String& newChannelName,
+                             const ft::String& password);
 static void joinExistingChannel(User& user,
                                 Server& server,
                                 Channel& channel,
-                                const std::string& password);
+                                const ft::String& password);
 static void sendChannelWelcomeMessages(User& user,
                                        const Server& server,
                                        Channel& channel);
 
-void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
+void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received JOIN request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -26,10 +26,10 @@ void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
         return;
     }
 
-    std::vector<std::string> channelsNames = ft::String::split(args[0], ",");
-    std::vector<std::string> channelsPasswords;
+    std::vector<ft::String> channelsNames = args[0].split(",");
+    std::vector<ft::String> channelsPasswords;
     if (args.size() > 1)
-        channelsPasswords = ft::String::split(args[1], ",");
+        channelsPasswords = args[1].split(",");
 
     for (size_t i = 0; i < channelsNames.size(); ++i) {
         if (didUserReachThisChannelTypeLimit(*this, channelsNames[i])) {
@@ -38,7 +38,7 @@ void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
         }
 
         Channel*            channel = server.getChannelByName(channelsNames[i]);
-        const std::string&  password = i < channelsPasswords.size() ? channelsPasswords[i] : "";
+        const ft::String&  password = i < channelsPasswords.size() ? channelsPasswords[i] : "";
         if (channel == NULL) {
             createNewChannel(*this, server, channelsNames[i], password);
         } else {
@@ -47,15 +47,15 @@ void User::_handleJOIN(Server& server, const std::vector<std::string>& args) {
     }
 }
 
-static bool didUserReachThisChannelTypeLimit(const User& user, const std::string& channelName) {
+static bool didUserReachThisChannelTypeLimit(const User& user, const ft::String& channelName) {
     return (channelName[0] == '#' && user.hasJoinedTheMaxNbOfRegularChannels())
            || (channelName[0] == '&' && user.hasJoinedTheMaxNbOfLocalChannels());
 }
 
 static void createNewChannel(User& user,
                              Server& server,
-                             const std::string& newChannelName,
-                             const std::string& password) {
+                             const ft::String& newChannelName,
+                             const ft::String& password) {
     try {
         Channel* newChannel = new Channel(newChannelName, password, user);
         server.addChannel(*newChannel);
@@ -68,7 +68,7 @@ static void createNewChannel(User& user,
 static void joinExistingChannel(User& user,
                                 Server& server,
                                 Channel& channel,
-                                const std::string& password) {
+                                const ft::String& password) {
     if (channel.isInviteOnly() && !channel.wasUserInvited(user.getFD())) {
         NumericReplies::Error::inviteOnlyChannel(user, server, channel);
         return;

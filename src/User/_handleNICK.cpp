@@ -7,11 +7,11 @@
 #include "NumericReplies.hpp"
 
 static bool isNickNameValid(User& user,
-                          const std::string &realNickName,
-                          const std::string& fullNickName,
+                          const ft::String &realNickName,
+                          const ft::String& fullNickName,
                           const Server &server);
 
-void    User::_handleNICK(Server& server, const std::vector<std::string>& args) {
+void    User::_handleNICK(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received NICK request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -25,7 +25,8 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
         return;
     }
 
-    const std::string nickname = ft::String::toLower(args[0].substr(0,  User::maxNickNameLength));
+    ft::String nickname = args[0].substr(0,  User::maxNickNameLength);
+    nickname.toLower();
     if (!isNickNameValid(*this, nickname, args[0], server)) {
         return;
     }
@@ -41,11 +42,11 @@ void    User::_handleNICK(Server& server, const std::vector<std::string>& args) 
 }
 
 static bool isNickNameValid(User& user,
-                            const std::string &realNickName,
-                            const std::string& fullNickName,
+                            const ft::String &realNickName,
+                            const ft::String& fullNickName,
                             const Server &server) {
-    if (std::string("$:#&").find(realNickName[0]) != std::string::npos
-        || realNickName.find_first_of(" ,*?!@.") != std::string::npos) {
+    if (ft::String("$:#&").find(realNickName[0]) != ft::String::npos
+        || realNickName.find_first_of(" ,*?!@.") != ft::String::npos) {
         NumericReplies::Error::erroneousNick(user, server, fullNickName);
         return false;
     }

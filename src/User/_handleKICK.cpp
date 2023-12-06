@@ -5,11 +5,11 @@
 static void sendChannelKickMessages(const User& user,
                                     const Server& server,
                                     Channel&channel,
-                                    const std::string& kicked,
-                                    const std::string& reason);
+                                    const ft::String& kicked,
+                                    const ft::String& reason);
 
 void User::_handleKICK(Server& server,
-                       const std::vector<std::string>& args) {
+                       const std::vector<ft::String>& args) {
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "KICK");
         return;
@@ -28,8 +28,8 @@ void User::_handleKICK(Server& server,
         return;
     }
 
-    std::vector<std::string>    nicknames = ft::String::split(args[1], ",");
-    for (std::vector<std::string>::const_iterator it = nicknames.begin();
+    std::vector<ft::String>    nicknames = args[1].split(",");
+    for (std::vector<ft::String>::const_iterator it = nicknames.begin();
          it != nicknames.end();
          ++it) {
         if (!channelTarget->isMember(*it)) {
@@ -44,8 +44,8 @@ void User::_handleKICK(Server& server,
 static void sendChannelKickMessages(const User& user,
                                     const Server& server,
                                     Channel& channel,
-                                    const std::string& kicked,
-                                    const std::string& reason) {
+                                    const ft::String& kicked,
+                                    const ft::String& reason) {
     std::stringstream message;
 
     message << user.getHostMask() << " KICK "

@@ -10,7 +10,7 @@
 #include <sstream>
 
 User::RequestsHandlersMap   User::_requestsHandlers;
-std::string                 User::defaultNickname = "*";
+ft::String                  User::defaultNickname = "*";
 
 User::User(const int fd):
         _fd(fd),
@@ -19,6 +19,7 @@ User::User(const int fd):
         _isRegistered(false),
         _nickName(defaultNickname),
         _passwordWasGiven(false),
+        _lastIndexOfBufferWithNoDelimiters(0),
         _shouldDestroyUserAfterFlush(false) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
@@ -39,26 +40,26 @@ void    User::setIsRegistered(const bool isRegistered) {
     _isRegistered = isRegistered;
 }
 
-const std::string&  User::getNickName() const {
+const ft::String&  User::getNickName() const {
     return _nickName;
 }
 
-const std::string&  User::getUserName() const {
+const ft::String&  User::getUserName() const {
     return _userName;
 }
 
-const std::string& User::getRealName() const {
+const ft::String& User::getRealName() const {
     return _realName;
 }
 
-std::string User::getHostMask() const {
+ft::String User::getHostMask() const {
     std::stringstream message;
 
     message << ':' << _nickName << '!' << _userName << '@' << _realName;
     return message.str();
 }
 
-void User::setNickName(const std::string& newNickName) {
+void User::setNickName(const ft::String& newNickName) {
     _nickName = newNickName;
 }
 
@@ -101,11 +102,11 @@ bool User::isRegistered() const {
     return (_isRegistered);
 }
 
-void User::sendMessage(const std::string &message, const Server& server) {
+void User::sendMessage(const ft::String &message, const Server& server) {
     if (_shouldDestroyUserAfterFlush) return;
 
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
-        const std::string   messageToPrint(message.begin(), message.end() - 2);
+        const ft::String   messageToPrint(message.begin(), message.end() - 2);
         ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
                         << _fd << " _messagesBuffer" << std::endl;
     }
@@ -121,7 +122,7 @@ void User::sendMessage(const std::string &message, const Server& server) {
     }
 }
 
-void User::sendMessageToConnections(const std::string& message, const Server& server) {
+void User::sendMessageToConnections(const ft::String& message, const Server& server) {
     static_cast<void>(server); static_cast<void>(message); // TODO remove me
     // TODO send message to all users on the same channel as *this
 }
@@ -138,41 +139,41 @@ void    User::_handleEPOLLIN(Server& server) {
         errorMessage << "Failed to read from socket " << _fd;
         throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
     }
-    const std::string stringBuffer = std::string(rcvBuffer, end);
+    const ft::String stringBuffer = ft::String(rcvBuffer, end);
     _requestBuffer += stringBuffer;
     ft::Log::debug << "User(" << _fd << ")::_requestBuffer += \"" << stringBuffer
                      << '\"' << std::endl;
-    if (_requestBuffer.find('\r') != std::string::npos ||
-        _requestBuffer.find('\n') != std::string::npos) {
+    if (_requestBuffer.find("\r\n", _lastIndexOfBufferWithNoDelimiters) != ft::String::npos) {
         _processRequest(server);
     }
 }
 
 void    User::_processRequest(Server& server) {
 
-    std::vector<std::string>    messages = ft::String::split(_requestBuffer,
-                                                             "\r\n");
-    if (*(_requestBuffer.end() - 1) == '\n') {
+    std::vector<ft::String>    messages = _requestBuffer.split("\r\n");
+    if (_requestBuffer.endsWith("\r\n")) {
         _requestBuffer = "";
+        _lastIndexOfBufferWithNoDelimiters = 0;
     } else {
         _requestBuffer = *(messages.end() - 1);
+        _lastIndexOfBufferWithNoDelimiters = _requestBuffer.length() - 1;
         messages.pop_back();
     }
-    for (std::vector<std::string>::iterator it = messages.begin();
+    for (std::vector<ft::String>::iterator it = messages.begin();
          it != messages.end();
          ++it) {
         _handleRequest(server, *it);
     }
 }
 
-void    User::_handleRequest(Server& server, const std::string& request) {
+void    User::_handleRequest(Server& server, const ft::String& request) {
     const Command cmd(request);
     ft::Log::info << "Processing request " << cmd.getCommand() << " from user "
                     << _fd << std::endl;
 
     RequestHandler requestHandler;
     try {
-        requestHandler = _requestsHandlers.at(cmd.getCommand());
+        requestHandler = _requestsHandlers.at(cmd.getCommand().copyToUpper());
     } catch (std::out_of_range&) {
         NumericReplies::Error::unknownCommand(*this, server, cmd.getCommand());
         ft::Log::warning << "Request was not recognized" << std::endl;
@@ -192,7 +193,7 @@ bool    User::_isCommandAllowedWhenNotRegistered(RequestHandler requestHandler) 
             || requestHandler == &User::_handleNICK;
 }
 
-void    User::sendErrorAndDestroyUser(const std::string& message, Server& server) {
+void    User::sendErrorAndDestroyUser(const ft::String& message, Server& server) {
     std::stringstream   error;
 
     error << "ERROR :Closing Link: " << message << "\r\n";
@@ -211,7 +212,7 @@ void    User::sendErrorAndDestroyUser(const std::string& message, Server& server
 void User::_flushMessages(Server& server) {
     ft::Log::info << "Flushing messages destined to user " << _fd << std::endl;
 
-    std::string messages;
+    ft::String messages;
     while (!_messagesBuffer.empty()) {
         messages += _messagesBuffer.front();
         _messagesBuffer.pop();

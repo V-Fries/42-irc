@@ -1,13 +1,13 @@
 #include "ft_String.hpp"
 
-std::ostream&    operator<<(std::ostream& os, const std::vector<std::string>& strings) {
+std::ostream&    operator<<(std::ostream& os, const std::vector<ft::String>& strings) {
     if (strings.size() == 0) {
         os << "{}";
         return os;
     }
 
-    const std::vector<std::string>::const_iterator  lastString = strings.end() - 1;
-    std::vector<std::string>::const_iterator        it;
+    const std::vector<ft::String>::const_iterator  lastString = strings.end() - 1;
+    std::vector<ft::String>::const_iterator        it;
     os << '{';
     for (it = strings.begin(); it != lastString; ++it) {
         os << '"' << *it << "\", ";
@@ -16,11 +16,11 @@ std::ostream&    operator<<(std::ostream& os, const std::vector<std::string>& st
     return os;
 }
 
-std::vector<std::string>    operator+(const std::vector<std::string>& leftValue,
-                                      const std::vector<std::string>& rightValue) {
-    std::vector<std::string>    result(leftValue);
+std::vector<ft::String> operator+(const std::vector<ft::String>& leftValue,
+                                  const std::vector<ft::String>& rightValue) {
+    std::vector<ft::String>    result(leftValue);
 
-    for (std::vector<std::string>::const_iterator it = rightValue.begin();
+    for (std::vector<ft::String>::const_iterator it = rightValue.begin();
          it != rightValue.end();
          ++it) {
         result.push_back(*it);
@@ -28,10 +28,10 @@ std::vector<std::string>    operator+(const std::vector<std::string>& leftValue,
     return result;
 }
 
-std::vector<std::string>&    operator+=(std::vector<std::string>& leftValue,
-                                        const std::vector<std::string>& rightValue) {
-    const std::vector<std::string>* vectorToAdd;
-    std::vector<std::string>        tmp;
+std::vector<ft::String>&    operator+=(std::vector<ft::String>& leftValue,
+                                       const std::vector<ft::String>& rightValue) {
+    const std::vector<ft::String>* vectorToAdd;
+    std::vector<ft::String>        tmp;
     if (&leftValue == &rightValue) {
         tmp = rightValue;
         vectorToAdd = &tmp;
@@ -39,7 +39,7 @@ std::vector<std::string>&    operator+=(std::vector<std::string>& leftValue,
         vectorToAdd = &rightValue;
     }
 
-    for (std::vector<std::string>::const_iterator it = vectorToAdd->begin();
+    for (std::vector<ft::String>::const_iterator it = vectorToAdd->begin();
          it != vectorToAdd->end();
          ++it) {
         leftValue.push_back(*it);
