@@ -6,9 +6,19 @@
 
 #include "NumericReplies.hpp"
 
+static bool isNickNameValid(User& user,
+                            const ft::String &realNickName,
+                            const ft::String& fullNickName,
+                            const Server &server);
+
 void    User::_handleNICK(Server& server, const std::vector<ft::String>& args) {
     ft::Log::info << "Received NICK request: " << args << " from user " << _fd
                   << std::endl;
+
+    if (!_passwordWasGiven) {
+        this->sendErrorAndDestroyUser("Password was not given", server);
+        return;
+    }
 
     if (args.empty()) {
         NumericReplies::Error::noNicknameGiven(*this, server);
@@ -17,24 +27,32 @@ void    User::_handleNICK(Server& server, const std::vector<ft::String>& args) {
 
     ft::String nickname = args[0].substr(0,  User::maxNickNameLength);
     nickname.toLower();
-    if (_checkNickname(nickname, server)) {
+    if (!isNickNameValid(*this, nickname, args[0], server)) {
+        return;
+    }
+
+    if (_isRegistered) {
+        server.renameUser(*this, nickname);
+    } else {
+        server.removeNickNameOfUserCurrentlyRegistering(_nickName);
         _nickName = nickname;
+        server.addNickNameOfUserCurrentlyRegistering(_nickName);
         _registerUserIfReady(server);
     }
 }
 
-bool    User::_checkNickname(const ft::String &nickName, const Server &server) {
-    if (ft::String("$:#&").find(nickName[0]) != ft::String::npos) {
-        NumericReplies::Error::erroneousNick(*this, server, nickName);
-        return (false);
+static bool isNickNameValid(User& user,
+                            const ft::String &realNickName,
+                            const ft::String& fullNickName,
+                            const Server &server) {
+    if (ft::String("$:#&").find(realNickName[0]) != ft::String::npos
+        || realNickName.find_first_of(" ,*?!@.") != ft::String::npos) {
+        NumericReplies::Error::erroneousNick(user, server, fullNickName);
+        return false;
     }
-    if (nickName.find_first_of(" ,*?!@.") != ft::String::npos) {
-        NumericReplies::Error::erroneousNick(*this, server, nickName);
-        return (false);
+    if (server.nicknameIsTaken(realNickName)) {
+        NumericReplies::Error::nickInUse(user, server, realNickName);
+        return false;
     }
-    if (server.nicknameIsTaken(nickName)) {
-        NumericReplies::Error::nickInUse(*this, server, nickName);
-        return (false);
-    }
-    return (true);
+    return true;
 }

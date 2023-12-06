@@ -53,7 +53,7 @@ void processCurrentChannel(const ft::String& channelName,
     sendChannelPartMessages(*user, server, *channel);
     channel->removeMember(user);
     if (channel->getMembers().empty()) {
-        server.removeChannel(channel);
+        server.removeChannel(*channel);
     }
 }
 
@@ -74,7 +74,7 @@ void processCurrentChannel(const ft::String& channelName,
     sendChannelPartMessages(*user, server, *channel, reason);
     channel->removeMember(user);
     if (channel->getMembers().empty()) {
-        server.removeChannel(channel);
+        server.removeChannel(*channel);
     }
 }
 

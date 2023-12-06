@@ -26,34 +26,48 @@ class Server {
 
         ~Server();
 
+        const ft::String&  getPassword() const;
+
         int                 getEpollFD() const;
 
-        void                addUser(User* user);
+        void                addUser(User& user);
+
+        void    renameUser(User& user, const ft::String& newNickName);
+
+        void    removeNickNameOfUserCurrentlyRegistering(const ft::String& nickName);
+        void    addNickNameOfUserCurrentlyRegistering(const ft::String& nickName);
+
         static epoll_event  getBaseUserEpollEvent(int userFD);
-        void                removeUser(User* user);
+        void                addUserToDestroyList(User& user);
         User*               getUserByNickname(const ft::String&) const;
         bool                nicknameIsTaken(const ft::String &nick) const;
-        void                registerUser(User *user);
+        void                registerUser(User& user);
         size_t              getNbOfRegisteredUsers() const;
         size_t              getPeakRegisteredUserCount() const;
 
         size_t              getNbOfChannels() const;
-        void                addChannel(Channel *channel);
-        void                removeChannel(Channel *channel);
+        void                addChannel(Channel& channel);
+        void                removeChannel(Channel& channel);
         Channel*            getChannelByName(const ft::String& name);
-        void                addUserToChannel(const ft::String& channel, User *user);
         const ChannelMap&   getChannels() const;
         void                addUserToChannel(const ft::String& channel, User& user);
         void                addUserToChannel(Channel& channel, User& user);
 
         const ft::String&  getNicknameByFd(int fd) const;
 
-        void    waitForEvents();
-        void    handleEvents();
         void    run();
         void    stop(int exitCode);
 
     private:
+        void        _closeSocket(int fd, bool isListenSocket) const;
+        static void _closeFd(int fd);
+
+        void    _removeUser(User& user);
+        void    _destroyUsersToDestroy();
+
+        void    _waitForEvents();
+        void    _handleEvents();
+
         const ft::String   _password;
 
         const int   _epollFD;
@@ -65,6 +79,10 @@ class Server {
 
         SocketMap       _sockets;
         RegisteredMap   _registeredUsers;
+
+        ft::Set<ft::String> _nickNamesOfUsersCurrentlyRegistering;
+
+        std::queue<User*>   _usersToDestroy;
 
         size_t          _peakRegisteredUserCount;
 

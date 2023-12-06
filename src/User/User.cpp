@@ -6,12 +6,11 @@
 #include "ft_Exception.hpp"
 #include "NumericReplies.hpp"
 
-#include <iostream>
 #include <sys/socket.h>
 #include <sstream>
 
 User::RequestsHandlersMap   User::_requestsHandlers;
-ft::String                 User::defaultNickname = "*";
+ft::String                  User::defaultNickname = "*";
 
 User::User(const int fd):
         _fd(fd),
@@ -19,7 +18,9 @@ User::User(const int fd):
         _nbOfJoinedRegularChannels(0),
         _isRegistered(false),
         _nickName(defaultNickname),
-        _lastIndexOfBufferWithNoDelimiters(0) {
+        _passwordWasGiven(false),
+        _lastIndexOfBufferWithNoDelimiters(0),
+        _shouldDestroyUserAfterFlush(false) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
 }
 
@@ -28,11 +29,11 @@ int User::getFD() const {
 }
 
 bool User::hasJoinedTheMaxNbOfRegularChannels() const {
-    return this->_nbOfJoinedRegularChannels >= maxNbOfJoinedRegularChannels;
+    return _nbOfJoinedRegularChannels >= maxNbOfJoinedRegularChannels;
 }
 
 bool User::hasJoinedTheMaxNbOfLocalChannels() const {
-    return this->_nbOfJoinedLocalChannels >= maxNbOfJoinedLocalChannels;
+    return _nbOfJoinedLocalChannels >= maxNbOfJoinedLocalChannels;
 }
 
 void    User::setIsRegistered(const bool isRegistered) {
@@ -58,6 +59,10 @@ ft::String User::getHostMask() const {
     return message.str();
 }
 
+void User::setNickName(const ft::String& newNickName) {
+    _nickName = newNickName;
+}
+
 void    User::initRequestsHandlers() {
     ft::Log::debug << "Initializing User::_requestsHandlers" << std::endl;
     _requestsHandlers["PASS"] = &User::_handlePASS;
@@ -80,16 +85,16 @@ void    User::handleEvent(const uint32_t epollEvents, Server& server) {
     ft::Log::debug << "User " << _fd << " is handling event " << epollEvents << std::endl;
     if (epollEvents & EPOLLHUP || epollEvents & EPOLLRDHUP) {
         ft::Log::debug << "User " << _fd << " received EPOLLHUP || EPOLLRDHUP" << std::endl;
-        server.removeUser(this);
+        server.addUserToDestroyList(*this);
         return;
     }
-    if (epollEvents & EPOLLIN) {
+    if (epollEvents & EPOLLIN && !_shouldDestroyUserAfterFlush) {
         ft::Log::debug << "User " << _fd << " received EPOLLIN" << std::endl;
         _handleEPOLLIN(server);
     }
     if (epollEvents & EPOLLOUT) {
         ft::Log::debug << "User " << _fd << " received EPOLLOUT" << std::endl;
-        this->_flushMessages(server);
+        _flushMessages(server);
     }
 }
 
@@ -98,6 +103,8 @@ bool User::isRegistered() const {
 }
 
 void User::sendMessage(const ft::String &message, const Server& server) {
+    if (_shouldDestroyUserAfterFlush) return;
+
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
         const ft::String   messageToPrint(message.begin(), message.end() - 2);
         ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
@@ -113,6 +120,11 @@ void User::sendMessage(const ft::String &message, const Server& server) {
     } else {
         ft::Log::info << "User " << _fd << " now waits for EPOLLOUT" << std::endl;
     }
+}
+
+void User::sendMessageToConnections(const ft::String& message, const Server& server) {
+    static_cast<void>(server); static_cast<void>(message); // TODO remove me
+    // TODO send message to all users on the same channel as *this
 }
 
 void    User::_handleEPOLLIN(Server& server) {
@@ -181,7 +193,23 @@ bool    User::_isCommandAllowedWhenNotRegistered(RequestHandler requestHandler) 
             || requestHandler == &User::_handleNICK;
 }
 
-void User::_flushMessages(const Server& server) {
+void    User::sendErrorAndDestroyUser(const ft::String& message, Server& server) {
+    std::stringstream   error;
+
+    error << "ERROR :Closing Link: " << message << "\r\n";
+    this->sendMessage(error.str(), server);
+    _shouldDestroyUserAfterFlush = true;
+    epoll_event event = {};
+    event.events = EPOLLOUT | EPOLLRDHUP;
+    event.data.fd = _fd;
+    if (epoll_ctl(server.getEpollFD(), EPOLL_CTL_MOD, _fd, &event) == -1) {
+        ft::Log::error << "Failed to make user " << _fd << " wait for EPOLLOUT"
+                           << std::endl;
+        server.addUserToDestroyList(*this);
+    }
+}
+
+void User::_flushMessages(Server& server) {
     ft::Log::info << "Flushing messages destined to user " << _fd << std::endl;
 
     ft::String messages;
@@ -202,12 +230,14 @@ void User::_flushMessages(const Server& server) {
     } else {
         ft::Log::info << "User " << _fd << " stopped waiting for EPOLLOUT" << std::endl;
     }
+
+    if (_shouldDestroyUserAfterFlush) server.addUserToDestroyList(*this);
 }
 
 void    User::_registerUserIfReady(Server& server) {
-    if (_password.empty() || _nickName == "*" || _userName.empty()) return;
+    if (!_passwordWasGiven || _nickName == "*" || _userName.empty()) return;
 
-    server.registerUser(this);
+    server.registerUser(*this);
 
     NumericReplies::Reply::welcome(*this, server);
     NumericReplies::Reply::yourHost(*this, server);
