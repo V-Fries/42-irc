@@ -46,7 +46,6 @@ class ft::String : public std::string {
                              const String& separator);
 
         ///
-        /// \param string string to split
         /// \param delimiter
         /// \param flags (SPLIT_ON_CHARACTER_SET | SPLIT_UNLESS_IN_QUOTES)
         ///              will split on each chars of the delimiter ignoring the chars

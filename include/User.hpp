@@ -8,6 +8,8 @@
 #include <queue>
 #include <sstream>
 
+#include "Channel.hpp"
+
 class Server;
 
 class User : public ISocket {
@@ -43,8 +45,10 @@ class User : public ISocket {
         bool    isRegistered() const;
 
         void    sendMessage(const ft::String &message, const Server& server);
-        void    sendMessageToConnections(const ft::String& message, const Server& server);
+        void    sendMessageToConnections(const ft::String& message,
+                                         const Server& server);
 
+        void    leaveChannel(const ft::String& channelName);
 
         static ft::String    defaultNickname;
 
@@ -75,10 +79,9 @@ class User : public ISocket {
         void    _handleISON(Server& server, const std::vector<ft::String>& args);
         void    _handleINVITE(Server& server, const std::vector<ft::String>& args);
         void    _handleKICK(Server& server, const std::vector<ft::String>& args);
+        void    _handleQUIT(Server& server, const std::vector<ft::String>& args);
 
         void    _registerUserIfReady(Server& server);
-
-        bool    _checkNickname(const ft::String &nickName, const Server &server);
 
         static RequestsHandlersMap _requestsHandlers;
 
@@ -100,4 +103,6 @@ class User : public ISocket {
         std::queue<ft::String> _messagesBuffer;
 
         bool    _shouldDestroyUserAfterFlush;
+
+        std::map<ft::String, Channel*> _channels;
 };

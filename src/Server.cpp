@@ -4,6 +4,7 @@
 
 #include <unistd.h>
 #include <cstdlib>
+#include <algorithm>
 
 Server::Server(const uint16_t port, const ft::String& password):
     _password(password),

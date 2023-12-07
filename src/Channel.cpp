@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include "ft_Log.hpp"
+#include "User.hpp"
 
 // public:
 
@@ -71,6 +72,7 @@ void    Channel::addMember(User *newMember) throw (Channel::IsFull) {
 void    Channel::removeMember(User *member) {
     this->removeOperator(member->getFD());
     _members.erase(member);
+    member->leaveChannel(_name);
 }
 
 bool    Channel::isMember(const int memberFD) const {
@@ -93,7 +95,6 @@ bool    Channel::isMember(const User* member) const {
     return _members.contains(const_cast<User*>(member));
 }
 
-
 const Channel::UsersFdContainer& Channel::getOperators() {
     return _operators;
 }
@@ -110,11 +111,11 @@ void    Channel::addOperator(User *newOperator) {
     _operators.insert(newOperator->getFD());
 }
 
-void Channel::addOperator(int newOperatorFd) {
+void Channel::addOperator(const int newOperatorFd) {
     _operators.insert(newOperatorFd);
 }
 
-void    Channel::removeOperator(User *operatorPtr) {
+void    Channel::removeOperator(const User *operatorPtr) {
     _operators.erase(operatorPtr->getFD());
 }
 

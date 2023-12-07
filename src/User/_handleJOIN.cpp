@@ -5,14 +5,14 @@
 #include "User.hpp"
 
 static bool didUserReachThisChannelTypeLimit(const User& user, const ft::String& channelName);
-static void createNewChannel(User& user,
-                             Server& server,
-                             const ft::String& newChannelName,
-                             const ft::String& password);
-static void joinExistingChannel(User& user,
-                                Server& server,
-                                Channel& channel,
-                                const ft::String& password);
+static Channel* createNewChannel(User& user,
+                                 Server& server,
+                                 const ft::String& newChannelName,
+                                 const ft::String& password);
+static int joinExistingChannel(User& user,
+                               Server& server,
+                               Channel& channel,
+                               const ft::String& password);
 static void sendChannelWelcomeMessages(User& user,
                                        const Server& server,
                                        Channel& channel);
@@ -26,8 +26,9 @@ void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
         return;
     }
 
-    std::vector<ft::String> channelsNames = args[0].split(",");
-    std::vector<ft::String> channelsPasswords;
+    const std::vector<ft::String>   channelsNames = args[0].split(",");
+    std::vector<ft::String>         channelsPasswords;
+
     if (args.size() > 1)
         channelsPasswords = args[1].split(",");
 
@@ -40,10 +41,18 @@ void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
         Channel*            channel = server.getChannelByName(channelsNames[i]);
         const ft::String&  password = i < channelsPasswords.size() ? channelsPasswords[i] : "";
         if (channel == NULL) {
-            createNewChannel(*this, server, channelsNames[i], password);
-        } else {
-            joinExistingChannel(*this, server, *channel, password);
+            channel = createNewChannel(*this, server, channelsNames[i], password);
+            if (channel == NULL) continue;
+            sendChannelWelcomeMessages(*this, server, *channel);
         }
+        if (joinExistingChannel(*this, server, *channel, password) == -1) {
+            continue;
+        }
+        _channels[channel->getName()] = channel;
+        if (*channel->getName().begin() == '#')
+            _nbOfJoinedRegularChannels++;
+        else if (*channel->getName().begin() == '&')
+            _nbOfJoinedLocalChannels++;
     }
 }
 
@@ -52,31 +61,35 @@ static bool didUserReachThisChannelTypeLimit(const User& user, const ft::String&
            || (channelName[0] == '&' && user.hasJoinedTheMaxNbOfLocalChannels());
 }
 
-static void createNewChannel(User& user,
-                             Server& server,
-                             const ft::String& newChannelName,
-                             const ft::String& password) {
+static Channel* createNewChannel(User& user,
+                                 Server& server,
+                                 const ft::String& newChannelName,
+                                 const ft::String& password) {
     try {
-        Channel* newChannel = new Channel(newChannelName, password, user);
+        Channel*    newChannel = new Channel(newChannelName, password, user);
         server.addChannel(*newChannel);
-        sendChannelWelcomeMessages(user, server, *newChannel);
+        return newChannel;
     } catch (Channel::IncorrectName&) {
         NumericReplies::Error::badChannelMask(user, server, newChannelName);
     }
+    return NULL;
 }
 
-static void joinExistingChannel(User& user,
-                                Server& server,
-                                Channel& channel,
-                                const ft::String& password) {
+static int joinExistingChannel(User&user,
+                               Server&server,
+                               Channel&channel,
+                               const ft::String&password) {
+    if (channel.isMember(user.getFD())) {
+        return -1; // TODO check if we should send a numeric
+    }
     if (channel.isInviteOnly() && !channel.wasUserInvited(user.getFD())) {
         NumericReplies::Error::inviteOnlyChannel(user, server, channel);
-        return;
+        return -1;
     }
 
     if (password != channel.getPassword()) {
         NumericReplies::Error::badChannelKey(user, server, channel);
-        return;
+        return -1;
     }
 
     try {
@@ -85,7 +98,9 @@ static void joinExistingChannel(User& user,
         sendChannelWelcomeMessages(user, server, channel);
     } catch (Channel::IsFull&) {
         NumericReplies::Error::channelIsFull(user, server, channel.getName());
+        return -1;
     }
+    return 0;
 }
 
 static void sendChannelWelcomeMessages(User& user,
@@ -96,8 +111,10 @@ static void sendChannelWelcomeMessages(User& user,
     message << user.getHostMask() << " JOIN " << channel.getName() << "\r\n";
 
     channel.sendMessage(-1, message.str(), server);
-    NumericReplies::Reply::topic(user, channel, server);
-    NumericReplies::Reply::topicWhoTime(user, channel, server);
+    if (!channel.getTopic().getSetAt().empty()) {
+        NumericReplies::Reply::topic(user, channel, server);
+        NumericReplies::Reply::topicWhoTime(user, channel, server);
+    }
     NumericReplies::Reply::namesReply(user, channel, server);
     NumericReplies::Reply::endOfNames(user, channel, server);
 }
