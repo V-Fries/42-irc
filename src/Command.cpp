@@ -65,4 +65,5 @@ std::vector<ft::String> getArgs(const ft::String& rawCommand,
         if (currIterator != rawCommand.end())
             args.push_back(ft::String(currIterator, rawCommand.end()));
     }
+    return args;
 }
