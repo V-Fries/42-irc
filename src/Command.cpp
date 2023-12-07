@@ -47,7 +47,7 @@ static ft::String getCommand(const ft::String& rawCommand,
 }
 
 std::vector<ft::String> getArgs(const ft::String& rawCommand,
-    ft::String::const_iterator& it) {
+                                ft::String::const_iterator& it) {
     while (it != rawCommand.end() && isspace(*it)) ++it;
     if (it == rawCommand.end()) {
         return std::vector<ft::String>();
