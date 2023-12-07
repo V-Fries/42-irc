@@ -48,7 +48,7 @@ class User : public ISocket {
         void    sendMessageToConnections(const ft::String& message,
                                          const Server& server);
 
-        void    leaveChannel(const ft::String&channelName);
+        void    leaveChannel(const ft::String& channelName);
 
         static ft::String    defaultNickname;
 

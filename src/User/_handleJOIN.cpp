@@ -9,10 +9,10 @@ static Channel* createNewChannel(User& user,
                                  Server& server,
                                  const ft::String& newChannelName,
                                  const ft::String& password);
-static int joinExistingChannel(User&user,
-                               Server&server,
-                               Channel&channel,
-                               const ft::String&password);
+static int joinExistingChannel(User& user,
+                               Server& server,
+                               Channel& channel,
+                               const ft::String& password);
 static void sendChannelWelcomeMessages(User& user,
                                        const Server& server,
                                        Channel& channel);
@@ -26,8 +26,8 @@ void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
         return;
     }
 
-    std::vector<ft::String> channelsNames = args[0].split(",");
-    std::vector<ft::String>            channelsPasswords;
+    const std::vector<ft::String>   channelsNames = args[0].split(",");
+    std::vector<ft::String>         channelsPasswords;
 
     if (args.size() > 1)
         channelsPasswords = args[1].split(",");
@@ -40,9 +40,9 @@ void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
 
         Channel*            channel = server.getChannelByName(channelsNames[i]);
         const ft::String&  password = i < channelsPasswords.size() ? channelsPasswords[i] : "";
-        if (!channel) {
+        if (channel == NULL) {
             channel = createNewChannel(*this, server, channelsNames[i], password);
-            if (!channel) continue;
+            if (channel == NULL) continue;
             sendChannelWelcomeMessages(*this, server, *channel);
         }
         if (joinExistingChannel(*this, server, *channel, password) == -1) {
@@ -82,7 +82,7 @@ static int joinExistingChannel(User&user,
     if (channel.isMember(user.getFD())) {
         return -1; // TODO check if we should send a numeric
     }
-    if (channel.isInviteOnly() && !channel.wasUserInvited(user.getFD())) {
+    if (channel.isInviteOnly() && channel.wasUserInvited(user.getFD()) == NULL) {
         NumericReplies::Error::inviteOnlyChannel(user, server, channel);
         return -1;
     }

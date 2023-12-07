@@ -1,17 +1,20 @@
 #include "Command.hpp"
 #include "ft.hpp"
 
+static ft::String getCommand(const ft::String& rawCommand,
+                             ft::String::const_iterator& it);
+
 Command::Command(const ft::String &rawCommand) {
-    ft::String::const_iterator it = rawCommand.begin();
-    while (isspace(*it)) ++it;
-    if (*it == ':')
-        while (!isspace(*it)) ++it;
-    while (isspace(*it)) ++it;
-    _command = ft::String::getFirstWord(it,
-                                        rawCommand.end(),
-                                        ": ");
-    it += _command.length();
-    while (isspace(*it)) ++it;
+    ft::String::const_iterator  it = rawCommand.begin();
+
+    ::getCommand(rawCommand, it);
+
+    while (it != rawCommand.end() && isspace(*it)) ++it;
+    if (it == rawCommand.end()) {
+        _args = std::vector<ft::String>();
+        return;
+    }
+
     ft::String::const_iterator currIterator = it;
     while (currIterator != rawCommand.end() && \
             *currIterator != ':')
@@ -36,4 +39,22 @@ std::ostream& operator<<(std::ostream& os, const Command& cmd) {
     os << "Command: " << cmd.getCommand() << " | ";
     os << "Args: " << cmd.getArgs() ;
     return os;
+}
+
+static ft::String getCommand(const ft::String& rawCommand,
+                             ft::String::const_iterator& it) {
+    while (it != rawCommand.end() && isspace(*it)) ++it;
+    if (it != rawCommand.end() && *it == ':')
+        while (it != rawCommand.end() && !isspace(*it)) ++it;
+    while (it != rawCommand.end() && isspace(*it)) ++it;
+    if (it == rawCommand.end()) {
+        it = rawCommand.end();
+        return "";
+    }
+
+    ft::String command = ft::String::getFirstWord(it,
+                                                  rawCommand.end(),
+                                                  ": ");
+    it += command.length();
+    return (command);
 }
