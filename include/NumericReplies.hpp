@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include <sstream>
-
 #include "Channel.hpp"
 #include "Server.hpp"
 
@@ -100,18 +97,30 @@ class NumericReplies {
                                      const Channel& channel);
 
                 static void currUserModes(User& user, const Server& server);
-                static void channelModeIs(User& user, const Channel& channel, const Server& server);
-                static void creationTime(User& user, const Channel& channel, const Server& server);
+                static void channelModeIs(User& user,
+                                          const Channel& channel,
+                                          const Server& server);
+                static void creationTime(User& user,
+                                         const Channel& channel,
+                                         const Server& server);
 
-                static void topic(User& user, const Channel& channel, const Server& server);
-                static void topicWhoTime(User& user, const Channel& channel, const Server& server);
-                static void noTopic(User& user, Channel& channel, const Server& server);
+                static void topic(User& user,
+                                  const Channel& channel,
+                                  const Server& server);
+                static void topicWhoTime(User& user,
+                                         const Channel& channel,
+                                         const Server& server);
+                static void noTopic(User& user,
+                                    Channel& channel,
+                                    const Server& server);
 
                 static void listStart(User& user, const Server& server);
                 static void list(User& user, Server& server);
                 static void listEnd(User& user, Server& server);
 
-                static void isOn(User& user, const std::vector<ft::String>& nicknames, Server &server);
+                static void isOn(User& user,
+                                 const std::vector<ft::String>& nicknames,
+                                 Server &server);
         };
 
         class Error {
@@ -155,9 +164,14 @@ class NumericReplies {
                 static void userDontMatchView(User& user, const Server& server);
                 static void userDontMatchSet(User& user, const Server& server);
 
-                static void chanOperPrivNeeded(User& user, const Channel& channel, const Server& server);
+                static void chanOperPrivNeeded(User& user,
+                                               const Channel& channel,
+                                               const Server& server);
 
-                static void userNotInChannel(User& user, const ft::String& nickname, const Channel& channel, const Server& server);
+                static void userNotInChannel(User& user,
+                                             const ft::String& nickname,
+                                             const Channel& channel,
+                                             const Server& server);
                 static void channelPrivilegesNeeded(User& user,
                                                     const Server& server,
                                                     const Channel& channel);

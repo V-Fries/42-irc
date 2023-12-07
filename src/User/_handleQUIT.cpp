@@ -9,14 +9,12 @@
 
 void    User::_handleQUIT(Server& server,
                           const std::vector<ft::String>& args) {
-    std::set<User*>     users;
     std::stringstream   message;
     std::stringstream   reply;
 
     ft::Log::info << "Process QUIT from " << _nickName << std::endl;
 
-    reply << "ERROR :Closing Link: "
-          << _nickName << "["
+    reply << _nickName << "["
           << _userName << "@"
           << _realName << "] (\"";
     if (!args.empty())
@@ -28,16 +26,7 @@ void    User::_handleQUIT(Server& server,
         message << args[0];
     message << "\r\n";
 
-    for (std::set<User*>::iterator it = users.begin();
-         it != users.end();
-         ++it) {
-        if (users.find(*it) == users.end()) {
-            (*it)->sendMessage(message.str(), server);
-            users.insert(*it);
-        }
-    }
+    this->sendMessageToConnections(message.str(), server);
 
-    this->sendMessage(reply.str(), server);
-    _flushMessages(server);
-    server.removeUser(_nickName);
+    this->sendErrorAndDestroyUser(reply.str(), server);
 }

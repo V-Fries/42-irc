@@ -109,7 +109,7 @@ void User::sendMessage(const ft::String &message, const Server& server) {
     if (ft::Log::getDebugLevel() <= ft::Log::INFO) {
         const ft::String   messageToPrint(message.begin(), message.end() - 2);
         ft::Log::info << "Adding message \"" << messageToPrint << "\" to user "
-                        << _fd << " _messagesBuffer" << std::endl;
+                        << _nickName << " _messagesBuffer" << std::endl;
     }
 
     _messagesBuffer.push(message);
@@ -123,7 +123,10 @@ void User::sendMessage(const ft::String &message, const Server& server) {
     }
 }
 
-void User::leaveChannel(const ft::String&channelName) {
+void User::leaveChannel(const ft::String& channelName) {
+    if (_channels.find(channelName) == _channels.end()) {
+        return;
+    }
     if (*channelName.begin() == '#')
         _nbOfJoinedRegularChannels--;
     else if (*channelName.begin() == '&')
@@ -132,8 +135,21 @@ void User::leaveChannel(const ft::String&channelName) {
 }
 
 void User::sendMessageToConnections(const ft::String& message, const Server& server) {
-    static_cast<void>(server); static_cast<void>(message); // TODO remove me
-    // TODO send message to all users on the same channel as *this
+    Channel::UserContainer  usersCache;
+
+    usersCache.insert(this);
+    for (std::map<ft::String, Channel*>::iterator channel = _channels.begin();
+         channel != _channels.end();
+         ++channel) {
+        for (Channel::UserContainer::iterator member = channel->second->getMembers().begin();
+             member != channel->second->getMembers().end();
+             ++member) {
+            if (usersCache.find(*member) == usersCache.end()) {
+                (*member)->sendMessage(message, server);
+                usersCache.insert(*member);
+            }
+        }
+    }
 }
 
 void    User::_handleEPOLLIN(Server& server) {

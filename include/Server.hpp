@@ -39,7 +39,6 @@ class Server {
 
         static epoll_event  getBaseUserEpollEvent(int userFD);
         void                addUserToDestroyList(User& user);
-        void                removeUser(const ft::String& nickName);
         User*               getUserByNickname(const ft::String&) const;
         bool                nicknameIsTaken(const ft::String &nick) const;
         void                registerUser(User& user);
@@ -51,7 +50,8 @@ class Server {
         void                removeChannel(Channel& channel);
         Channel*            getChannelByName(const ft::String& name);
         const ChannelMap&   getChannels() const;
-        void                addUserToChannel(const ft::String& channel, User& user);
+        void                addUserToChannel(const ft::String& channel,
+                                             User& user);
         void                addUserToChannel(Channel& channel, User& user);
 
         const ft::String&  getNicknameByFd(int fd) const;

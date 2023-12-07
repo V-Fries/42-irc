@@ -45,7 +45,8 @@ class User : public ISocket {
         bool    isRegistered() const;
 
         void    sendMessage(const ft::String &message, const Server& server);
-        void    sendMessageToConnections(const ft::String& message, const Server& server);
+        void    sendMessageToConnections(const ft::String& message,
+                                         const Server& server);
 
         void    leaveChannel(const ft::String&channelName);
 
@@ -81,8 +82,6 @@ class User : public ISocket {
         void    _handleQUIT(Server& server, const std::vector<ft::String>& args);
 
         void    _registerUserIfReady(Server& server);
-
-        bool    _checkNickname(const ft::String &nickName, const Server &server);
 
         static RequestsHandlersMap _requestsHandlers;
 

@@ -141,15 +141,6 @@ void Server::addUserToDestroyList(User& user) {
     _usersToDestroy.push(&user);
 }
 
-void Server::removeUser(const ft::String& nickName) {
-    User*   user = _registeredUsers.at(nickName);
-
-    if (user) {
-        ft::Log::debug << "remove: " << nickName << std::endl;
-        _removeUser(*user);
-    }
-}
-
 void Server::_destroyUsersToDestroy() {
     while (!_usersToDestroy.empty()) {
         _removeUser(*_usersToDestroy.front());

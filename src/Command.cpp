@@ -4,7 +4,12 @@
 Command::Command(const ft::String &rawCommand) {
     ft::String::const_iterator it = rawCommand.begin();
     while (isspace(*it)) ++it;
-    _command = ft::String::getFirstWord(it, rawCommand.end(), ": ");
+    if (*it == ':')
+        while (!isspace(*it)) ++it;
+    while (isspace(*it)) ++it;
+    _command = ft::String::getFirstWord(it,
+                                        rawCommand.end(),
+                                        ": ");
     it += _command.length();
     while (isspace(*it)) ++it;
     ft::String::const_iterator currIterator = it;

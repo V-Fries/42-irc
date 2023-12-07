@@ -35,7 +35,8 @@ class Channel {
         void                setPassword(const ft::String& newPassword);
 
         const Topic&    getTopic() const;
-        void            setTopic(const ft::String& newTopic, const ft::String& author);
+        void            setTopic(const ft::String& newTopic,
+                                 const ft::String& author);
 
         const UserContainer&    getMembers() const;
         void                    addMember(User* newMember)
@@ -61,8 +62,8 @@ class Channel {
         bool        getModes(uint8_t flags) const;
         void        addModes(uint8_t flags);
         void        removeModes(uint8_t flags);
-        ft::String modesString() const;
-        ft::String modesArgs() const;
+        ft::String  modesString() const;
+        ft::String  modesArgs() const;
 
         size_t          getUserLimit() const;
         void            setUserLimit(size_t newUserLimit)
@@ -71,7 +72,9 @@ class Channel {
 
         time_t  getCreationTime() const;
 
-        void    sendMessage(int senderFd, const ft::String& message, const Server& server);
+        void    sendMessage(int senderFd,
+                            const ft::String& message,
+                            const Server& server);
 
     private:
         static bool _isNameCorrect(const ft::String& name);
