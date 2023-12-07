@@ -82,7 +82,7 @@ static int joinExistingChannel(User&user,
     if (channel.isMember(user.getFD())) {
         return -1; // TODO check if we should send a numeric
     }
-    if (channel.isInviteOnly() && channel.wasUserInvited(user.getFD()) == NULL) {
+    if (channel.isInviteOnly() && !channel.wasUserInvited(user.getFD())) {
         NumericReplies::Error::inviteOnlyChannel(user, server, channel);
         return -1;
     }

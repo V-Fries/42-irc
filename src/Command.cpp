@@ -1,30 +1,17 @@
 #include "Command.hpp"
 #include "ft.hpp"
 
-static ft::String getCommand(const ft::String& rawCommand,
-                             ft::String::const_iterator& it);
+static ft::String               getCommand(const ft::String& rawCommand,
+                                           ft::String::const_iterator& it);
+static std::vector<ft::String>  getArgs(const ft::String& rawCommand,
+                                        ft::String::const_iterator& it);
 
 Command::Command(const ft::String &rawCommand) {
     ft::String::const_iterator  it = rawCommand.begin();
 
-    ::getCommand(rawCommand, it);
+    _command = ::getCommand(rawCommand, it);
 
-    while (it != rawCommand.end() && isspace(*it)) ++it;
-    if (it == rawCommand.end()) {
-        _args = std::vector<ft::String>();
-        return;
-    }
-
-    ft::String::const_iterator currIterator = it;
-    while (currIterator != rawCommand.end() && \
-            *currIterator != ':')
-            ++currIterator;
-    _args = ft::String(it, currIterator).split(" ");
-    if (*currIterator == ':') {
-        ++currIterator;
-        if (currIterator != rawCommand.end())
-            _args.push_back(ft::String(currIterator, rawCommand.end()));
-    }
+    _args = ::getArgs(rawCommand, it);
 }
 
 const ft::String &Command::getCommand() const {
@@ -57,4 +44,25 @@ static ft::String getCommand(const ft::String& rawCommand,
                                                   ": ");
     it += command.length();
     return (command);
+}
+
+std::vector<ft::String> getArgs(const ft::String& rawCommand,
+    ft::String::const_iterator& it) {
+    while (it != rawCommand.end() && isspace(*it)) ++it;
+    if (it == rawCommand.end()) {
+        return std::vector<ft::String>();
+    }
+
+    ft::String::const_iterator currIterator = it;
+    while (currIterator != rawCommand.end() && \
+            *currIterator != ':')
+        ++currIterator;
+
+    std::vector<ft::String> args = ft::String(it, currIterator).split(" ");
+
+    if (currIterator != rawCommand.end() && *currIterator == ':') {
+        ++currIterator;
+        if (currIterator != rawCommand.end())
+            args.push_back(ft::String(currIterator, rawCommand.end()));
+    }
 }
