@@ -1,12 +1,14 @@
 #pragma once
 
 #include "ft_Set.hpp"
+#include "ft_Exception.hpp"
+#include "Topic.hpp"
 
 #include <string>
 
-#include "ft_Exception.hpp"
-#include "Topic.hpp"
-#include "User.hpp"
+class Server;
+class User;
+
 
 #define MODE_INV (1 << 0)
 #define MODE_TOP (1 << 1)
@@ -36,7 +38,8 @@ class Channel {
         void                setPassword(const ft::String& newPassword);
 
         const Topic&    getTopic() const;
-        void            setTopic(const ft::String& newTopic, const ft::String& author);
+        void            setTopic(const ft::String& newTopic,
+                                 const ft::String& author);
 
         const UserContainer&    getMembers() const;
         void                    addMember(User* newMember)
@@ -50,7 +53,7 @@ class Channel {
         bool                    isOperator(int memberFD) const;
         void                    addOperator(User* newOperator);
         void                    addOperator(int newOperatorFd);
-        void                    removeOperator(User* operatorPtr);
+        void                    removeOperator(const User* operatorPtr);
         void                    removeOperator(int operatorFd);
 
         const UsersFdContainer& getInvitedUsers() const;
@@ -63,8 +66,8 @@ class Channel {
         void        addModes(uint8_t flags);
         void        removeModes(uint8_t flags);
         void        setMode(char sign, char modeChar, uint8_t save);
-        ft::String modesString() const;
-        ft::String modesArgs() const;
+        ft::String  modesString() const;
+        ft::String  modesArgs() const;
 
         size_t          getUserLimit() const;
         void            setUserLimit(size_t newUserLimit)
@@ -73,7 +76,9 @@ class Channel {
 
         time_t  getCreationTime() const;
 
-        void    sendMessage(int senderFd, const ft::String& message, const Server& server);
+        void    sendMessage(int senderFd,
+                            const ft::String& message,
+                            const Server& server);
 
     private:
         static bool _isNameCorrect(const ft::String& name);

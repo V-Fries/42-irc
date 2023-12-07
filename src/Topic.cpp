@@ -4,7 +4,7 @@
 #include <ctime>
 #include <sstream>
 
-Topic::Topic() {
+Topic::Topic(): _setAt("") {
 }
 
 Topic::~Topic() {

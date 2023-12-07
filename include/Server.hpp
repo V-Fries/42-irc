@@ -50,7 +50,8 @@ class Server {
         void                removeChannel(Channel& channel);
         Channel*            getChannelByName(const ft::String& name);
         const ChannelMap&   getChannels() const;
-        void                addUserToChannel(const ft::String& channel, User& user);
+        void                addUserToChannel(const ft::String& channel,
+                                             User& user);
         void                addUserToChannel(Channel& channel, User& user);
 
         const ft::String&  getNicknameByFd(int fd) const;
