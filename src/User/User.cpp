@@ -1,4 +1,7 @@
 #include "User.hpp"
+
+#include <cstring>
+
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "Command.hpp"
@@ -161,6 +164,7 @@ void    User::_handleEPOLLIN(Server& server) {
     if (end < 0) {
         std::stringstream   errorMessage;
         errorMessage << "Failed to read from socket " << _fd;
+        ft::Log::error << "Failed to read: " << strerror(errno) << std::endl;
         throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
     }
     const ft::String stringBuffer = ft::String(rcvBuffer, end);

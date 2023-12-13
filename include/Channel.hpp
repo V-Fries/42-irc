@@ -9,11 +9,11 @@
 class Server;
 class User;
 
-
 #define MODE_INV (1 << 0)
 #define MODE_TOP (1 << 1)
 #define MODE_KEY (1 << 2)
 #define MODE_LIM (1 << 3)
+#define MODE_OPE (1 << 4)
 
 class Channel {
     public:
@@ -25,7 +25,10 @@ class Channel {
 
         typedef ft::Set<User*>  UserContainer;
         typedef ft::Set<int>    UsersFdContainer;
-        typedef void (Channel::*channelSetter)(uint8_t);
+        typedef void (Channel::*channelSetter)(uint8_t,
+                                               std::vector<ft::String>::iterator&,
+                                               User&,
+                                               const Server&);
 
         Channel(const ft::String& name,
                 const ft::String& password,
@@ -50,11 +53,14 @@ class Channel {
         bool                    isMember(const User* member) const;
 
         const UsersFdContainer& getOperators();
+        ft::String              getNewOperators();
+        ft::String              getRemovedOperators();
         bool                    isOperator(int memberFD) const;
-        void                    addOperator(User* newOperator);
-        void                    addOperator(int newOperatorFd);
+        void                    addOperator(const User* newOperator);
+        void                    addOperator(const ft::String& newOperatorNickname);
         void                    removeOperator(const User* operatorPtr);
         void                    removeOperator(int operatorFd);
+        void                    removeOperator(const ft::String& operatorNickname);
 
         const UsersFdContainer& getInvitedUsers() const;
         bool                    wasUserInvited(int userFD) const;
@@ -63,9 +69,20 @@ class Channel {
         bool                    isInviteOnly() const;
 
         uint8_t     getModes(uint8_t flags) const;
-        void        addModes(uint8_t flags);
-        void        removeModes(uint8_t flags);
-        void        setMode(char sign, char modeChar, uint8_t save);
+        void        addMode(uint8_t flag,
+                            std::vector<ft::String>::iterator& arg,
+                            User& author,
+                            const Server& server);
+        void        removeMode(uint8_t flag,
+                               std::vector<ft::String>::iterator& arg,
+                               User& author,
+                               const Server& server);
+        void        setMode(User& author,
+                            char sign,
+                            char modeChar,
+                            std::vector<ft::String>::iterator& it,
+                            std::vector<ft::String>::iterator end,
+                            const Server& server);
         ft::String  modesString() const;
         ft::String  modesArgs() const;
 
@@ -91,8 +108,10 @@ class Channel {
 
         Topic   _topic;
 
-        UserContainer       _members;
-        UsersFdContainer    _operators; // TODO use pointers
+        UserContainer           _members;
+        UsersFdContainer        _operators; // TODO use pointers
+        std::vector<ft::String> _newOperators;
+        std::vector<ft::String> _removedOperators;
 
         UsersFdContainer    _invitedUsersFDs;
 

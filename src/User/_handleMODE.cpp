@@ -4,14 +4,15 @@
 #include "User.hpp"
 
 static void sendModes(User* user, Server& server, const ft::String& target);
-static void setModes(User&user,
+static void setModes(User& user,
                      Server& server,
-                     const ft::String&target,
-                     const ft::String&modeChars);
+                     const ft::String& target,
+                     std::vector<ft::String> args);
 static void sendModesSummary(User& user,
                              uint8_t save,
                              uint8_t newModes,
-                             const Server& server);
+                             const Server& server,
+                             Channel& channel);
 
 void User::_handleMODE(Server& server, const std::vector<ft::String>& args) {
     if (args.empty()) {
@@ -22,7 +23,7 @@ void User::_handleMODE(Server& server, const std::vector<ft::String>& args) {
         sendModes(this, server, args[0]);
         return;
     }
-    setModes(*this, server, args[0], args[1]);
+    setModes(*this, server, args[0], std::vector<ft::String>(args.begin() + 1, args.end()));
 }
 
 static void sendModes(User* user, Server& server, const ft::String& target) {
@@ -49,8 +50,8 @@ static void sendModes(User* user, Server& server, const ft::String& target) {
 
 static void setModes(User& user,
                      Server& server,
-                     const ft::String&target,
-                     const ft::String&modeChars) {
+                     const ft::String& target,
+                     std::vector<ft::String> args) {
     if (target[0] != '#' && target[0] != '&') {
         if (!server.getUserByNickname(target)) {
             NumericReplies::Error::noSuchNick(user, server, target);
@@ -64,60 +65,88 @@ static void setModes(User& user,
     }
 
     Channel*        channelTarget = server.getChannelByName(target);
+
+    if (!channelTarget->isOperator(user.getFD())) {
+        NumericReplies::Error::channelPrivilegesNeeded(user, server, *channelTarget);
+        return;
+    }
+
     char            sign = '+';
     const uint8_t   save = channelTarget->getModes(MODE_INV | MODE_KEY | MODE_LIM | MODE_TOP);
 
-    for (ft::String::const_iterator it = modeChars.begin();
-         it != modeChars.end();
-         ++it) {
-        if (*it == '+' || *it == '-') {
-            sign = *it;
-        } else if (Channel::availableMhannelModes.find(*it) == ft::String::npos) {
-            NumericReplies::Error::unknowMode(user, *it, server);
-        } else {
-            channelTarget->setMode(sign, *it, save);
+    for (std::vector<ft::String>::iterator arg = args.begin();
+         arg < args.end();
+         ++arg) {
+        ft::Log::info << "arg: " << *arg << std::endl;
+        ft::String  currArg = *arg;
+
+        for (ft::String::const_iterator it = currArg.begin();
+             it != currArg.end();
+             ++it) {
+            if (*it == '+' || *it == '-') {
+                sign = *it;
+            } else if (Channel::availableMhannelModes.find(*it) == ft::String::npos) {
+                NumericReplies::Error::unknowMode(user, *it, server);
+            } else {
+                channelTarget->setMode(user, sign, *it, arg, args.end(), server);
+            }
         }
     }
-    sendModesSummary(user, save, channelTarget->getModes(MODE_INV | MODE_KEY | MODE_LIM | MODE_TOP), server);
+    sendModesSummary(user, save, channelTarget->getModes(MODE_INV | MODE_KEY | MODE_LIM | MODE_TOP), server, *channelTarget);
 }
 
 void sendModesSummary(User& user,
                       uint8_t save,
-                      uint8_t newModes, const Server& server) {
+                      uint8_t newModes,
+                      const Server& server,
+                      Channel& channel) {
     std::stringstream   reply;
+    std::stringstream   addSummary;
+    std::stringstream   removeSummary;
+    std::stringstream   paramsSummary;
+    uint8_t             diff = save ^ newModes;
 
-    uint8_t         diff = save ^ newModes;
-    std::bitset<8>  saveBits = save;
-    std::bitset<8>  newBits = newModes;
-    std::bitset<8>  diffBits = diff;
-
-    ft::Log::info << "size: " << sizeof(std::bitset<8>) << std::endl;
-    ft::Log::info << "save: " << saveBits << "\nnew:  " << newBits << "\ndiff: " << diffBits << std::endl;
     if (diff & MODE_TOP) {
         if (newModes & MODE_TOP)
-            ft::Log::info << "Mode topic added" << std::endl;
+            addSummary << "t";
         else
-            ft::Log::info << "Mode topic removed" << std::endl;
+            removeSummary << "t";
     }
     if (diff & MODE_INV) {
         if (newModes & MODE_INV)
-            ft::Log::info << "Mode topic added" << std::endl;
+            addSummary << "i";
         else
-            ft::Log::info << "Mode topic removed" << std::endl;
+            removeSummary << "i";
     }
     if (newModes & MODE_KEY || diff & MODE_KEY) {
-        if (newModes & MODE_KEY)
-            ft::Log::info << "Mode key changed" << std::endl;
-        else if (diff & MODE_KEY)
-            ft::Log::info << "Mode key removed" << std::endl;
+        if (newModes & MODE_KEY) {
+            addSummary << "k";
+            paramsSummary << channel.getPassword() << " ";
+        }
+        else if (diff & MODE_KEY) {
+            removeSummary << "k";
+            paramsSummary << "* ";
+        }
     }
     if (newModes & MODE_LIM || diff & MODE_LIM) {
-        if (newModes & MODE_LIM)
-            ft::Log::info << "Mode limite changed" << std::endl;
-        else if (diff & MODE_LIM)
-            ft::Log::info << "Mode limite removed" << std::endl;
+        if (newModes & MODE_LIM) {
+            addSummary << "l";
+            paramsSummary << channel.getUserLimit() << " ";
+        }
+        else if (diff & MODE_LIM) {
+            removeSummary << "l";
+        }
     }
-    reply << user.getHostMask() << " MODE ";
+    reply << user.getHostMask() << " MODE "
+          << channel.getName() << " ";
+    if (!addSummary.str().empty())
+        reply << "+" << addSummary.str();
+    if (!removeSummary.str().empty())
+        reply << "-" << removeSummary.str();
+    if (!paramsSummary.str().empty())
+        reply << " " << paramsSummary.str();
+    reply << " " << channel.getNewOperators()
+          << " " << channel.getRemovedOperators();
     reply << "\r\n";
-    user.sendMessage(reply.str(), server);
+    channel.sendMessage(-1, reply.str(), server);
 }
