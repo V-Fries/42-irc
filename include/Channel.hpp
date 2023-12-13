@@ -9,11 +9,11 @@
 class Server;
 class User;
 
-#define MODE_INV (1 << 0)
-#define MODE_TOP (1 << 1)
-#define MODE_KEY (1 << 2)
-#define MODE_LIM (1 << 3)
-#define MODE_OPE (1 << 4)
+#define MODE_INVITE_ONLY (1 << 0)
+#define MODE_TOPIC_PROTECTED (1 << 1)
+#define MODE_PASSWORD (1 << 2)
+#define MODE_LIMIT (1 << 3)
+#define MODE_OPERATOR (1 << 4)
 
 class Channel {
     public:

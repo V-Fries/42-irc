@@ -38,7 +38,7 @@ Channel::Channel(const ft::String& name,
     _members.insert(&creator);
     _operators.insert(creator.getFD());
     if (_name[0] == '#')
-        _modes = MODE_TOP;
+        _modes = MODE_TOPIC_PROTECTED;
     _creationTine = std::time(NULL);
 }
 
@@ -71,7 +71,7 @@ const Channel::UserContainer&   Channel::getMembers() const {
 }
 
 void    Channel::addMember(User *newMember) throw (Channel::IsFull) {
-    if (_members.size() >= _userLimit && (_modes & MODE_LIM)) {
+    if (_members.size() >= _userLimit && (_modes & MODE_LIMIT)) {
         throw (Channel::IsFull());
     }
 
@@ -197,7 +197,7 @@ void    Channel::removeInvitedUser(const int invitedUserFD) {
 }
 
 bool Channel::isInviteOnly() const {
-    return _modes & MODE_INV;
+    return _modes & MODE_INVITE_ONLY;
 }
 
 uint8_t Channel::getModes(const uint8_t flags) const {
@@ -210,15 +210,15 @@ void Channel::addMode(const uint8_t flag,
                       const Server&server) {
     ft::String  param = *arg;
 
-    if (flag & MODE_KEY) {
+    if (flag & MODE_PASSWORD) {
         ++arg;
         _password = *arg;
     }
-    else if (flag & MODE_LIM) {
+    else if (flag & MODE_LIMIT) {
         ++arg;
         _userLimit = std::strtol(arg->c_str(), NULL, 10);
     }
-    else if (flag & MODE_OPE) {
+    else if (flag & MODE_OPERATOR) {
         ++arg;
         ft::Log::debug << "add operator: " << *arg << std::endl;
         if (!server.nicknameIsTaken(*arg)) {
@@ -238,13 +238,13 @@ void Channel::removeMode(const uint8_t flag,
                          std::vector<ft::String>::iterator& arg,
                          User& author,
                          const Server& server) {
-    if (flag & MODE_KEY) {
+    if (flag & MODE_PASSWORD) {
         ++arg;
         if (*arg != _password) {
             return;
         }
     }
-    if (flag & MODE_OPE) {
+    if (flag & MODE_OPERATOR) {
         ++arg;
         ft::Log::debug << "remove operator: " << *arg << std::endl;
         if (!server.nicknameIsTaken(*arg)) {
@@ -278,19 +278,19 @@ void Channel::setMode(User& author,
 
     switch (modeChar) {
         case 'i':
-            (this->*setter)(MODE_INV, it, author, server);
+            (this->*setter)(MODE_INVITE_ONLY, it, author, server);
             break;
         case 't':
-            (this->*setter)(MODE_TOP, it, author, server);
+            (this->*setter)(MODE_TOPIC_PROTECTED, it, author, server);
             break;
         case 'k':
-            (this->*setter)(MODE_KEY, it, author, server);
+            (this->*setter)(MODE_PASSWORD, it, author, server);
             break;
         case 'l':
-            (this->*setter)(MODE_LIM, it, author, server);
+            (this->*setter)(MODE_LIMIT, it, author, server);
             break;
         case 'o':
-            (this->*setter)(MODE_OPE, it, author, server);
+            (this->*setter)(MODE_OPERATOR, it, author, server);
         default:
             break;
     }
@@ -301,13 +301,13 @@ ft::String Channel::modesString() const {
 
     ft::Log::info << "channel " << _name << " raw modes: " << _modes << std::endl;
     modesString << "+";
-    if (_modes & MODE_TOP)
+    if (_modes & MODE_TOPIC_PROTECTED)
         modesString << "t";
-    if (_modes & MODE_INV)
+    if (_modes & MODE_INVITE_ONLY)
         modesString << "i";
-    if (_modes & MODE_KEY)
+    if (_modes & MODE_PASSWORD)
         modesString << "k";
-    if (_modes & MODE_LIM)
+    if (_modes & MODE_LIMIT)
         modesString << "l";
     return (modesString.str());
 }
@@ -315,9 +315,9 @@ ft::String Channel::modesString() const {
 ft::String Channel::modesArgs() const {
     std::stringstream   args;
 
-    if (_modes & MODE_KEY)
+    if (_modes & MODE_PASSWORD)
         args << " " << _password;
-    if (_modes & MODE_LIM)
+    if (_modes & MODE_LIMIT)
         args << " " << _userLimit;
     return (args.str());
 }

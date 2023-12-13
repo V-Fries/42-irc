@@ -72,7 +72,7 @@ static void setModes(User& user,
     }
 
     char            sign = '+';
-    const uint8_t   save = channelTarget->getModes(MODE_INV | MODE_KEY | MODE_LIM | MODE_TOP);
+    const uint8_t   save = channelTarget->getModes(MODE_INVITE_ONLY | MODE_PASSWORD | MODE_LIMIT | MODE_TOPIC_PROTECTED);
 
     for (std::vector<ft::String>::iterator arg = args.begin();
          arg < args.end();
@@ -92,7 +92,7 @@ static void setModes(User& user,
             }
         }
     }
-    sendModesSummary(user, save, channelTarget->getModes(MODE_INV | MODE_KEY | MODE_LIM | MODE_TOP), server, *channelTarget);
+    sendModesSummary(user, save, channelTarget->getModes(MODE_INVITE_ONLY | MODE_PASSWORD | MODE_LIMIT | MODE_TOPIC_PROTECTED), server, *channelTarget);
 }
 
 void sendModesSummary(User& user,
@@ -106,34 +106,34 @@ void sendModesSummary(User& user,
     std::stringstream   paramsSummary;
     uint8_t             diff = save ^ newModes;
 
-    if (diff & MODE_TOP) {
-        if (newModes & MODE_TOP)
+    if (diff & MODE_TOPIC_PROTECTED) {
+        if (newModes & MODE_TOPIC_PROTECTED)
             addSummary << "t";
         else
             removeSummary << "t";
     }
-    if (diff & MODE_INV) {
-        if (newModes & MODE_INV)
+    if (diff & MODE_INVITE_ONLY) {
+        if (newModes & MODE_INVITE_ONLY)
             addSummary << "i";
         else
             removeSummary << "i";
     }
-    if (newModes & MODE_KEY || diff & MODE_KEY) {
-        if (newModes & MODE_KEY) {
+    if (newModes & MODE_PASSWORD || diff & MODE_PASSWORD) {
+        if (newModes & MODE_PASSWORD) {
             addSummary << "k";
             paramsSummary << channel.getPassword() << " ";
         }
-        else if (diff & MODE_KEY) {
+        else if (diff & MODE_PASSWORD) {
             removeSummary << "k";
             paramsSummary << "* ";
         }
     }
-    if (newModes & MODE_LIM || diff & MODE_LIM) {
-        if (newModes & MODE_LIM) {
+    if (newModes & MODE_LIMIT || diff & MODE_LIMIT) {
+        if (newModes & MODE_LIMIT) {
             addSummary << "l";
             paramsSummary << channel.getUserLimit() << " ";
         }
-        else if (diff & MODE_LIM) {
+        else if (diff & MODE_LIMIT) {
             removeSummary << "l";
         }
     }

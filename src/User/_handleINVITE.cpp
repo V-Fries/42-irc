@@ -52,7 +52,7 @@ static bool userCanInviteAUserToThisChannel(User& user,
         return false;
     }
 
-    if (channel.getModes(MODE_INV) && !channel.isOperator(user.getFD())) {
+    if (channel.getModes(MODE_INVITE_ONLY) && !channel.isOperator(user.getFD())) {
         NumericReplies::Error::channelPrivilegesNeeded(user, server, channel);
         return false;
     }

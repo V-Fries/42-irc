@@ -25,7 +25,7 @@ void User::_handleTOPIC(Server& server, const std::vector<ft::String>& args) {
         }
         return;
     }
-    if (target->getModes(MODE_TOP) && !target->isOperator(_fd)) {
+    if (target->getModes(MODE_TOPIC_PROTECTED) && !target->isOperator(_fd)) {
         NumericReplies::Error::chanOperPrivNeeded(*this, *target, server);
         return;
     }
