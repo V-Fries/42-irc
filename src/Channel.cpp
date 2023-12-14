@@ -157,9 +157,11 @@ void Channel::addOperator(const ft::String& newOperatorNickname) {
     if ((*it)->getNickName() != newOperatorNickname) {
         return;
     }
-    _newOperators.push_back(newOperatorNickname);
+    if (!_operators.contains((*it)->getFD())) {
+        _newOperators.push_back(newOperatorNickname);
+        _operators.insert((*it)->getFD());
+    }
     _removedOperators.remove(newOperatorNickname);
-    _operators.insert((*it)->getFD());
 }
 
 void    Channel::removeOperator(const User *operatorPtr) {
@@ -178,9 +180,11 @@ void Channel::removeOperator(const ft::String& operatorNickname) {
     if ((*it)->getNickName() != operatorNickname) {
         return;
     }
-    _removedOperators.push_back(operatorNickname);
+    if (_operators.contains((*it)->getFD())) {
+        _removedOperators.push_back(operatorNickname);
+        _operators.erase((*it)->getFD());
+    }
     _newOperators.remove(operatorNickname);
-    _operators.erase((*it)->getFD());
 }
 
 
