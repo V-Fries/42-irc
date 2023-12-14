@@ -11,7 +11,7 @@ static bool isNickNameValid(User& user,
                             const ft::String& fullNickName,
                             const Server &server);
 
-void    User::_handleNICK(Server& server, const std::vector<ft::String>& args) {
+void    User::_handleNICK(Server& server, const ft::Vector<ft::String>& args) {
     ft::Log::info << "Received NICK request: " << args << " from user " << _fd
                   << std::endl;
 

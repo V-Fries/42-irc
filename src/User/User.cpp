@@ -178,7 +178,7 @@ void    User::_handleEPOLLIN(Server& server) {
 
 void    User::_processRequest(Server& server) {
 
-    std::vector<ft::String>    messages = _requestBuffer.split("\r\n");
+    ft::Vector<ft::String>    messages = _requestBuffer.split("\r\n");
     if (_requestBuffer.endsWith("\r\n")) {
         _requestBuffer = "";
         _lastIndexOfBufferWithNoDelimiters = 0;
@@ -187,7 +187,7 @@ void    User::_processRequest(Server& server) {
         _lastIndexOfBufferWithNoDelimiters = _requestBuffer.length() - 1;
         messages.pop_back();
     }
-    for (std::vector<ft::String>::iterator it = messages.begin();
+    for (ft::Vector<ft::String>::iterator it = messages.begin();
          it != messages.end();
          ++it) {
         _handleRequest(server, *it);

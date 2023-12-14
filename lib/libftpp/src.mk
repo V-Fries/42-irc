@@ -9,6 +9,8 @@ SRC	=\
 	String/toLowerOrUpper.cpp			\
 	String/vector_string_operators.cpp	\
 	\
+	ft_Vector.cpp	\
+	\
 	Exception.cpp	\
 	Io.cpp			\
 	Log.cpp

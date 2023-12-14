@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-void    User::_handlePASS(Server& server, const std::vector<ft::String>& args) {
+void    User::_handlePASS(Server& server, const ft::Vector<ft::String>& args) {
     ft::Log::info << "Received PASS request: " << args << " from user " << _fd
                   << std::endl;
 

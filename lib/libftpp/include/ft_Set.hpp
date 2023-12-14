@@ -3,7 +3,7 @@
 #include <set>
 
 namespace ft {
-    template <typename T>
+    template <typename Key>
     class Set;
 };
 

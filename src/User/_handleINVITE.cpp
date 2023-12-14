@@ -22,7 +22,7 @@ static void sendInvitationToInvitee(const User& inviter,
                                     const Server& server,
                                     const Channel& channel);
 
-void User::_handleINVITE(Server& server, const std::vector<ft::String>& args) {
+void User::_handleINVITE(Server& server, const ft::Vector<ft::String>& args) {
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "INVITE");
         return;

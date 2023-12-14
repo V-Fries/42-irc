@@ -7,14 +7,14 @@ static void sendModes(User* user, Server& server, const ft::String& target);
 static void setModes(User& user,
                      Server& server,
                      const ft::String& target,
-                     std::vector<ft::String> args);
+                     ft::Vector<ft::String> args);
 static void sendModesSummary(User& user,
                              uint8_t save,
                              uint8_t newModes,
                              const Server& server,
                              Channel& channel);
 
-void User::_handleMODE(Server& server, const std::vector<ft::String>& args) {
+void User::_handleMODE(Server& server, const ft::Vector<ft::String>& args) {
     if (args.empty()) {
         NumericReplies::Error::needMoreParameters(*this, server, "MODE");
         return;
@@ -23,7 +23,7 @@ void User::_handleMODE(Server& server, const std::vector<ft::String>& args) {
         sendModes(this, server, args[0]);
         return;
     }
-    setModes(*this, server, args[0], std::vector<ft::String>(args.begin() + 1, args.end()));
+    setModes(*this, server, args[0], ft::Vector<ft::String>(args.begin() + 1, args.end()));
 }
 
 static void sendModes(User* user, Server& server, const ft::String& target) {
@@ -51,7 +51,7 @@ static void sendModes(User* user, Server& server, const ft::String& target) {
 static void setModes(User& user,
                      Server& server,
                      const ft::String& target,
-                     std::vector<ft::String> args) {
+                     ft::Vector<ft::String> args) {
     if (target[0] != '#' && target[0] != '&') {
         if (!server.getUserByNickname(target)) {
             NumericReplies::Error::noSuchNick(user, server, target);
@@ -74,7 +74,7 @@ static void setModes(User& user,
     char            sign = '+';
     const uint8_t   save = channelTarget->getModes(MODE_INVITE_ONLY | MODE_PASSWORD | MODE_LIMIT | MODE_TOPIC_PROTECTED);
 
-    for (std::vector<ft::String>::iterator arg = args.begin();
+    for (ft::Vector<ft::String>::iterator arg = args.begin();
          arg < args.end();
          ++arg) {
         ft::Log::info << "arg: " << *arg << std::endl;

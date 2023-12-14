@@ -9,7 +9,7 @@ static void sendChannelKickMessages(const User& user,
                                     const ft::String& reason);
 
 void User::_handleKICK(Server& server,
-                       const std::vector<ft::String>& args) {
+                       const ft::Vector<ft::String>& args) {
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "KICK");
         return;
@@ -28,8 +28,8 @@ void User::_handleKICK(Server& server,
         return;
     }
 
-    std::vector<ft::String>    nicknames = args[1].split(",");
-    for (std::vector<ft::String>::const_iterator it = nicknames.begin();
+    ft::Vector<ft::String>    nicknames = args[1].split(",");
+    for (ft::Vector<ft::String>::const_iterator it = nicknames.begin();
          it != nicknames.end();
          ++it) {
         if (!channelTarget->isMember(*it)) {

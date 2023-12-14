@@ -1,17 +1,17 @@
 #include "ft_String.hpp"
 
-static std::vector<ft::String>  splitOnDelimiter(const ft::String& string,
+static ft::Vector<ft::String>  splitOnDelimiter(const ft::String& string,
                                                  const ft::String& delimiter);
-static std::vector<ft::String>  splitOnCharacterSet(const ft::String& string,
+static ft::Vector<ft::String>  splitOnCharacterSet(const ft::String& string,
                                                     const ft::String& set);
-//static std::vector<ft::String>    splitUnlessInQuotes(const ft::String& string,
+//static ft::Vector<ft::String>    splitUnlessInQuotes(const ft::String& string,
 //                                                       const ft::String& delimiter);
 
-std::vector<ft::String> ft::String::split(const String& delimiter,
+ft::Vector<ft::String> ft::String::split(const String& delimiter,
                                           const uint8_t flags) const
                                         throw(std::invalid_argument) {
     if (delimiter.empty()) {
-        std::vector<ft::String> result;
+        ft::Vector<ft::String> result;
         result.push_back(*this);
         return result;
     }
@@ -26,9 +26,9 @@ std::vector<ft::String> ft::String::split(const String& delimiter,
     }
 }
 
-static std::vector<ft::String>  splitOnDelimiter(const ft::String& string,
+static ft::Vector<ft::String>  splitOnDelimiter(const ft::String& string,
                                                  const ft::String& delimiter) {
-    std::vector<ft::String> result;
+    ft::Vector<ft::String> result;
 
     size_t  postNextDelimiter;
     for (size_t i = string.findFirstNotOfString(delimiter);
@@ -46,9 +46,9 @@ static std::vector<ft::String>  splitOnDelimiter(const ft::String& string,
     return result;
 }
 
-static std::vector<ft::String>  splitOnCharacterSet(const ft::String& string,
+static ft::Vector<ft::String>  splitOnCharacterSet(const ft::String& string,
                                                     const ft::String& set) {
-    std::vector<ft::String> result;
+    ft::Vector<ft::String> result;
 
     size_t  postNextDelimiter;
     for (size_t i = string.find_first_not_of(set);
@@ -67,9 +67,9 @@ static std::vector<ft::String>  splitOnCharacterSet(const ft::String& string,
 }
 
 //
-//static std::vector<ft::String>    splitUnlessInQuotes(const ft::String& string,
+//static ft::Vector<ft::String>    splitUnlessInQuotes(const ft::String& string,
 //                                                       const ft::String& delimiter) {
-//    std::vector<ft::String>    result;
+//    ft::Vector<ft::String>    result;
 //
 //    static_cast<void>(string);
 //    static_cast<void>(delimiter);

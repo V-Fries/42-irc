@@ -10,7 +10,7 @@ static ft::String  constructMessageToChannel(const User& sender,
                                               const Channel& receiver,
                                               const ft::String& body);
 
-void User::_handlePRIVMSG(Server& server, const std::vector<ft::String>& args) {
+void User::_handlePRIVMSG(Server& server, const ft::Vector<ft::String>& args) {
     ft::Log::info << "Received PRIVMSG request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -20,8 +20,8 @@ void User::_handlePRIVMSG(Server& server, const std::vector<ft::String>& args) {
     if (args.size() < 2) {
         NumericReplies::Error::noTextToSend(*this, server);
     }
-    std::vector<ft::String> targets = args[0].split(",");
-    for (std::vector<ft::String>::const_iterator it = targets.begin();
+    ft::Vector<ft::String> targets = args[0].split(",");
+    for (ft::Vector<ft::String>::const_iterator it = targets.begin();
          it != targets.end();
          ++it) {
         User* currUserTarget = server.getUserByNickname(*it);
