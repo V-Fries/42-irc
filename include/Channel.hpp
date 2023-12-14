@@ -1,7 +1,6 @@
 #pragma once
 
-#include "ft_Set.hpp"
-#include "ft_Exception.hpp"
+#include "ft.hpp"
 #include "Topic.hpp"
 
 #include <string>
@@ -26,7 +25,7 @@ class Channel {
         typedef ft::Set<User*>  UserContainer;
         typedef ft::Set<int>    UsersFdContainer;
         typedef void (Channel::*channelSetter)(uint8_t,
-                                               std::vector<ft::String>::iterator&,
+                                               ft::Vector<ft::String>::iterator&,
                                                User&,
                                                const Server&);
 
@@ -54,7 +53,9 @@ class Channel {
 
         const UsersFdContainer& getOperators();
         ft::String              getNewOperators();
+        size_t                  getNewOperatorsNumber() const;
         ft::String              getRemovedOperators();
+        size_t                  getRemovedOperatorsNumber() const;
         bool                    isOperator(int memberFD) const;
         void                    addOperator(const User* newOperator);
         void                    addOperator(const ft::String& newOperatorNickname);
@@ -69,19 +70,20 @@ class Channel {
         bool                    isInviteOnly() const;
 
         uint8_t     getModes(uint8_t flags) const;
+        uint8_t     getModes() const;
         void        addMode(uint8_t flag,
-                            std::vector<ft::String>::iterator& arg,
+                            ft::Vector<ft::String>::iterator& arg,
                             User& author,
                             const Server& server);
         void        removeMode(uint8_t flag,
-                               std::vector<ft::String>::iterator& arg,
+                               ft::Vector<ft::String>::iterator& arg,
                                User& author,
                                const Server& server);
         void        setMode(User& author,
                             char sign,
                             char modeChar,
-                            std::vector<ft::String>::iterator& it,
-                            std::vector<ft::String>::iterator end,
+                            ft::Vector<ft::String>::iterator& it,
+                            ft::Vector<ft::String>::iterator end,
                             const Server& server);
         ft::String  modesString() const;
         ft::String  modesArgs() const;
@@ -110,8 +112,8 @@ class Channel {
 
         UserContainer           _members;
         UsersFdContainer        _operators; // TODO use pointers
-        std::vector<ft::String> _newOperators;
-        std::vector<ft::String> _removedOperators;
+        ft::Vector<ft::String>  _newOperators;
+        ft::Vector<ft::String>  _removedOperators;
 
         UsersFdContainer    _invitedUsersFDs;
 

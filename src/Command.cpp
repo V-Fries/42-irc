@@ -3,7 +3,7 @@
 
 static ft::String               getCommand(const ft::String& rawCommand,
                                            ft::String::const_iterator& it);
-static std::vector<ft::String>  getArgs(const ft::String& rawCommand,
+static ft::Vector<ft::String>  getArgs(const ft::String& rawCommand,
                                         ft::String::const_iterator& it);
 
 Command::Command(const ft::String &rawCommand) {
@@ -18,7 +18,7 @@ const ft::String &Command::getCommand() const {
     return _command;
 }
 
-const std::vector<ft::String> &Command::getArgs() const {
+const ft::Vector<ft::String> &Command::getArgs() const {
     return _args;
 }
 
@@ -46,11 +46,11 @@ static ft::String getCommand(const ft::String& rawCommand,
     return (command);
 }
 
-std::vector<ft::String> getArgs(const ft::String& rawCommand,
+ft::Vector<ft::String> getArgs(const ft::String& rawCommand,
                                 ft::String::const_iterator& it) {
     while (it != rawCommand.end() && isspace(*it)) ++it;
     if (it == rawCommand.end()) {
-        return std::vector<ft::String>();
+        return ft::Vector<ft::String>();
     }
 
     ft::String::const_iterator currIterator = it;
@@ -58,7 +58,7 @@ std::vector<ft::String> getArgs(const ft::String& rawCommand,
             *currIterator != ':')
         ++currIterator;
 
-    std::vector<ft::String> args = ft::String(it, currIterator).split(" ");
+    ft::Vector<ft::String> args = ft::String(it, currIterator).split(" ");
 
     if (currIterator != rawCommand.end() && *currIterator == ':') {
         ++currIterator;

@@ -394,13 +394,13 @@ void NumericReplies::Reply::listEnd(User& user, Server& server) {
 }
 
 void NumericReplies::Reply::isOn(User& user,
-                                 const std::vector<ft::String>& nicknames,
+                                 const ft::Vector<ft::String>& nicknames,
                                  Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(RPL_ISON, SERVER_NAME)
           << user.getNickName() << " :";
-    for (std::vector<ft::String>::const_iterator it = nicknames.begin();
+    for (ft::Vector<ft::String>::const_iterator it = nicknames.begin();
          it != nicknames.end();
          ++it) {
         if (server.getUserByNickname(*it))

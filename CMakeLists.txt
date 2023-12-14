@@ -12,7 +12,6 @@ add_executable(webserv
 		lib/libftpp/include/ft_String.hpp
 		lib/libftpp/include/ft.hpp
 		src/main.cpp
-		lib/libftpp/src/String/join.cpp
 		lib/libftpp/src/String/split.cpp
 		lib/libftpp/src/String/split.cpp
 		lib/libftpp/src/String/vector_string_operators.cpp

@@ -2,7 +2,7 @@
 #include "User.hpp"
 
 void User::_handleISON(Server& server,
-                       const std::vector<ft::String>& args) {
+                       const ft::Vector<ft::String>& args) {
     if (args.empty()) {
         NumericReplies::Error::needMoreParameters(*this, server, "ISON");
         return;

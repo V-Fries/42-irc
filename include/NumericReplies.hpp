@@ -120,7 +120,7 @@ class NumericReplies {
                 static void listEnd(User& user, Server& server);
 
                 static void isOn(User& user,
-                                 const std::vector<ft::String>& nicknames,
+                                 const ft::Vector<ft::String>& nicknames,
                                  Server &server);
         };
 

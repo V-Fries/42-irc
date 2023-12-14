@@ -1,8 +1,9 @@
 #include "Channel.hpp"
 
+#include <algorithm>
 #include <cstdlib>
 
-#include "ft_String.hpp"
+#include "ft.hpp"
 
 #include <limits>
 #include <sstream>
@@ -12,8 +13,6 @@
 #include "NumericReplies.hpp"
 #include "Server.hpp"
 #include "User.hpp"
-
-ft::String  join(const std::vector<ft::String>& strings, char delim);
 
 // public:
 
@@ -115,11 +114,13 @@ ft::String Channel::getNewOperators() {
         return "";
     }
 
-    ft::String  newOperators = "+" + ft::String(_newOperators.size(), 'o') + " ";
-
-    newOperators += join(_newOperators, ' ');
+    ft::String  newOperators = _newOperators.join(" ");
     _newOperators.clear();
     return newOperators;
+}
+
+size_t Channel::getNewOperatorsNumber() const {
+    return _newOperators.size();
 }
 
 ft::String Channel::getRemovedOperators() {
@@ -127,12 +128,13 @@ ft::String Channel::getRemovedOperators() {
         return "";
     }
 
-    ft::String  removedOperators = "-" + ft::String(_removedOperators.size(), 'o') + " ";
-
-    removedOperators += join(_removedOperators, ' ');
-    ft::Log::debug << "removed: " << removedOperators << std::endl;
+    ft::String  removedOperators = _removedOperators.join(" ");
     _removedOperators.clear();
     return removedOperators;
+}
+
+size_t Channel::getRemovedOperatorsNumber() const {
+    return _removedOperators.size();
 }
 
 bool    Channel::isOperator(const int memberFD) const {
@@ -152,10 +154,11 @@ void Channel::addOperator(const ft::String& newOperatorNickname) {
     for (it = _members.begin();
          it != _members.end() && (*it)->getNickName() != newOperatorNickname;
          ++it) {}
-    if (it == _members.end()) {
+    if ((*it)->getNickName() != newOperatorNickname) {
         return;
     }
     _newOperators.push_back(newOperatorNickname);
+    _removedOperators.remove(newOperatorNickname);
     _operators.insert((*it)->getFD());
 }
 
@@ -176,6 +179,7 @@ void Channel::removeOperator(const ft::String& operatorNickname) {
         return;
     }
     _removedOperators.push_back(operatorNickname);
+    _newOperators.remove(operatorNickname);
     _operators.erase((*it)->getFD());
 }
 
@@ -204,8 +208,12 @@ uint8_t Channel::getModes(const uint8_t flags) const {
     return (_modes & flags);
 }
 
+uint8_t Channel::getModes() const {
+    return _modes;
+}
+
 void Channel::addMode(const uint8_t flag,
-                      std::vector<ft::String>::iterator& arg,
+                      ft::Vector<ft::String>::iterator& arg,
                       User& author,
                       const Server&server) {
     ft::String  param = *arg;
@@ -235,7 +243,7 @@ void Channel::addMode(const uint8_t flag,
 }
 
 void Channel::removeMode(const uint8_t flag,
-                         std::vector<ft::String>::iterator& arg,
+                         ft::Vector<ft::String>::iterator& arg,
                          User& author,
                          const Server& server) {
     if (flag & MODE_PASSWORD) {
@@ -263,8 +271,8 @@ void Channel::removeMode(const uint8_t flag,
 void Channel::setMode(User& author,
                       const char sign,
                       const char modeChar,
-                      std::vector<ft::String>::iterator& it,
-                      const std::vector<ft::String>::iterator end,
+                      ft::Vector<ft::String>::iterator& it,
+                      const ft::Vector<ft::String>::iterator end,
                       const Server& server) {
     channelSetter   setter = &Channel::addMode;
 
@@ -363,16 +371,4 @@ bool    Channel::_isNameCorrect(const ft::String& name) {
         }
     }
     return true;
-}
-
-ft::String  join(const std::vector<ft::String>& strings, const char delim) {
-    ft::String  joined = *strings.begin();
-
-    for (std::vector<ft::String>::const_iterator it = strings.begin() + 1;
-         it != strings.end();
-         ++it) {
-        joined += delim;
-        joined += *it;
-    }
-    return joined;
 }
