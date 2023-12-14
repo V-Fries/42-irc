@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ISocket.hpp"
-#include "ft_String.hpp"
+#include "ft.hpp"
 
 #include <stdint.h>
 #include <map>
@@ -53,7 +53,7 @@ class User : public ISocket {
         static ft::String    defaultNickname;
 
     private:
-        typedef void (User::*RequestHandler)(Server&, const std::vector<ft::String>&);
+        typedef void (User::*RequestHandler)(Server&, const ft::Vector<ft::String>&);
         typedef std::map<ft::String, RequestHandler>   RequestsHandlersMap;
 
         void    _flushMessages(Server& server);
@@ -65,21 +65,21 @@ class User : public ISocket {
 
         void    sendErrorAndDestroyUser(const ft::String& message, Server& server);
 
-        void    _handlePASS(Server& server, const std::vector<ft::String>& args);
-        void    _handleUSER(Server& server, const std::vector<ft::String>& args);
-        void    _handleNICK(Server& server, const std::vector<ft::String>& args);
-        void    _handlePRIVMSG(Server& server, const std::vector<ft::String>& args);
-        void    _handleJOIN(Server& server, const std::vector<ft::String>& args);
-        void    _handlePING(Server& server, const std::vector<ft::String>& args);
-        void    _handleWHO(Server& server, const std::vector<ft::String>& args);
-        void    _handlePART(Server& server, const std::vector<ft::String>& args);
-        void    _handleTOPIC(Server& server, const std::vector<ft::String>& args);
-        void    _handleMODE(Server& server, const std::vector<ft::String>& args);
-        void    _handleLIST(Server& server, const std::vector<ft::String>& args);
-        void    _handleISON(Server& server, const std::vector<ft::String>& args);
-        void    _handleINVITE(Server& server, const std::vector<ft::String>& args);
-        void    _handleKICK(Server& server, const std::vector<ft::String>& args);
-        void    _handleQUIT(Server& server, const std::vector<ft::String>& args);
+        void    _handlePASS(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleUSER(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleNICK(Server& server, const ft::Vector<ft::String>& args);
+        void    _handlePRIVMSG(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleJOIN(Server& server, const ft::Vector<ft::String>& args);
+        void    _handlePING(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleWHO(Server& server, const ft::Vector<ft::String>& args);
+        void    _handlePART(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleTOPIC(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleMODE(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleLIST(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleISON(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleINVITE(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleKICK(Server& server, const ft::Vector<ft::String>& args);
+        void    _handleQUIT(Server& server, const ft::Vector<ft::String>& args);
 
         void    _registerUserIfReady(Server& server);
 

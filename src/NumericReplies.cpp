@@ -394,13 +394,13 @@ void NumericReplies::Reply::listEnd(User& user, Server& server) {
 }
 
 void NumericReplies::Reply::isOn(User& user,
-                                 const std::vector<ft::String>& nicknames,
+                                 const ft::Vector<ft::String>& nicknames,
                                  Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(RPL_ISON, SERVER_NAME)
           << user.getNickName() << " :";
-    for (std::vector<ft::String>::const_iterator it = nicknames.begin();
+    for (ft::Vector<ft::String>::const_iterator it = nicknames.begin();
          it != nicknames.end();
          ++it) {
         if (server.getUserByNickname(*it))
@@ -560,10 +560,21 @@ void NumericReplies::Error::passwordMissMatch(User& user, const Server& server) 
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::unknowMode(User& user,
+                                       const char modeChar,
+                                       const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_UNKNOWNMODE, SERVER_NAME)
+          << user.getNickName() << " " << modeChar << " :is unknown mode char to me\r\n";
+
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
 ft::String NumericReplies::_constructHeader(const ft::String &numericID,
-                                             const ft::String &hostname) {
+                                            const ft::String &hostname) {
     std::stringstream   result;
 
     result << ':' << hostname << ' ' << numericID << ' ';

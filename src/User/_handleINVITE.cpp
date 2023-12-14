@@ -22,7 +22,7 @@ static void sendInvitationToInvitee(const User& inviter,
                                     const Server& server,
                                     const Channel& channel);
 
-void User::_handleINVITE(Server& server, const std::vector<ft::String>& args) {
+void User::_handleINVITE(Server& server, const ft::Vector<ft::String>& args) {
     if (args.size() < 2) {
         NumericReplies::Error::needMoreParameters(*this, server, "INVITE");
         return;
@@ -52,7 +52,7 @@ static bool userCanInviteAUserToThisChannel(User& user,
         return false;
     }
 
-    if (channel.getModes(MODE_INV) && !channel.isOperator(user.getFD())) {
+    if (channel.getModes(MODE_INVITE_ONLY) && !channel.isOperator(user.getFD())) {
         NumericReplies::Error::channelPrivilegesNeeded(user, server, channel);
         return false;
     }

@@ -49,6 +49,7 @@
 #define ERR_ALREADYREGISTERED "462"
 #define ERR_PASSWDMISMATCH "464"
 #define ERR_CHANNELISFULL "471"
+#define ERR_UNKNOWNMODE "472"
 #define ERR_INVITEONLYCHAN "473"
 #define ERR_BADCHANNELKEY "475"
 #define ERR_BADCHANMASK "476"
@@ -119,7 +120,7 @@ class NumericReplies {
                 static void listEnd(User& user, Server& server);
 
                 static void isOn(User& user,
-                                 const std::vector<ft::String>& nicknames,
+                                 const ft::Vector<ft::String>& nicknames,
                                  Server &server);
         };
 
@@ -201,9 +202,11 @@ class NumericReplies {
                                           const Channel& channel);
 
                 static void passwordMissMatch(User& user, const Server& server);
+
+                static void unknowMode(User &user, char modeChar, const Server& server);
         };
 
     private:
         static ft::String  _constructHeader(const ft::String& numericID,
-                                             const ft::String& hostname);
+                                            const ft::String& hostname);
 };

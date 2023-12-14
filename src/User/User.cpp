@@ -1,4 +1,7 @@
 #include "User.hpp"
+
+#include <cstring>
+
 #include "Server.hpp"
 #include "ft_String.hpp"
 #include "Command.hpp"
@@ -161,6 +164,7 @@ void    User::_handleEPOLLIN(Server& server) {
     if (end < 0) {
         std::stringstream   errorMessage;
         errorMessage << "Failed to read from socket " << _fd;
+        ft::Log::error << "Failed to read: " << strerror(errno) << std::endl;
         throw ft::Exception(errorMessage.str(), ft::Log::ERROR);
     }
     const ft::String stringBuffer = ft::String(rcvBuffer, end);
@@ -174,7 +178,7 @@ void    User::_handleEPOLLIN(Server& server) {
 
 void    User::_processRequest(Server& server) {
 
-    std::vector<ft::String>    messages = _requestBuffer.split("\r\n");
+    ft::Vector<ft::String>    messages = _requestBuffer.split("\r\n");
     if (_requestBuffer.endsWith("\r\n")) {
         _requestBuffer = "";
         _lastIndexOfBufferWithNoDelimiters = 0;
@@ -183,7 +187,7 @@ void    User::_processRequest(Server& server) {
         _lastIndexOfBufferWithNoDelimiters = _requestBuffer.length() - 1;
         messages.pop_back();
     }
-    for (std::vector<ft::String>::iterator it = messages.begin();
+    for (ft::Vector<ft::String>::iterator it = messages.begin();
          it != messages.end();
          ++it) {
         _handleRequest(server, *it);

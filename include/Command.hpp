@@ -10,10 +10,10 @@ class Command {
         explicit Command(const ft::String &rawCommand);
 
         const ft::String               &getCommand() const;
-        const std::vector<ft::String>  &getArgs() const;
+        const ft::Vector<ft::String>  &getArgs() const;
     private:
         ft::String                 _command;
-        std::vector<ft::String>    _args;
+        ft::Vector<ft::String>    _args;
 };
 
 std::ostream& operator<<(std::ostream& os, const Command& cmd);
