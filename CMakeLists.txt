@@ -62,5 +62,4 @@ add_executable(webserv
 		src/User/_handleKICK.cpp
 		lib/libftpp/src/String/startsOrEndsWith.cpp
 		src/User/_handleKICK.cpp
-		lib/libftpp/include/ft_Vector.hpp
-		lib/libftpp/src/ft_Vector.cpp)
+		lib/libftpp/include/ft_Vector.hpp)
