@@ -28,9 +28,9 @@ class Server {
 
         const ft::String&  getPassword() const;
 
-        int                 getEpollFD() const;
+        int getEpollFD() const;
 
-        void                addUser(User& user);
+        void    addUser(User& user);
 
         void    renameUser(User& user, const ft::String& newNickName);
 

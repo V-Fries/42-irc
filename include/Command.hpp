@@ -9,11 +9,13 @@ class Command {
     public:
         explicit Command(const ft::String &rawCommand);
 
+        const ft::String               &getAuthor() const;
         const ft::String               &getCommand() const;
         const std::vector<ft::String>  &getArgs() const;
     private:
-        ft::String                 _command;
-        std::vector<ft::String>    _args;
+        ft::String                  _author;
+        ft::String                  _command;
+        std::vector<ft::String>     _args;
 };
 
 std::ostream& operator<<(std::ostream& os, const Command& cmd);

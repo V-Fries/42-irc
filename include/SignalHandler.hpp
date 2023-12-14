@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Server.hpp"
+#include "Bot.hpp"
 
 class SignalHandler {
     public:
-        static void init(Server& server);
+        static void init(Bot& bot);
 
     private:
         static void handleSignal(int signal);
 
-        static Server*  _server;
+        static Bot*  _bot;
 };

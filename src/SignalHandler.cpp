@@ -1,14 +1,13 @@
 #include "SignalHandler.hpp"
-#include "Server.hpp"
 #include "ft_Exception.hpp"
 
 #include <csignal>
 #include <cstdlib>
 
-Server* SignalHandler::_server;
+Bot* SignalHandler::_bot;
 
-void SignalHandler::init(Server& server) {
-    _server = &server;
+void SignalHandler::init(Bot& bot) {
+    SignalHandler::_bot = &bot;
 
     struct sigaction    action;
 
@@ -27,5 +26,7 @@ void SignalHandler::init(Server& server) {
 }
 
 void     SignalHandler::handleSignal(const int signal) {
-    _server->stop(128 + signal);
+    (void) signal;
+    _bot->sendMessage("QUIT: stop sig received\r\n");
+    _bot->run();
 }

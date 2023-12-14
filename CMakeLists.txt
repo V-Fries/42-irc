@@ -62,4 +62,11 @@ add_executable(webserv
 		lib/libftpp/src/String/map.cpp
 		src/User/_handleKICK.cpp
 		lib/libftpp/src/String/startsOrEndsWith.cpp
-		src/User/_handleKICK.cpp)
+		src/User/_handleKICK.cpp
+		include/Bot.hpp
+		src/Bot/Bot.cpp
+		src/Bot/_handlePRIVMSG.cpp
+		src/Bot/_handleINVITE.cpp
+		src/Bot/_handlePRIVMSG.cpp
+		src/Bot/_handleERR_PASSWDMISMATCH.cpp
+		src/Bot/_handleIGNORE.cpp)

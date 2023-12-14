@@ -4,8 +4,8 @@
 #include "User.hpp"
 
 static ft::String  constructMessageToUser(const User& sender,
-                                           const User& receiver,
-                                           const ft::String& body);
+                                          const User& receiver,
+                                          const ft::String& body);
 static ft::String  constructMessageToChannel(const User& sender,
                                               const Channel& receiver,
                                               const ft::String& body);
@@ -27,9 +27,9 @@ void User::_handlePRIVMSG(Server& server, const std::vector<ft::String>& args) {
         User* currUserTarget = server.getUserByNickname(*it);
         Channel* currChannelTarget = server.getChannelByName(*it);
         if (currUserTarget) {
-            currUserTarget->sendMessage(constructMessageToUser(*this,
-                                                           *currUserTarget,
-                                                           args[1]),
+            currUserTarget->sendMessage(::constructMessageToUser(*this,
+                                            *currUserTarget,
+                                            args[1]),
                                     server);
         } else if (currChannelTarget) {
             ft::Log::info << "send message to channel :" << currChannelTarget->getName() << std::endl;
@@ -39,8 +39,8 @@ void User::_handlePRIVMSG(Server& server, const std::vector<ft::String>& args) {
 }
 
 static ft::String  constructMessageToUser(const User& sender,
-                                           const User& receiver,
-                                           const ft::String& body) {
+                                          const User& receiver,
+                                          const ft::String& body) {
     std::stringstream   message;
 
     message << ":" << sender.getNickName() << " PRIVMSG " <<

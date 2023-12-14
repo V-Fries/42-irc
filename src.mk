@@ -16,6 +16,12 @@ SRC	=\
 	User/_handleKICK.cpp	\
 	User/User.cpp			\
 \
+	Bot/Bot.cpp							\
+	Bot/_handleIGNORE.cpp				\
+	Bot/_handlePRIVMSG.cpp				\
+	Bot/_handleINVITE.cpp				\
+	Bot/_handleERR_PASSWDMISMATCH.cpp	\
+\
 	Channel.cpp			\
 	ListenSocket.cpp	\
 	main.cpp			\

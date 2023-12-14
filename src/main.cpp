@@ -1,33 +1,24 @@
-#include "Server.hpp"
-#include "SignalHandler.hpp"
-#include "ft.hpp"
-
 #include <limits>
 #include <sstream>
-#include <cerrno>
 #include <cstdlib>
 
-#define PASS_REQUEST_LENGTH 7
-#define MAX_PASSWORD_LENGHT (REQUEST_LENGTH_LIMIT - PASS_REQUEST_LENGTH)
+#include "Bot.hpp"
+#include "SignalHandler.hpp"
 
-static uint16_t     getPort(const ft::String& portStr);
+static uint16_t    getPort(const ft::String& portStr);
 static ft::String  getPassword(const ft::String& password);
 
-int main(const int argc, char** argv) {
-    ft::Log::setDebugLevel(ft::Log::DEBUG);
-    ft::Log::setFileToWriteTo("logs.txt");
+int main(const int ac, const char** av) {
+    // ft::Log::setDebugLevel(ft::Log::INFO);
 
-    if (argc != 3) {
-        ft::Log::critical << "Wrong number of arguments, expected:\n"
-                             "\t./ircserv PORT PASSWORD" << std::endl;
-        return 1;
+    if (ac != 3) {
+        return (1);
     }
 
     try {
-        Server  server(getPort(argv[1]), getPassword(argv[2]));
-        User::initRequestsHandlers();
-        SignalHandler::init(server);
-        server.run();
+        Bot bot = Bot(getPort(av[1]), getPassword(av[2]));
+        SignalHandler::init(bot);
+        bot.run();
     } catch (const ft::Exception& e) {
         e.printError();
         return 2;
@@ -58,12 +49,6 @@ static uint16_t getPort(const ft::String& portStr) {
 static ft::String getPassword(const ft::String& password) {
     if (password.empty()) {
         throw ft::Exception("Password argument should not be empty", ft::Log::CRITICAL);
-    }
-    if (password.size() > MAX_PASSWORD_LENGHT) {
-        std::stringstream   errorMessage;
-        errorMessage << "Password argument should be no longer than "
-                       << MAX_PASSWORD_LENGHT << " characters";
-        throw ft::Exception(errorMessage.str(), ft::Log::CRITICAL);
     }
 
     for (ft::String::const_iterator it(password.begin()); it != password.end(); ++it) {
