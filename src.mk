@@ -18,6 +18,7 @@ SRC	=\
 \
 	Channel.cpp			\
 	ListenSocket.cpp	\
+	CSVParser.cpp		\
 	main.cpp			\
 	NumericReplies.cpp	\
 	Server.cpp			\
