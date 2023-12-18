@@ -47,16 +47,16 @@ static ft::Exception    fileIsNotFormattedCorrectly(const ft::String& fileName,
 
 static void parseLine(const ft::String& line,
                       CSVParser::CSVFile& result) {
-    const std::vector<ft::String> slpittedLine = line.split(",");
+    const std::vector<ft::String> splitedLine = line.split(",");
 
-    if (slpittedLine.empty()) {
+    if (splitedLine.empty()) {
         return;
     }
-    if (slpittedLine.size() < 2) {
-        result.push_back(std::pair<ft::String, ft::String>(slpittedLine[0],
-                                                              ""));
+    if (splitedLine.size() < 2) {
+        result.push_back(std::pair<ft::String, ft::String>(splitedLine[0],
+                                                           ""));
         return;
     }
-    result.push_back(std::pair<ft::String, ft::String>(slpittedLine[0],
-                                                          slpittedLine[1]));
+    result.push_back(std::pair<ft::String, ft::String>(splitedLine[0],
+                                                       splitedLine[1]));
 }
