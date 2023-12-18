@@ -21,6 +21,10 @@ SRC	=\
 	Bot/_handlePRIVMSG.cpp				\
 	Bot/_handleINVITE.cpp				\
 	Bot/_handleERR_PASSWDMISMATCH.cpp	\
+	Bot/_handleERROR.cpp				\
+	Bot/_handleNICKERRORS.cpp			\
+	Bot/_handleWELCOME.cpp				\
+	Bot/_handleRPL_LIST.cpp				\
 \
 	Channel.cpp			\
 	ListenSocket.cpp	\

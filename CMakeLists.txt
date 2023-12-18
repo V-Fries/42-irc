@@ -69,4 +69,8 @@ add_executable(webserv
 		src/Bot/_handleINVITE.cpp
 		src/Bot/_handlePRIVMSG.cpp
 		src/Bot/_handleERR_PASSWDMISMATCH.cpp
-		src/Bot/_handleIGNORE.cpp)
+		src/Bot/_handleIGNORE.cpp
+		src/Bot/_handleERROR.cpp
+		src/Bot/_handleNICKERRORS.cpp
+		src/Bot/_handleWELCOME.cpp
+		src/Bot/_handleRPL_LIST.cpp)
