@@ -62,4 +62,6 @@ add_executable(webserv
 		lib/libftpp/src/String/map.cpp
 		src/User/_handleKICK.cpp
 		lib/libftpp/src/String/startsOrEndsWith.cpp
-		src/User/_handleKICK.cpp)
+		src/User/_handleKICK.cpp
+		include/CSVParser.hpp
+		src/CSVParser.cpp)
