@@ -2,8 +2,6 @@
 #include "ft.hpp"
 #include "NumericReplies.hpp"
 
-
-
 static ft::String  constructMessageToUser(const ft::String& sender,
                                           const ft::String& receiver,
                                           const ft::String& body);

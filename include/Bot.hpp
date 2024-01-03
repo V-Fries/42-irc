@@ -2,6 +2,8 @@
 #include <map>
 #include <queue>
 #include <sys/epoll.h>
+#include <algorithm>
+#include <sstream>
 
 #include "ft.hpp"
 
