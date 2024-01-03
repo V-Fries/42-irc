@@ -25,9 +25,15 @@ void Bot::_handlePRIVMSG(const ft::String& author, const std::vector<ft::String>
                                                  (args.end() - 1)->c_str() + 7,
                                                  "");
         }
-        if ((args.end() - 1)->find("epitech > 42") != ft::String::npos) {
-            reply = ::constructMessageToKickUser("bot", *args.begin(),
-                                                  author, "42 is better my boy");
+        for (std::vector< std::pair<ft::String, ft::String> >::const_iterator it = _kickWords.begin();
+             it != _kickWords.end();
+             ++it) {
+            if ((args.end() - 1)->find(it->first) != ft::String::npos) {
+                reply = ::constructMessageToKickUser("bot",
+                                                     *args.begin(),
+                                                     author,
+                                                     it->second);
+            }
         }
     }
     this->sendMessage(reply);
@@ -55,7 +61,6 @@ static ft::String  constructMessageToKickUser(const ft::String& sender,
         message << " :" << reason;
     }
     std::cout << "kick message: " << message.str() << std::endl;
-    std::cout << "reason: " << reason << std::endl;
     message << "\r\n";
     return (message.str());
 }
