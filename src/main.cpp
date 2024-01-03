@@ -4,20 +4,23 @@
 
 #include "Bot.hpp"
 #include "SignalHandler.hpp"
+#include "CSVParser.hpp"
 
 static uint16_t    getPort(const ft::String& portStr);
 static ft::String  getPassword(const ft::String& password);
 
 int main(const int ac, const char** av) {
-    // ft::Log::setDebugLevel(ft::Log::INFO);
+    ft::Log::setDebugLevel(ft::Log::INFO);
+    const std::vector< std::pair<ft::String, ft::String> > kickWords = CSVParser::parseCSVFile("./words.csv", ft::Log::WARNING);
 
-    if (ac != 3) {
-        return (1);
+    if (ac < 4) {
+        return 1;
     }
 
     try {
-        Bot bot = Bot(getPort(av[1]), getPassword(av[2]));
+        Bot bot = Bot(av[1], getPort(av[2]), getPassword(av[3]), kickWords);
         SignalHandler::init(bot);
+        bot.addNickname("bot");
         bot.run();
     } catch (const ft::Exception& e) {
         e.printError();

@@ -14,11 +14,16 @@
 #include "ft_String.hpp"
 #include "NumericReplies.hpp"
 
-Bot::Bot(const uint16_t port, const ft::String& password) {
-    _serverPassword = password;
-    _lastIndexOfBufferWithNoDelimiters = 0;
-    _connected = false;
-
+Bot::Bot(const ft::String& serverIp,
+         const uint16_t port,
+         const ft::String& password,
+         const std::vector< std::pair<ft::String, ft::String> >& kickWords):
+                                        _serverPassword(password),
+                                        _connected(false),
+                                        _registered(false),
+                                        _lastIndexOfBufferWithNoDelimiters(0),
+                                        _kickWords(kickWords) {
+    ft::Log::info << "Construct bot" << std::endl;
     _epollFd = epoll_create1(0);
     if (_epollFd == -1) {
         ft::Log::error << "Failed to create epoll fd: " << strerror(errno) << std::endl;
@@ -34,11 +39,13 @@ Bot::Bot(const uint16_t port, const ft::String& password) {
     }
 
     struct sockaddr_in addr = {};
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    addr.sin_addr.s_addr = inet_addr(serverIp.c_str());
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     if (connect(_sockfd, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == -1) {
-        ft::Log::error << "Failed to connect to " << "127.0.0.1" << ":" << port << " : " << strerror(errno) << std::endl;
+        ft::Log::error << "Failed to connect to " << serverIp
+                       << ":" << port
+                       << " : " << strerror(errno) << std::endl;
         close(_sockfd);
         _sockfd = -1;
         close(_epollFd);
@@ -54,6 +61,7 @@ Bot::Bot(const uint16_t port, const ft::String& password) {
         close(_epollFd);
         return;
     }
+
     this->initRequestsHandlers();
     _connected = true;
 }
@@ -62,12 +70,22 @@ void    Bot::initRequestsHandlers() {
     ft::Log::debug << "Initializing Bot::_requestsHandlers" << std::endl;
     _requestsHandlers["PRIVMSG"] = &Bot::_handlePRIVMSG;
     _requestsHandlers["INVITE"] = &Bot::_handleINVITE;
+    _requestsHandlers["JOIN"] = &Bot::_handleJOIN;
+    _requestsHandlers["ERROR"] = &Bot::_handleERROR;
+    _requestsHandlers["PART"] = &Bot::_handlePART;
+    _requestsHandlers["KICK"] = &Bot::_handleKICK;
+    _requestsHandlers["QUIT"] = &Bot::_handleQUIT;
+    _requestsHandlers[RPL_WELCOME] = &Bot::_handleWELCOME;
+    _requestsHandlers[RPL_LIST] = &Bot::_handleRPL_LIST;
+    _requestsHandlers[RPL_NAMREPLY] = &Bot::_handleRPL_NAMREPLY;
+    _requestsHandlers[ERR_NONICKNAMEGIVEN] = &Bot::_handleNICKERRORS;
+    _requestsHandlers[ERR_ERRONEUSNICKNAME] = &Bot::_handleNICKERRORS;
+    _requestsHandlers[ERR_NICKNAMEINUSE] = &Bot::_handleNICKERRORS;
     _requestsHandlers[ERR_PASSWDMISMATCH] = &Bot::_handleERR_PASSWDMISMATCH;
-    _requestsHandlers[RPL_WELCOME] = &Bot::_handleIGNORE;
 }
 
 void Bot::initConnection() {
-    this->sendMessage("PASS " + _serverPassword + "\r\nNICK bot\r\nUSER a b c d\r\n");
+    this->sendMessage("PASS " + _serverPassword + "\r\nNICK " + _nicknames.front() + "\r\nUSER a b c d\r\n");
 }
 
 Bot::~Bot() {
@@ -145,7 +163,6 @@ void    Bot::_handleRequest(const ft::String& request) {
 }
 
 void Bot::sendMessage(const ft::String &message) {
-
     _messagesBuffer.push(message);
 
     struct epoll_event  event = {};
@@ -155,6 +172,18 @@ void Bot::sendMessage(const ft::String &message) {
         ft::Log::error << "Failed to make fd " << _sockfd << " wait for EPOLLOUT" << std::endl;
     } else {
         ft::Log::info << "fd " << _sockfd << " now waits for EPOLLOUT" << std::endl;
+    }
+}
+
+void Bot::addNickname(const ft::String& nickname) {
+    _nicknames.push(nickname);
+}
+
+void Bot::addNicknames(const std::vector<ft::String>& nicknames) {
+    for (std::vector<ft::String>::const_iterator it = nicknames.begin();
+         it != nicknames.end();
+         ++it) {
+        _nicknames.push(*it);
     }
 }
 
@@ -182,5 +211,29 @@ void Bot::_flushMessages() {
                            << std::endl;
     } else {
         ft::Log::info << "fd " << _sockfd << " stopped waiting for EPOLLOUT" << std::endl;
+    }
+}
+
+void Bot::_removeSomeone(const ft::String& nickname) {
+    if (nickname == _nicknames.front())
+        return;
+
+    for (std::map< ft::String, std::vector<ft::String> >::iterator channel = _channels.begin();
+         channel != _channels.end();
+         ++channel) {
+        _removeSomeone(nickname, channel->first);
+    }
+}
+
+void Bot::_removeSomeone(const ft::String& nickname, const ft::String& channelName) {
+    if (nickname == _nicknames.front())
+        return;
+
+    std::vector<ft::String>&    channel = _channels.at(channelName);
+
+    channel.erase(std::remove(channel.begin(), channel.end(), nickname), channel.end());
+    if (channel.size() == 1) {
+        this->sendMessage("PART " + channelName + "\r\nf");
+        _channels.erase(channelName);
     }
 }
