@@ -27,6 +27,6 @@ void SignalHandler::init(Bot& bot) {
 
 void     SignalHandler::handleSignal(const int signal) {
     (void) signal;
-    _bot->sendMessage("QUIT: stop sig received\r\n");
+    _bot->sendMessage("QUIT:stop sig received\r\n");
     _bot->run();
 }
