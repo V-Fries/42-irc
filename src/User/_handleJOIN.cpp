@@ -67,7 +67,7 @@ static Channel* createNewChannel(User& user,
                                  const ft::String& password) {
     try {
         Channel*    newChannel = new Channel(newChannelName, password, user);
-        server.addChannel(*newChannel);
+        server.addChannel(newChannel);
         return newChannel;
     } catch (Channel::IncorrectName&) {
         NumericReplies::Error::badChannelMask(user, server, newChannelName);

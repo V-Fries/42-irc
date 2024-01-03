@@ -37,7 +37,6 @@ const ft::String&  Channel::getName() const {
     return _name;
 }
 
-
 const ft::String&  Channel::getPassword() const {
     return _password;
 }
@@ -45,7 +44,6 @@ const ft::String&  Channel::getPassword() const {
 void    Channel::setPassword(const ft::String& newPassword) {
     _password = newPassword;
 }
-
 
 const Topic& Channel::getTopic() const {
     return _topic;
@@ -55,7 +53,6 @@ void    Channel::setTopic(const ft::String& newTopic,
                           const ft::String& author) {
     _topic.setContent(newTopic, author);
 }
-
 
 const Channel::UserContainer&   Channel::getMembers() const {
     return _members;
