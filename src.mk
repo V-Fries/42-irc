@@ -1,37 +1,20 @@
 SRC	=\
-	User/_handleINVITE.cpp	\
-	User/_handleNICK.cpp	\
-	User/_handlePASS.cpp	\
-	User/_handleUSER.cpp	\
-	User/_handlePRIVMSG.cpp	\
-	User/_handleJOIN.cpp	\
-	User/_handlePING.cpp	\
-	User/_handleWHO.cpp		\
-	User/_handlePART.cpp	\
-	User/_handleQUIT.cpp	\
-	User/_handleTOPIC.cpp	\
-	User/_handleMODE.cpp	\
-	User/_handleLIST.cpp	\
-	User/_handleISON.cpp	\
-	User/_handleKICK.cpp	\
-	User/User.cpp			\
-\
 	Bot/Bot.cpp							\
 	Bot/_handleIGNORE.cpp				\
 	Bot/_handlePRIVMSG.cpp				\
 	Bot/_handleINVITE.cpp				\
+	Bot/_handleJOIN.cpp					\
 	Bot/_handleERR_PASSWDMISMATCH.cpp	\
 	Bot/_handleERROR.cpp				\
 	Bot/_handleNICKERRORS.cpp			\
 	Bot/_handleWELCOME.cpp				\
 	Bot/_handleRPL_LIST.cpp				\
+	Bot/_handleRPL_NAMREPLY.cpp			\
+	Bot/_handleQUIT.cpp					\
+	Bot/_handleKICK.cpp					\
+	Bot/_handlePART.cpp					\
 \
-	Channel.cpp			\
-	ListenSocket.cpp	\
 	CSVParser.cpp		\
 	main.cpp			\
-	NumericReplies.cpp	\
-	Server.cpp			\
 	SignalHandler.cpp	\
 	Command.cpp			\
-	Topic.cpp			\
