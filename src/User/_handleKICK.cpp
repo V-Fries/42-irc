@@ -37,6 +37,8 @@ void User::_handleKICK(Server& server,
         } else {
             sendChannelKickMessages(*this, server, *channelTarget, *it, args[2]);
             channelTarget->removeMember(server.getUserByNickname(*it));
+            if (channelTarget->getMembers().empty())
+                server.removeChannel(channelTarget->getName());
         }
     }
 }

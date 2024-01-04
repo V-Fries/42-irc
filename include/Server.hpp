@@ -46,8 +46,8 @@ class Server {
         size_t              getPeakRegisteredUserCount() const;
 
         size_t              getNbOfChannels() const;
-        void                addChannel(Channel& channel);
-        void                removeChannel(Channel& channel);
+        void                addChannel(Channel* channel);
+        void                removeChannel(const ft::String& channelName);
         Channel*            getChannelByName(const ft::String& name);
         const ChannelMap&   getChannels() const;
         void                addUserToChannel(const ft::String& channel,

@@ -126,6 +126,8 @@ void    Server::_removeUser(User& user) {
     ft::Log::info << "User " << user.getFD() << " disconnected" << std::endl;
     for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) { // TODO once user has a list of channels they are a member of we'll be able to use that instead
         it->second->removeMember(&user);
+        if (it->second->getMembers().empty())
+            this->removeChannel(it->second->getName());
         it->second->removeOperator(user.getFD());
         it->second->removeInvitedUser(user.getFD());
     }
@@ -173,13 +175,18 @@ size_t  Server::getNbOfChannels() const {
     return _channels.size();
 }
 
-void Server::addChannel(Channel& channel) {
-    _channels[channel.getName()] = &channel;
+void Server::addChannel(Channel* channel) {
+    if (!channel)
+        return;
+
+    _channels[channel->getName()] = channel;
 }
 
-void Server::removeChannel(Channel& channel) {
-    _channels.erase(channel.getName());
-    delete &channel;
+void Server::removeChannel(const ft::String& channelName) {
+    Channel*    channel = _channels.at(channelName);
+
+    _channels.erase(channelName);
+    delete channel;
 }
 
 Channel* Server::getChannelByName(const ft::String& name) {
