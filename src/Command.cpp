@@ -1,6 +1,8 @@
 #include "Command.hpp"
 #include "ft.hpp"
 
+static ft::String               getAuthor(const ft::String& rawCommand,
+                                           ft::String::const_iterator& it);
 static ft::String               getCommand(const ft::String& rawCommand,
                                            ft::String::const_iterator& it);
 static std::vector<ft::String>  getArgs(const ft::String& rawCommand,
@@ -9,9 +11,17 @@ static std::vector<ft::String>  getArgs(const ft::String& rawCommand,
 Command::Command(const ft::String &rawCommand) {
     ft::String::const_iterator  it = rawCommand.begin();
 
+    while (it != rawCommand.end() && isspace(*it)) ++it;
+    if (it != rawCommand.end() && *it == ':')
+        _author = ::getAuthor(rawCommand, it);
+
     _command = ::getCommand(rawCommand, it);
 
     _args = ::getArgs(rawCommand, it);
+}
+
+const ft::String& Command::getAuthor() const {
+    return _author;
 }
 
 const ft::String &Command::getCommand() const {
@@ -28,11 +38,25 @@ std::ostream& operator<<(std::ostream& os, const Command& cmd) {
     return os;
 }
 
+ft::String getAuthor(const ft::String& rawCommand,
+    ft::String::const_iterator& it) {
+    ft::String  author;
+
+    if (it != rawCommand.end() && *it == ':') {
+        ++it;
+        author = ft::String::getFirstWord(it,
+                                          rawCommand.end(),
+                                          " ");
+        it += author.length();
+        author = ft::String::getFirstWord(author.begin(),
+                                          author.end(),
+                                          "! ");
+    }
+    return (author);
+}
+
 static ft::String getCommand(const ft::String& rawCommand,
                              ft::String::const_iterator& it) {
-    while (it != rawCommand.end() && isspace(*it)) ++it;
-    if (it != rawCommand.end() && *it == ':')
-        while (it != rawCommand.end() && !isspace(*it)) ++it;
     while (it != rawCommand.end() && isspace(*it)) ++it;
     if (it == rawCommand.end()) {
         it = rawCommand.end();
