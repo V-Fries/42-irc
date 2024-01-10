@@ -124,7 +124,7 @@ epoll_event Server::getBaseUserEpollEvent(const int userFD) {
 
 void    Server::_removeUser(User& user) {
     ft::Log::info << "User " << user.getFD() << " disconnected" << std::endl;
-    for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) { // TODO once user has a list of channels they are a member of we'll be able to use that instead
+    for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         it->second->removeMember(&user);
         if (it->second->getMembers().empty())
             this->removeChannel(it->second->getName());

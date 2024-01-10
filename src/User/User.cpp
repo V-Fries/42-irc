@@ -158,9 +158,7 @@ void User::sendMessageToConnections(const ft::String& message, const Server& ser
 void    User::_handleEPOLLIN(Server& server) {
     char        rcvBuffer[2049];
 
-    const ssize_t end = recv(_fd, rcvBuffer, 2048, 0); // TODO should EPOLLET be removed temporally
-    // TODO if we failed to read the whole
-    // TODO request in one go?
+    const ssize_t end = recv(_fd, rcvBuffer, 2048, 0);
     if (end < 0) {
         std::stringstream   errorMessage;
         errorMessage << "Failed to read from socket " << _fd;
