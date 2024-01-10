@@ -22,7 +22,9 @@ class Server {
         typedef ft::String                     ChannelName;
         typedef std::map<ChannelName, Channel*> ChannelMap;
 
-        Server(uint16_t port, const ft::String& password);
+        Server(uint16_t port,
+               const ft::String& password,
+               const ft::String& pathToBinary);
 
         ~Server();
 
@@ -59,6 +61,8 @@ class Server {
         void    run();
         void    stop(int exitCode);
 
+        const ft::String&   getPathToMOTD() const;
+
     private:
         void        _closeSocket(int fd, bool isListenSocket) const;
         static void _closeFd(int fd);
@@ -86,6 +90,8 @@ class Server {
         std::queue<User*>   _usersToDestroy;
 
         size_t          _peakRegisteredUserCount;
+
+        const ft::String    _pathToMOTD;
 
         ChannelMap  _channels;
 };
