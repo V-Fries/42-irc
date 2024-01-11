@@ -6,14 +6,19 @@
 #include <cstdlib>
 #include <algorithm>
 
-Server::Server(const uint16_t port, const ft::String& password):
+#define PATH_TO_MOTD "data/MOTD.txt"
+
+Server::Server(const uint16_t port,
+               const ft::String& password,
+               const ft::String& pathToBinary):
     _password(password),
     _epollFD(epoll_create1(0)),
     _listenSocketFD(-1),
     _events(NULL),
     _shouldUpdateEventsSize(true),
     _numberOfEvents(0),
-    _peakRegisteredUserCount(0) {
+    _peakRegisteredUserCount(0),
+    _pathToMOTD(ft::String(pathToBinary.c_str(), pathToBinary.rfind('/') + 1) + PATH_TO_MOTD) {
     ft::Log::debug << "Server constructor called" << std::endl;
     if (_epollFD == -1) {
         throw ft::Exception("epoll failed to be created", ft::Log::CRITICAL);
@@ -284,4 +289,8 @@ void    Server::stop(const int exitCode) {
     ft::Log::info << "Stopping server" << std::endl;
     this->~Server();
     std::exit(exitCode);
+}
+
+const ft::String&   Server::getPathToMOTD() const {
+    return _pathToMOTD;
 }
