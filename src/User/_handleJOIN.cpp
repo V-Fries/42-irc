@@ -87,7 +87,7 @@ static int joinExistingChannel(User&user,
         return -1;
     }
 
-    if (password != channel.getPassword()) {
+    if (channel.getModes(MODE_PASSWORD) && password != channel.getPassword()) {
         NumericReplies::Error::badChannelKey(user, server, channel);
         return -1;
     }
