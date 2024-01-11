@@ -80,7 +80,7 @@ static int joinExistingChannel(User&user,
                                Channel&channel,
                                const ft::String&password) {
     if (channel.isMember(user.getFD())) {
-        return -1; // TODO check if we should send a numeric
+        return -1;
     }
     if (channel.isInviteOnly() && !channel.wasUserInvited(user.getFD())) {
         NumericReplies::Error::inviteOnlyChannel(user, server, channel);

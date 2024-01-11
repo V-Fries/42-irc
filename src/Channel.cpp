@@ -187,7 +187,7 @@ size_t  Channel::getUserLimit() const {
 void    Channel::setUserLimit(const size_t newUserLimit)
             throw (Channel::HasMoreUserThanNewLimit) {
     if (_members.size() >= newUserLimit) {
-        throw (Channel::HasMoreUserThanNewLimit()); // TODO need to check RFC to see expected behaviour
+        throw (Channel::HasMoreUserThanNewLimit());
     }
 
     _userLimit = newUserLimit;

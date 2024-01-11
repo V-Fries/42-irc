@@ -42,7 +42,7 @@ class Channel {
         void                    addMember(User* newMember)
                                     throw (Channel::IsFull);
         void                    removeMember(User* member);
-        bool                    isMember(int memberFD) const; // TODO remove this
+        bool                    isMember(int memberFD) const;
         bool                    isMember(const ft::String& nickname) const;
         bool                    isMember(const User* member) const;
 
@@ -88,7 +88,7 @@ class Channel {
         Topic   _topic;
 
         UserContainer       _members;
-        UsersFdContainer    _operators; // TODO use pointers
+        UsersFdContainer    _operators;
 
         UsersFdContainer    _invitedUsersFDs;
 
