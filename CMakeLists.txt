@@ -12,7 +12,6 @@ add_executable(webserv
 		lib/libftpp/include/ft_String.hpp
 		lib/libftpp/include/ft.hpp
 		src/main.cpp
-		lib/libftpp/src/String/join.cpp
 		lib/libftpp/src/String/split.cpp
 		lib/libftpp/src/String/split.cpp
 		lib/libftpp/src/String/vector_string_operators.cpp
@@ -62,4 +61,5 @@ add_executable(webserv
 		lib/libftpp/src/String/map.cpp
 		src/User/_handleKICK.cpp
 		lib/libftpp/src/String/startsOrEndsWith.cpp
-		src/User/_handleKICK.cpp)
+		src/User/_handleKICK.cpp
+		lib/libftpp/include/ft_Vector.hpp)

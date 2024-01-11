@@ -6,14 +6,19 @@
 #include <cstdlib>
 #include <algorithm>
 
-Server::Server(const uint16_t port, const ft::String& password):
+#define PATH_TO_MOTD "data/MOTD.txt"
+
+Server::Server(const uint16_t port,
+               const ft::String& password,
+               const ft::String& pathToBinary):
     _password(password),
     _epollFD(epoll_create1(0)),
     _listenSocketFD(-1),
     _events(NULL),
     _shouldUpdateEventsSize(true),
     _numberOfEvents(0),
-    _peakRegisteredUserCount(0) {
+    _peakRegisteredUserCount(0),
+    _pathToMOTD(ft::String(pathToBinary.c_str(), pathToBinary.rfind('/') + 1) + PATH_TO_MOTD) {
     ft::Log::debug << "Server constructor called" << std::endl;
     if (_epollFD == -1) {
         throw ft::Exception("epoll failed to be created", ft::Log::CRITICAL);
@@ -126,6 +131,8 @@ void    Server::_removeUser(User& user) {
     ft::Log::info << "User " << user.getFD() << " disconnected" << std::endl;
     for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         it->second->removeMember(&user);
+        if (it->second->getMembers().empty())
+            this->removeChannel(it->second->getName());
         it->second->removeOperator(user.getFD());
         it->second->removeInvitedUser(user.getFD());
     }
@@ -173,13 +180,18 @@ size_t  Server::getNbOfChannels() const {
     return _channels.size();
 }
 
-void Server::addChannel(Channel& channel) {
-    _channels[channel.getName()] = &channel;
+void Server::addChannel(Channel* channel) {
+    if (!channel)
+        return;
+
+    _channels[channel->getName()] = channel;
 }
 
-void Server::removeChannel(Channel& channel) {
-    _channels.erase(channel.getName());
-    delete &channel;
+void Server::removeChannel(const ft::String& channelName) {
+    Channel*    channel = _channels.at(channelName);
+
+    _channels.erase(channelName);
+    delete channel;
 }
 
 Channel* Server::getChannelByName(const ft::String& name) {
@@ -277,4 +289,8 @@ void    Server::stop(const int exitCode) {
     ft::Log::info << "Stopping server" << std::endl;
     this->~Server();
     std::exit(exitCode);
+}
+
+const ft::String&   Server::getPathToMOTD() const {
+    return _pathToMOTD;
 }

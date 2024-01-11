@@ -1,7 +1,7 @@
 #pragma once
 
+#include "ft_Vector.hpp"
 #include <ostream>
-#include <vector>
 #include <stdexcept>
 #include <stdint.h>
 
@@ -42,7 +42,7 @@ class ft::String : public std::string {
         String(InputIterator first, InputIterator last):
             std::string(first, last) {}
 
-        static String   join(const std::vector<String>& strings,
+        static String   join(const ft::Vector<String>& strings,
                              const String& separator);
 
         ///
@@ -51,7 +51,7 @@ class ft::String : public std::string {
         ///              will split on each chars of the delimiter ignoring the chars
         ///              that are between quotes
         /// \return
-        std::vector<String> split(const String& delimiter,
+        ft::Vector<String> split(const String& delimiter,
                                   uint8_t flags = 0) const
                                 throw(std::invalid_argument);
 
@@ -105,10 +105,10 @@ class ft::String : public std::string {
         static void toUpper(iterator start, const_iterator end);
 };
 
-std::ostream&   operator<<(std::ostream& os, const std::vector<ft::String>& strings);
+std::ostream&   operator<<(std::ostream& os, const ft::Vector<ft::String>& strings);
 
-std::vector<ft::String> operator+(const std::vector<ft::String>& leftValue,
-                                  const std::vector<ft::String>& rightValue);
+ft::Vector<ft::String> operator+(const ft::Vector<ft::String>& leftValue,
+                                  const ft::Vector<ft::String>& rightValue);
 
-std::vector<ft::String>&    operator+=(std::vector<ft::String>& leftValue,
-                                       const std::vector<ft::String>& rightValue);
+ft::Vector<ft::String>&    operator+=(ft::Vector<ft::String>& leftValue,
+                                       const ft::Vector<ft::String>& rightValue);

@@ -9,7 +9,7 @@
 
 static ft::String getRealName(int fd, const ft::String& userSetRealName);
 
-void    User::_handleUSER(Server& server, const std::vector<ft::String>& args) {
+void    User::_handleUSER(Server& server, const ft::Vector<ft::String>& args) {
     ft::Log::info << "Received USER request: " << args << " from user " << _fd
                   << std::endl;
 

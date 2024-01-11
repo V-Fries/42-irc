@@ -19,7 +19,7 @@ static void sendChannelPartMessages(const User& user,
                                     const Server& server,
                                     const Channel& channel);
 
-void User::_handlePART(Server& server, const std::vector<ft::String>& args) {
+void User::_handlePART(Server& server, const ft::Vector<ft::String>& args) {
     ft::Log::info << "Received PART request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -28,8 +28,8 @@ void User::_handlePART(Server& server, const std::vector<ft::String>& args) {
         return;
     }
 
-    std::vector<ft::String> channelsNames = args[0].split(",");
-    for (std::vector<ft::String>::const_iterator it = channelsNames.begin(); it != channelsNames.end(); ++it) {
+    ft::Vector<ft::String> channelsNames = args[0].split(",");
+    for (ft::Vector<ft::String>::const_iterator it = channelsNames.begin(); it != channelsNames.end(); ++it) {
         if (args.size() > 1)
             processCurrentChannel(*it, this, server, args[1]);
         else
@@ -53,7 +53,7 @@ void processCurrentChannel(const ft::String& channelName,
     sendChannelPartMessages(*user, server, *channel);
     channel->removeMember(user);
     if (channel->getMembers().empty()) {
-        server.removeChannel(*channel);
+        server.removeChannel(channel->getName());
     }
 }
 
@@ -74,7 +74,7 @@ void processCurrentChannel(const ft::String& channelName,
     sendChannelPartMessages(*user, server, *channel, reason);
     channel->removeMember(user);
     if (channel->getMembers().empty()) {
-        server.removeChannel(*channel);
+        server.removeChannel(channel->getName());
     }
 }
 

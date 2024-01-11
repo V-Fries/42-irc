@@ -17,7 +17,7 @@ static void sendChannelWelcomeMessages(User& user,
                                        const Server& server,
                                        Channel& channel);
 
-void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
+void User::_handleJOIN(Server& server, const ft::Vector<ft::String>& args) {
     ft::Log::info << "Received JOIN request: " << args << " from user " << _fd
                   << std::endl;
 
@@ -26,8 +26,8 @@ void User::_handleJOIN(Server& server, const std::vector<ft::String>& args) {
         return;
     }
 
-    const std::vector<ft::String>   channelsNames = args[0].split(",");
-    std::vector<ft::String>         channelsPasswords;
+    const ft::Vector<ft::String>   channelsNames = args[0].split(",");
+    ft::Vector<ft::String>         channelsPasswords;
 
     if (args.size() > 1)
         channelsPasswords = args[1].split(",");
@@ -67,7 +67,7 @@ static Channel* createNewChannel(User& user,
                                  const ft::String& password) {
     try {
         Channel*    newChannel = new Channel(newChannelName, password, user);
-        server.addChannel(*newChannel);
+        server.addChannel(newChannel);
         return newChannel;
     } catch (Channel::IncorrectName&) {
         NumericReplies::Error::badChannelMask(user, server, newChannelName);

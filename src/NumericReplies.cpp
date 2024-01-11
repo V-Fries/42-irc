@@ -11,9 +11,6 @@
 #define SERVER_VERSION "0.1"
 #define CREATION_DATE "November the 9th of 2023"
 
-#define PATH_TO_MOTD "data/MOTD.txt" // TODO this path only works if IRC binary
-                                     // TODO is in the current working directory
-
 // Reply
 
 void    NumericReplies::Reply::welcome(User& user, const Server& server) {
@@ -121,10 +118,10 @@ void    NumericReplies::Reply::messageOfTheDay(User& user, const Server& server)
     reply << _constructHeader(RPL_MOTDSTART, SERVER_NAME) << user.getNickName()
             << " :- " SERVER_NAME " Message of the day - \r\n";
 
-    std::ifstream   file(PATH_TO_MOTD);
+    std::ifstream   file(server.getPathToMOTD().c_str());
     if (!file.is_open()) {
         reply << _constructHeader(RPL_MOTD, SERVER_NAME) << user.getNickName()
-                << " :Failed to open file " PATH_TO_MOTD "\r\n";
+                << " :Failed to open file " << server.getPathToMOTD() << "\r\n";
     } else {
         ft::String line;
         while (std::getline(file, line)) {
@@ -394,13 +391,13 @@ void NumericReplies::Reply::listEnd(User& user, Server& server) {
 }
 
 void NumericReplies::Reply::isOn(User& user,
-                                 const std::vector<ft::String>& nicknames,
+                                 const ft::Vector<ft::String>& nicknames,
                                  Server& server) {
     std::stringstream   reply;
 
     reply << _constructHeader(RPL_ISON, SERVER_NAME)
           << user.getNickName() << " :";
-    for (std::vector<ft::String>::const_iterator it = nicknames.begin();
+    for (ft::Vector<ft::String>::const_iterator it = nicknames.begin();
          it != nicknames.end();
          ++it) {
         if (server.getUserByNickname(*it))
@@ -560,10 +557,21 @@ void NumericReplies::Error::passwordMissMatch(User& user, const Server& server) 
     user.sendMessage(reply.str(), server);
 }
 
+void NumericReplies::Error::unknowMode(User& user,
+                                       const char modeChar,
+                                       const Server& server) {
+    std::stringstream   reply;
+
+    reply << _constructHeader(ERR_UNKNOWNMODE, SERVER_NAME)
+          << user.getNickName() << " " << modeChar << " :is unknown mode char to me\r\n";
+
+    user.sendMessage(reply.str(), server);
+}
+
 // _constructHeader
 
 ft::String NumericReplies::_constructHeader(const ft::String &numericID,
-                                             const ft::String &hostname) {
+                                            const ft::String &hostname) {
     std::stringstream   result;
 
     result << ':' << hostname << ' ' << numericID << ' ';
