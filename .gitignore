@@ -37,6 +37,7 @@ logs.txt
 ircserv
 ircserv_debug1
 ircserv_debug2
+ircbot
 *.exe
 *.out
 *.app

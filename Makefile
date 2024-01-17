@@ -1,11 +1,25 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: beroux <beroux@student.42lyon.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/01/17 14:13:58 by beroux            #+#    #+#              #
+#    Updated: 2024/01/17 14:17:05 by beroux           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 DEBUG					=	0
 
+BOT_NAME				=	ircbot
 BASE_NAME				=	ircserv
 BUILD_ROOT				=	.build/
 NAMES =\
 	$(BASE_NAME)		\
 	$(BASE_NAME)_debug1	\
-	$(BASE_NAME)_debug2
+	$(BASE_NAME)_debug2 \
+	$(BOT_NAME)
 ARGS = 6667 password
 ifeq ($(DEBUG), 0)
 	NAME				=	$(BASE_NAME)
@@ -91,6 +105,7 @@ $(NAME):	$(OBJS)
 clean:
 		$(MAKE_LIBFTPP) clean
 		$(RM) $(BUILD_ROOT)
+		$(MAKE) -C bot/ clean
 
 .PHONY:	fclean
 fclean:	clean
@@ -133,3 +148,9 @@ re:		fclean
 $(DIR_BUILD)%.o : $(SRC_PATH)%.cpp $(LIBFTPP_A)
 		@mkdir -p $(shell dirname $@)
 		$(CXX) $(CPPFLAGS) $(DEPS_FLAGS) $(INCLUDES) -c $< -o $@
+
+.PHONY: bonus
+bonus: $(BOT_NAME)
+
+$(BOT_NAME):
+	$(MAKE) -C bot/ && mv bot/ircbot ./
