@@ -25,6 +25,8 @@ User::User(const int fd):
         _lastIndexOfBufferWithNoDelimiters(0),
         _shouldDestroyUserAfterFlush(false) {
     ft::Log::debug << "User " << fd << " constructor called" << std::endl;
+    if (_requestsHandlers.empty())
+        User::initRequestsHandlers();
 }
 
 int User::getFD() const {

@@ -25,7 +25,6 @@ int main(const int argc, char** argv) {
 
     try {
         Server  server(getPort(argv[1]), getPassword(argv[2]), argv[0]);
-        User::initRequestsHandlers();
         SignalHandler::init(server);
         server.run();
     } catch (const ft::Exception& e) {

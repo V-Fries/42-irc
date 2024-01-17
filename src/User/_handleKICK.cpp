@@ -35,7 +35,12 @@ void User::_handleKICK(Server& server,
         if (!channelTarget->isMember(*it)) {
             NumericReplies::Error::userNotInChannel(*this, *it, *channelTarget, server);
         } else {
-            sendChannelKickMessages(*this, server, *channelTarget, *it, args[2]);
+            if (args.size() > 2) {
+                sendChannelKickMessages(*this, server, *channelTarget, *it, args[2]);
+            }
+            else {
+                sendChannelKickMessages(*this, server, *channelTarget, *it, "");
+            }
             channelTarget->removeMember(server.getUserByNickname(*it));
             if (channelTarget->getMembers().empty())
                 server.removeChannel(channelTarget->getName());
