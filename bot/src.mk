@@ -1,0 +1,19 @@
+SRC	=\
+	Bot/Bot.cpp							\
+	Bot/_handlePRIVMSG.cpp				\
+	Bot/_handleINVITE.cpp				\
+	Bot/_handleJOIN.cpp					\
+	Bot/_handleERR_PASSWDMISMATCH.cpp	\
+	Bot/_handleERROR.cpp				\
+	Bot/_handleNICKERRORS.cpp			\
+	Bot/_handleWELCOME.cpp				\
+	Bot/_handleRPL_LIST.cpp				\
+	Bot/_handleRPL_NAMREPLY.cpp			\
+	Bot/_handleQUIT.cpp					\
+	Bot/_handleKICK.cpp					\
+	Bot/_handlePART.cpp					\
+\
+	CSVParser.cpp		\
+	main.cpp			\
+	SignalHandler.cpp	\
+	Command.cpp			\
