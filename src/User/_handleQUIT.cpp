@@ -1,11 +1,10 @@
 #include "User.hpp"
 #include "Channel.hpp"
 #include "ft.hpp"
+#include "Server.hpp"
 
 #include <sstream>
 #include <vector>
-
-#include "Server.hpp"
 
 void    User::_handleQUIT(Server& server,
                           const ft::Vector<ft::String>& args) {

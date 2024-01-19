@@ -26,6 +26,11 @@ void User::_handleJOIN(Server& server, const ft::Vector<ft::String>& args) {
         return;
     }
 
+    if (args.size() == 1 && args[0] == "0") {
+        this->leaveAllChannels(server);
+        return;
+    }
+
     const ft::Vector<ft::String>   channelsNames = args[0].split(",");
     ft::Vector<ft::String>         channelsPasswords;
 
