@@ -139,6 +139,12 @@ void User::leaveChannel(const ft::String& channelName) {
     _channels.erase(channelName);
 }
 
+void User::leaveAllChannels() {
+    while (!_channels.empty()) {
+        this->leaveChannel(_channels.begin()->first);
+    }
+}
+
 void User::sendMessageToConnections(const ft::String& message, const Server& server) {
     Channel::UserContainer  usersCache;
 
