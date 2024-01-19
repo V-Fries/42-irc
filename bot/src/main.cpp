@@ -11,7 +11,16 @@ static ft::String  getPassword(const ft::String& password);
 
 int main(const int ac, const char** av) {
     ft::Log::setDebugLevel(ft::Log::INFO);
-    const std::vector< std::pair<ft::String, ft::String> > kickWords = CSVParser::parseCSVFile("./words.csv", ft::Log::WARNING);
+    const ft::String  pathToBinary = av[0];
+    const ft::String  pathToWords = ft::String(pathToBinary.c_str(), pathToBinary.rfind('/') + 1) + PATH_TO_WORDS;
+    std::vector< std::pair<ft::String, ft::String> > kickWords;
+
+    try {
+        kickWords = CSVParser::parseCSVFile(pathToWords, ft::Log::WARNING);
+    } catch (ft::Exception& e) {
+        e.printError();
+        return 1;
+    }
 
     if (ac < 4) {
         return 1;
