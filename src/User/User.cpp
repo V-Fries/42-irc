@@ -139,10 +139,17 @@ void User::leaveChannel(const ft::String& channelName) {
     _channels.erase(channelName);
 }
 
-void User::leaveAllChannels() {
-    while (!_channels.empty()) {
-        this->leaveChannel(_channels.begin()->first);
+void User::leaveAllChannels(Server&server) {
+    ft::Vector<ft::String>  channels;
+
+    for (std::map<ft::String, Channel *>::iterator it = _channels.begin();
+         it != _channels.end();
+         ++it) {
+        channels.push_back(it->first);
     }
+    ft::Vector<ft::String> args;
+    args.push_back(channels.join(ft::String(",")));
+    this->_handlePART(server, args);
 }
 
 void User::sendMessageToConnections(const ft::String& message, const Server& server) {
