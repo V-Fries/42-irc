@@ -2,7 +2,7 @@
 
 void Bot::_handleJOIN(const ft::String& author,
                       const std::vector<ft::String>& args) {
-    if ((!_nicknames.empty() && author == _nicknames.front()) || args.empty())
+    if (author == _nicknames.front())
         return;
     ft::Log::info << author << " has joined " << args[0] << std::endl;
     _channels[args[0]].push_back(author);

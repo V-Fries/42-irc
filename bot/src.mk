@@ -1,5 +1,6 @@
 SRC	=\
 	Bot/Bot.cpp							\
+	Bot/_handleIGNORE.cpp				\
 	Bot/_handlePRIVMSG.cpp				\
 	Bot/_handleINVITE.cpp				\
 	Bot/_handleJOIN.cpp					\
