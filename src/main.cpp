@@ -13,9 +13,18 @@
 static uint16_t     getPort(const ft::String& portStr);
 static ft::String  getPassword(const ft::String& password);
 
-int main(const int argc, char** argv) {
-    ft::Log::setDebugLevel(ft::Log::DEBUG);
-    ft::Log::setFileToWriteTo("logs.txt");
+int main(const int argc, const char** argv) {
+    ft::Log::setDebugLevel(ft::Log::INFO);
+    const ft::String  pathToBinary = argv[0];
+    const ft::String  pathToWords = ft::String(pathToBinary.c_str(), pathToBinary.rfind('/') + 1) + PATH_TO_WORDS;
+    std::vector< std::pair<ft::String, ft::String> > kickWords;
+
+    try {
+        kickWords = CSVParser::parseCSVFile(pathToWords, ft::Log::WARNING);
+    } catch (ft::Exception& e) {
+        e.printError();
+        return 1;
+    }
 
     if (argc != 3) {
         ft::Log::critical << "Wrong number of arguments, expected:\n"
