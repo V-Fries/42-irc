@@ -16,9 +16,11 @@ void User::_handlePRIVMSG(Server& server, const ft::Vector<ft::String>& args) {
 
     if (args.empty()) {
         NumericReplies::Error::noRecipient(*this, "PRIVMSG", server);
+        return;
     }
     if (args.size() < 2) {
         NumericReplies::Error::noTextToSend(*this, server);
+        return;
     }
     ft::Vector<ft::String> targets = args[0].split(",");
     for (ft::Vector<ft::String>::const_iterator it = targets.begin();
