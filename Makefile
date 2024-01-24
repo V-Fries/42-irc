@@ -1,6 +1,6 @@
 DEBUG					=	0
 
-BASE_NAME				=	ircserv
+BASE_NAME				=	ircbot
 BUILD_ROOT				=	.build/
 NAMES =\
 	$(BASE_NAME)		\

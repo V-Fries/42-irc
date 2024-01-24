@@ -17,25 +17,12 @@ add_executable(webserv
 		lib/libftpp/src/String/split.cpp
 		lib/libftpp/src/String/vector_string_operators.cpp
 		include/ISocket.hpp
-		include/Server.hpp
-		include/User.hpp
-		src/User/User.cpp
 		lib/libftpp/src/String/findFirstNotOfString.cpp
-		src/Server.cpp
-		include/ListenSocket.hpp
-		src/ListenSocket.cpp
 		include/SignalHandler.hpp
 		src/SignalHandler.cpp
 		lib/libftpp/src/String/getFirstWord.cpp
 		lib/libftpp/src/String/getFirstWord.cpp
 		lib/libftpp/src/String/skipChars.cpp
-		src/User/_handlePASS.cpp
-		src/User/_handleUSER.cpp
-		src/User/_handleNICK.cpp
-		include/NumericReplies.hpp
-		src/NumericReplies.cpp
-		include/Channel.hpp
-		src/Channel.cpp
 		src/Command.cpp
 		lib/libftpp/include/ft_Set.hpp
 		lib/libftpp/include/ft_Set.hpp
@@ -45,21 +32,23 @@ add_executable(webserv
 		lib/libftpp/include/ft_Log.hpp
 		lib/libftpp/include/ft_Io.hpp
 		lib/libftpp/src/Io.cpp
-		src/User/_handlePRIVMSG.cpp
 		lib/libftpp/src/String/toLowerOrUpper.cpp
-		src/User/_handleJOIN.cpp
-		src/User/_handlePING.cpp
-		src/User/_handleWHO.cpp
-		src/User/_handlePART.cpp
-		src/User/_handleMODE.cpp
-		src/User/_handleTOPIC.cpp
-		src/Topic.cpp
-		include/Topic.hpp
-		src/User/_handleLIST.cpp
-		src/User/_handleISON.cpp
-		src/User/_handleINVITE.cpp
-		src/User/_handleQUIT.cpp
 		lib/libftpp/src/String/map.cpp
-		src/User/_handleKICK.cpp
 		lib/libftpp/src/String/startsOrEndsWith.cpp
-		src/User/_handleKICK.cpp)
+		include/Bot.hpp
+		src/Bot/Bot.cpp
+		src/Bot/_handleINVITE.cpp
+		src/Bot/_handlePRIVMSG.cpp
+		src/Bot/_handleERR_PASSWDMISMATCH.cpp
+		src/Bot/_handleIGNORE.cpp
+		src/Bot/_handleERROR.cpp
+		src/Bot/_handleNICKERRORS.cpp
+		src/Bot/_handleWELCOME.cpp
+		src/Bot/_handleRPL_LIST.cpp
+		include/CSVParser.hpp
+		src/CSVParser.cpp
+		src/Bot/_handleJOIN.cpp
+		src/Bot/_handleRPL_NAMREPLY.cpp
+		src/Bot/_handleQUIT.cpp
+		src/Bot/_handleKICK.cpp
+		src/Bot/_handlePART.cpp)
