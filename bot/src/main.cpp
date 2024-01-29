@@ -10,7 +10,7 @@ static uint16_t    getPort(const ft::String& portStr);
 
 int main(const int argc, const char** argv) {
     ft::Log::setDebugLevel(ft::Log::INFO);
-    const ft::String  pathToBinary = av[0];
+    const ft::String  pathToBinary = argv[0];
     const ft::String  pathToWords = ft::String(pathToBinary.c_str(), pathToBinary.rfind('/') + 1) + PATH_TO_WORDS;
     std::vector< std::pair<ft::String, ft::String> > kickWords;
 
