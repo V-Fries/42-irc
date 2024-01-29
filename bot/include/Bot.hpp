@@ -9,6 +9,7 @@
 
 #define PATH_TO_WORDS "./words.csv"
 #define EPOLL_DEFAULT ((EPOLLIN) | (EPOLLRDHUP) | (EPOLLET))
+#define PATH_TO_WORDS "./words.csv"
 
 class Bot {
     public:

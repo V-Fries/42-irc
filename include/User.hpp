@@ -49,6 +49,7 @@ class User : public ISocket {
                                          const Server& server);
 
         void    leaveChannel(const ft::String& channelName);
+        void    leaveAllChannels(Server& server);
 
         static ft::String    defaultNickname;
 

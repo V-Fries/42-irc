@@ -7,9 +7,8 @@
 #include "CSVParser.hpp"
 
 static uint16_t    getPort(const ft::String& portStr);
-static ft::String  getPassword(const ft::String& password);
 
-int main(const int ac, const char** av) {
+int main(const int argc, const char** argv) {
     ft::Log::setDebugLevel(ft::Log::INFO);
     const ft::String  pathToBinary = av[0];
     const ft::String  pathToWords = ft::String(pathToBinary.c_str(), pathToBinary.rfind('/') + 1) + PATH_TO_WORDS;
@@ -22,12 +21,12 @@ int main(const int ac, const char** av) {
         return 1;
     }
 
-    if (ac < 4) {
+    if (argc != 4) {
         return 1;
     }
 
     try {
-        Bot bot = Bot(av[1], getPort(av[2]), getPassword(av[3]), kickWords);
+        Bot bot = Bot(argv[1], getPort(argv[2]), argv[3], kickWords);
         SignalHandler::init(bot);
         bot.addNickname("bot");
         bot.run();
@@ -56,19 +55,4 @@ static uint16_t getPort(const ft::String& portStr) {
 
     ft::Log::debug << "Port argument is " << static_cast<uint16_t>(port) << std::endl;
     return static_cast<uint16_t>(port);
-}
-
-static ft::String getPassword(const ft::String& password) {
-    if (password.empty()) {
-        throw ft::Exception("Password argument should not be empty", ft::Log::CRITICAL);
-    }
-
-    for (ft::String::const_iterator it(password.begin()); it != password.end(); ++it) {
-        if (std::isspace(static_cast<unsigned char>(*it))) {
-            throw ft::Exception("Password argument should not contain any whitespaces",
-                                ft::Log::CRITICAL);
-        }
-    }
-
-    return password;
 }

@@ -19,7 +19,7 @@ CSVParser::CSVFile  CSVParser::parseCSVFile(const ft::String& fileName,
     }
     ft::String  line;
     if (!getline(fileStream, line)) {
-
+        fileStream.close();
         throw fileIsNotFormattedCorrectly(fileName, logLevelOnError);
     }
 
@@ -27,7 +27,7 @@ CSVParser::CSVFile  CSVParser::parseCSVFile(const ft::String& fileName,
     while (getline(fileStream, line)) {
         parseLine(line, result);
     }
-
+    fileStream.close();
     return result;
 }
 
