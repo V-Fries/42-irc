@@ -6,7 +6,7 @@
 #    By: beroux <beroux@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/17 14:13:58 by beroux            #+#    #+#              #
-#    Updated: 2024/01/17 14:17:05 by beroux           ###   ########.fr        #
+#    Updated: 2024/01/24 13:50:19 by beroux           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -153,4 +153,4 @@ $(DIR_BUILD)%.o : $(SRC_PATH)%.cpp $(LIBFTPP_A)
 bonus: $(BOT_NAME)
 
 $(BOT_NAME):
-	$(MAKE) -C bot/ && mv bot/ircbot ./
+	$(MAKE) -C bot/ && mv bot/ircbot ./ && cp bot/words.csv ./
