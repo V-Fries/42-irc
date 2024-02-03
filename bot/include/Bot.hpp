@@ -8,7 +8,7 @@
 #include "ft.hpp"
 
 #define PATH_TO_WORDS "./words.csv"
-#define EPOLL_DEFAULT ((EPOLLIN) | (EPOLLRDHUP) | (EPOLLET))
+#define EPOLL_DEFAULT ((EPOLLIN) | (EPOLLRDHUP))
 #define PATH_TO_WORDS "./words.csv"
 
 class Bot {

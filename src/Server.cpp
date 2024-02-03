@@ -122,7 +122,7 @@ void Server::addNickNameOfUserCurrentlyRegistering(const ft::String& nickName) {
 
 epoll_event Server::getBaseUserEpollEvent(const int userFD) {
     epoll_event event = {};
-    event.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+    event.events = EPOLLIN | EPOLLRDHUP;
     event.data.fd = userFD;
     return event;
 }

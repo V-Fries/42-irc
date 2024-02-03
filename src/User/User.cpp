@@ -92,13 +92,12 @@ void    User::handleEvent(const uint32_t epollEvents, Server& server) {
     if (epollEvents & EPOLLHUP || epollEvents & EPOLLRDHUP) {
         ft::Log::debug << "User " << _fd << " received EPOLLHUP || EPOLLRDHUP" << std::endl;
         server.addUserToDestroyList(*this);
-        return;
     }
-    if (epollEvents & EPOLLIN && !_shouldDestroyUserAfterFlush) {
+    else if (epollEvents & EPOLLIN && !_shouldDestroyUserAfterFlush) {
         ft::Log::debug << "User " << _fd << " received EPOLLIN" << std::endl;
         _handleEPOLLIN(server);
     }
-    if (epollEvents & EPOLLOUT) {
+    else if (epollEvents & EPOLLOUT) {
         ft::Log::debug << "User " << _fd << " received EPOLLOUT" << std::endl;
         _flushMessages(server);
     }
@@ -258,9 +257,14 @@ void User::_flushMessages(Server& server) {
         messages += _messagesBuffer.front();
         _messagesBuffer.pop();
     }
-    if (send(_fd, messages.c_str(), messages.length(), 0) < 0) {
+    ssize_t sendReturnValue = send(_fd, messages.c_str(), messages.length(), 0);
+    if (sendReturnValue < 0) {
         ft::Log::error << "Failed to send messages to " << _fd << std::endl;
         _messagesBuffer.push(messages);
+        return;
+    }
+    if (sendReturnValue < static_cast<ssize_t>(messages.length())) {
+        _messagesBuffer.push(ft::String(messages.begin() + sendReturnValue, messages.end()));
         return;
     }
 
