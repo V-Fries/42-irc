@@ -129,14 +129,9 @@ epoll_event Server::getBaseUserEpollEvent(const int userFD) {
 
 void    Server::_removeUser(User& user) {
     ft::Log::info << "User " << user.getFD() << " disconnected" << std::endl;
+
+    user.leaveAllChannels(*this);
     for (ChannelMap::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-        it->second->removeMember(&user);
-        if (it->second->getMembers().empty()) {
-            this->removeChannel(it->second->getName());
-            it = _channels.begin();
-            continue;
-        }
-        it->second->removeOperator(user.getFD());
         it->second->removeInvitedUser(user.getFD());
     }
     _closeSocket(user.getFD(), false);
