@@ -149,7 +149,8 @@ void User::leaveAllChannels(Server&server) {
     }
     ft::Vector<ft::String> args;
     args.push_back(channels.join(ft::String(",")));
-    this->_handlePART(server, args);
+
+    if (!args.empty()) this->_handlePART(server, args);
 }
 
 void User::sendMessageToConnections(const ft::String& message, const Server& server) {
