@@ -277,7 +277,7 @@ void Channel::setMode(User& author,
                       const Server& server) {
     channelSetter   setter = &Channel::addMode;
 
-    if (it == end && ((modeChar == 'l' && sign == '+') || modeChar == 'k' || modeChar == 'o')) {
+    if (it + 1 >= end && ((modeChar == 'l' && sign == '+') || modeChar == 'k' || modeChar == 'o')) {
         return;
     }
 
